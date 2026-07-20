@@ -49,6 +49,9 @@ C'est le cœur du projet : **une illustration = un fichier JS**.
   automatiquement** quand on change de leçon — insère toujours tes éléments
   dedans plutôt qu'après le `#board`, sinon ils restent affichés sur les autres leçons.
 - `mv.typeset()` : re-rend les formules LaTeX si tu ajoutes du texte dynamiquement.
+- `mv.hideBoard()` : masque le repère JSXGraph pour une leçon **sans figure**
+  (ex. le tableau de conversion, entièrement en HTML dans `mv.extras`). Le repère
+  est réaffiché automatiquement à la leçon suivante.
 
 ## Structure
 

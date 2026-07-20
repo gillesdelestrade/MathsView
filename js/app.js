@@ -181,6 +181,9 @@
     // (Re)création du tableau JSXGraph
     freeCurrentBoard();
     const boardEl = document.getElementById('board');
+    // Réaffiche le repère : une leçon précédente a pu le masquer via mv.hideBoard()
+    // (utile pour les leçons sans figure, ex. le tableau de conversion).
+    boardEl.style.display = '';
     boardEl.innerHTML = '';
     // Vide les ajouts de la leçon précédente (curseurs, boutons, panneaux…).
     document.getElementById('lesson-extras').innerHTML = '';
@@ -201,7 +204,10 @@
       desc: document.getElementById('lesson-desc'),
       extras: document.getElementById('lesson-extras'),
       typeset: typeset,
-      addControls: addControls
+      addControls: addControls,
+      // Masque le repère JSXGraph pour une leçon sans figure (tableau, texte…).
+      // Il est réaffiché automatiquement au chargement de la leçon suivante.
+      hideBoard: function () { boardEl.style.display = 'none'; }
     };
 
     try {
