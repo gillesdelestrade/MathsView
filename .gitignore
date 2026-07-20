@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# Journaux / temporaires
+*.log
+
+# Réglages locaux Claude Code (spécifiques à la machine)
+.claude/

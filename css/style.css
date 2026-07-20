@@ -1,0 +1,299 @@
+:root {
+  --bg: #0f172a;
+  --bg-soft: #1e293b;
+  --panel: #ffffff;
+  --ink: #1e293b;
+  --ink-soft: #64748b;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  /* Un ton par niveau, en dégradé turquoise → fuchsia de la 6ème à la Terminale
+     (la continuité visuelle remplace l'ancienne coupure collège / lycée). */
+  --n6: #0d9488;
+  --n5: #0891b2;
+  --n4: #2563eb;
+  --n3: #4f46e5;
+  --n2: #7c3aed;
+  --n1: #9333ea;
+  --nt: #c026d3;
+  --border: #e2e8f0;
+  --radius: 14px;
+  --shadow: 0 1px 3px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.06);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: #f1f5f9;
+  line-height: 1.55;
+}
+
+/* ---------- Barre du haut ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .9rem 1.4rem;
+  background: linear-gradient(120deg, #1e293b, #0f172a);
+  color: #fff;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: .8rem; }
+.logo {
+  font-size: 1.9rem;
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,.1);
+  border-radius: 12px;
+}
+.topbar h1 { margin: 0; font-size: 1.35rem; letter-spacing: .3px; }
+.tagline { margin: 0; font-size: .82rem; color: #cbd5e1; }
+
+.filters { display: flex; gap: .5rem; flex-wrap: wrap; }
+.filters button {
+  border: 1px solid rgba(255,255,255,.25);
+  background: transparent;
+  color: #e2e8f0;
+  padding: .35rem .8rem;
+  border-radius: 999px;
+  font-size: .82rem;
+  cursor: pointer;
+  transition: all .15s;
+}
+.filters button:hover { background: rgba(255,255,255,.12); }
+.filters button.active { background: #fff; color: #0f172a; border-color: #fff; }
+
+/* ---------- Mise en page ---------- */
+.layout { display: flex; align-items: flex-start; }
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  padding: 1rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: #fff;
+}
+#search {
+  width: 100%;
+  padding: .55rem .8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: .9rem;
+  margin-bottom: .8rem;
+}
+#search:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+
+.menu-group-title {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-soft);
+  margin: 1rem 0 .35rem;
+  font-weight: 700;
+}
+.menu a {
+  display: block;
+  padding: .5rem .7rem;
+  border-radius: 9px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: .92rem;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+}
+.menu a:hover { background: #f8fafc; }
+.menu a.active { background: var(--accent-soft); border-left-color: var(--accent); font-weight: 600; }
+
+.content { flex: 1; padding: 1.6rem 2rem; min-width: 0; }
+
+/* ---------- Accueil ---------- */
+.home h2 { margin-top: 0; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: transform .12s, box-shadow .12s;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(15,23,42,.12); }
+.card h3 { margin: .3rem 0 .4rem; font-size: 1.05rem; }
+.card p { margin: 0; font-size: .85rem; color: var(--ink-soft); }
+
+/* ---------- Illustration ---------- */
+.lesson-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .3rem; }
+.lesson-head h2 { margin: 0; }
+.badge {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #fff;
+  padding: .22rem .6rem;
+  border-radius: 999px;
+}
+.badge.n6 { background: var(--n6); }
+.badge.n5 { background: var(--n5); }
+.badge.n4 { background: var(--n4); }
+.badge.n3 { background: var(--n3); }
+.badge.n2 { background: var(--n2); }
+.badge.n1 { background: var(--n1); }
+.badge.nt { background: var(--nt); }
+
+.lesson-desc { color: var(--ink); margin: .6rem 0 1rem; max-width: 70ch; }
+.lesson-notes { color: var(--ink); margin-top: 1rem; max-width: 70ch; }
+.lesson-notes ul { padding-left: 1.2rem; }
+
+.board {
+  width: 100%;
+  max-width: 640px;
+  height: 480px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  background: #fff;
+}
+
+.controls {
+  display: flex;
+  gap: .8rem;
+  flex-wrap: wrap;
+  margin: .8rem 0;
+  align-items: center;
+}
+.controls label { font-size: .88rem; display: flex; align-items: center; gap: .4rem; }
+.controls button {
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: .4rem .8rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .88rem;
+}
+.controls button:hover { background: #f8fafc; }
+/* Bouton de sélection actif (ex. sélecteur de forme de la leçon aires). */
+.controls button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ---------- Panneau de propriétés (leçon quadrilatères) ---------- */
+.props-panel {
+  max-width: 640px;
+  margin: 1rem 0;
+  padding: .9rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.props-name { font-size: 1.25rem; font-weight: 800; letter-spacing: .2px; }
+.props-label { font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin: .5rem 0 .3rem; font-weight: 700; }
+.props-list { margin: 0; padding-left: 1.2rem; }
+.props-list li { margin: .15rem 0; }
+.props-list li::marker { color: var(--accent); }
+
+/* ---------- Sélecteur de propriétés (leçon quadrilatères) ---------- */
+.quad-ui { max-width: 640px; }
+
+.quad-build {
+  margin-top: 1rem;
+  padding: .9rem 1.1rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.quad-build .props-label { margin-top: 0; }
+
+.quad-checks { display: grid; gap: .25rem; }
+.quad-check {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .9rem;
+  padding: .25rem .4rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.quad-check:hover { background: #f8fafc; }
+.quad-implied {
+  display: none;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: .1rem .4rem;
+  border-radius: 999px;
+}
+/* Propriété non cochée mais entraînée par les autres choix. */
+.quad-check.is-implied { color: var(--accent); }
+.quad-check.is-implied .quad-implied { display: inline; }
+
+.quad-anim {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  flex-wrap: wrap;
+  margin-top: .8rem;
+  padding-top: .8rem;
+  border-top: 1px solid var(--border);
+  font-size: .85rem;
+}
+.quad-anim button {
+  padding: .35rem .8rem;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+.quad-anim button:hover { background: #f8fafc; }
+.quad-anim label { display: flex; align-items: center; gap: .4rem; }
+/* Bouton principal : bascule animation ↔ déplacement des sommets. */
+.quad-anim .quad-mode {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+.quad-anim .quad-mode:hover { filter: brightness(.97); background: var(--accent-soft); }
+
+.quad-tour { margin-top: .7rem; font-size: .9rem; }
+.quad-tour-label {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft); font-weight: 700;
+}
+
+/* Lignes de calcul (leçon fonction affine) */
+.calc-line { font-size: .95rem; margin: .15rem 0; font-variant-numeric: tabular-nums; }
+.calc-line b { color: var(--accent); }
+.calc-result {
+  font-size: 1.15rem; font-weight: 800; margin-top: .3rem;
+  color: var(--ink); background: var(--accent-soft);
+  display: inline-block; padding: .35rem .7rem; border-radius: 8px;
+}
+.calc-warn { color: #b91c1c; font-weight: 600; margin-top: .3rem; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+  .content { padding: 1.2rem; }
+}

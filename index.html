@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MathsView — Illustrations de cours de mathématiques</title>
+  <link rel="stylesheet" href="vendor/jsxgraph.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">△</span>
+      <div>
+        <h1>MathsView</h1>
+        <p class="tagline">Illustrations interactives pour apprendre les maths</p>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <input type="search" id="search" placeholder="Rechercher un cours…" autocomplete="off">
+      <nav id="menu" class="menu"></nav>
+    </aside>
+
+    <main class="content">
+      <!-- Écran d'accueil -->
+      <section id="home" class="home">
+        <h2>Bienvenue&nbsp;!</h2>
+        <p>Choisis une illustration dans le menu de gauche pour explorer une notion de
+           mathématiques de façon interactive. Déplace les points, bouge les curseurs,
+           observe ce qui change.</p>
+        <div id="cards" class="cards"></div>
+      </section>
+
+      <!-- Écran d'une illustration -->
+      <section id="lesson" class="lesson" hidden>
+        <div class="lesson-head">
+          <span class="badge" id="lesson-level"></span>
+          <h2 id="lesson-title"></h2>
+        </div>
+        <div id="lesson-desc" class="lesson-desc"></div>
+        <div id="board" class="jxgbox board"></div>
+        <div id="lesson-extras"></div>
+        <div id="lesson-notes" class="lesson-notes"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Bibliothèques (locales, hors-ligne) -->
+  <script src="vendor/jsxgraphcore.js"></script>
+  <script src="vendor/tex-svg.js" id="MathJax-script"></script>
+
+  <!-- Moteur MathsView -->
+  <script src="js/app.js"></script>
+
+  <!-- Catalogue : ajoute ici chaque nouvelle illustration.
+       L'ordre ci-dessous est celui des cartes de l'accueil : on le garde par
+       niveau croissant, de la 6ème à la Terminale. -->
+  <script src="lessons/6eme/fractions.js"></script>
+  <script src="lessons/6eme/aires.js"></script>
+  <script src="lessons/6eme/quadrilateres.js"></script>
+  <script src="lessons/4eme/pythagore.js"></script>
+  <script src="lessons/3eme/thales.js"></script>
+  <script src="lessons/3eme/fonction-affine.js"></script>
+  <script src="lessons/1ere/derivee-tangente.js"></script>
+  <script src="lessons/1ere/cercle-trigonometrique.js"></script>
+
+  <script>MathsView.start();</script>
+</body>
+</html>
