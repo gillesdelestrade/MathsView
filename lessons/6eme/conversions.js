@@ -135,7 +135,7 @@ MathsView.register({
       for (var j = 0; j < numCols; j++) {
         var r = numCols - 1 - j, d;
         if (map[r] !== undefined) d = map[r];
-        else if (r >= 0 && r <= highInt && r <= numCols - 1) d = '0';
+        else if (r >= 0) d = '0';   // toute colonne entière vide → zéro (à gauche comme à droite)
         else d = '';
         cells.push({ d: d, r: r, unitFromRight: Math.floor(r / k) });
       }
