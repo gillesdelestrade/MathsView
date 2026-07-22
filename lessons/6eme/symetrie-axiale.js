@@ -62,7 +62,7 @@ MathsView.register({
     /* ==================================================================== */
     var anim = mv.createAnimator();
     function cancelAnim() { anim.cancel(); }
-    function runSteps(steps) { anim.runSteps(steps); }
+    function runSteps(steps, reset) { anim.runSteps(steps, reset); }
     // Segment de p0 à p1 (fns → [x,y]), révélé de 0 à prog.
     function segCurve(p0, p1, style) {
       var prog = { v: 0 };
@@ -198,7 +198,7 @@ MathsView.register({
         step: function (p) { perimProg.v = p; },
         after: function () { show(imgPoly, true); perimProg.v = 0; }
       });
-      runSteps(steps);
+      runSteps(steps, hideDrawing);
     }
 
     /* ==================================================================== */

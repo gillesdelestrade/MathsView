@@ -78,7 +78,7 @@ MathsView.register({
     // (case à cocher, bouton « Suivante » et barre espace) fournis par le harness.
     var anim = mv.createAnimator();
     function cancelAnim() { anim.cancel(); }
-    function runSteps(steps) { anim.runSteps(steps); }
+    function runSteps(steps, reset) { anim.runSteps(steps, reset); }
 
     function add(obj) { items.push(obj); return obj; }
     function show(obj, v) { obj.setAttribute({ visible: v }); }
@@ -208,7 +208,7 @@ MathsView.register({
             { dur: 850, step: function (p) { cB.prog.v = p; }, after: function () { show(P, true); show(Q, true); } },
             { dur: 750, step: function (p) { med.prog.v = p; },
               after: function () { show(M, true); show(sqA, true); show(sqB, true); show(lab, true); } }
-          ]);
+          ], hideDrawing);
         },
         reset: hideDrawing
       };
@@ -314,7 +314,7 @@ MathsView.register({
             { dur: 600, step: function (p) { arcJ.prog.v = p; }, after: function () { show(K, true); } },
             { dur: 800, step: function (p) { bis.prog.v = p; },
               after: function () { show(ang1, true); show(ang2, true); show(lab, true); } }
-          ]);
+          ], hideDrawing);
         },
         reset: hideDrawing
       };

@@ -171,7 +171,7 @@ MathsView.register({
               after: function () { show(lAb1, true); show(lAb2, true); show(sBb, true); show(sLb, true); } },
             { dur: 420, step: function (p) { reveal(rB, 0.42, p); },
               after: function () { show(lB, true); } }
-          ]);
+          ], hideAll);
         },
         reset: hideAll
       };
@@ -372,7 +372,7 @@ MathsView.register({
                 });
               },
               after: function () { show(lInner, true); } }
-          ]);
+          ], hideAll);
         },
         reset: hideAll
       };
@@ -501,7 +501,7 @@ MathsView.register({
                 sFill = p;
               },
               after: function () { sFill = 1; reveal(pB2, 0.42, 1); show(lB2, true); } }
-          ]);
+          ], hideAll);
         },
         reset: hideAll
       };

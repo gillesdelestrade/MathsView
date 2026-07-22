@@ -307,21 +307,26 @@
   /* Moteur d'animation partagé + mode « pas à pas »                       */
   /*                                                                       */
   /* Une leçon appelle `var anim = mv.createAnimator();` puis utilise      */
-  /* `anim.runSteps([...])` (liste d'étapes { dur, step(p), after }) à la  */
-  /* place de son moteur local. L'animateur ajoute tout seul une ligne     */
-  /* « ☐ Pas à pas  [Suivante ▶] » : quand la case est cochée, l'animation */
-  /* s'interrompt après chaque étape et n'avance qu'au clic sur le bouton  */
-  /* ou à l'appui sur la barre espace — pratique pour commenter en direct. */
+  /* `anim.runSteps(steps, reset)` (steps : liste { dur, step(p), after } ;*/
+  /* reset : fonction qui remet la figure à zéro) à la place de son moteur */
+  /* local. L'animateur ajoute tout seul la ligne                          */
+  /* « ☑ Pas à pas  [◀ Précédent] [Suivante ▶] » (cochée par défaut) : à   */
+  /* chaque étape l'animation s'arrête et n'avance qu'au clic sur le bouton*/
+  /* ou à la barre espace ; « Précédent » (ou ←) rejoue instantanément les */
+  /* étapes précédentes après un reset — pratique pour commenter en direct.*/
   /* --------------------------------------------------------------------- */
   function createAnimator() {
     const board = currentBoard;   // tableau de la leçon courante (au moment de l'appel)
     let raf = null;
-    let stepMode = false;
-    let pending = null;           // continuation en attente entre deux étapes
+    let stepMode = true;          // pas à pas coché PAR DÉFAUT
+    let steps = [];
+    let resetFn = null;
+    let idx = 0;                  // nombre d'étapes déjà jouées (0..steps.length)
+    let busy = false;             // une étape est en cours d'animation
 
     function stopRaf() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
 
-    function cancel() { stopRaf(); pending = null; refreshUI(); }
+    function cancel() { stopRaf(); busy = false; steps = []; idx = 0; refreshUI(); }
 
     function animate(dur, onStep, onDone) {
       stopRaf();
@@ -337,61 +342,93 @@
       raf = requestAnimationFrame(frame);
     }
 
-    function runSteps(steps) {
+    // Joue l'étape courante (idx) avec animation, puis incrémente idx.
+    function playStep(onDone) {
+      const s = steps[idx];
+      busy = true; refreshUI();
+      animate(s.dur, s.step, function () {
+        if (s.after) s.after();
+        idx++; busy = false; refreshUI();
+        if (onDone) onDone();
+      });
+    }
+    function autoRun() {
+      if (idx >= steps.length) return;
+      playStep(function () { if (!stepMode) autoRun(); });
+    }
+
+    function runSteps(newSteps, reset) {
       cancel();
-      let i = 0;
-      function next() {
-        if (i >= steps.length) { pending = null; refreshUI(); return; }
-        const s = steps[i++];
-        animate(s.dur, s.step, function () {
-          if (s.after) s.after();
-          if (i >= steps.length) { pending = null; refreshUI(); return; }
-          if (stepMode) { pending = next; refreshUI(); }  // pause : on attend l'utilisateur
-          else next();
-        });
+      steps = newSteps || [];
+      resetFn = reset || null;
+      idx = 0; busy = false;
+      refreshUI();
+      if (!stepMode) autoRun();   // en pas à pas on attend l'appui (figure vierge)
+    }
+
+    function advance() {          // « Suivante » / espace / →
+      if (busy || idx >= steps.length) return;
+      playStep(function () { if (!stepMode) autoRun(); });
+    }
+
+    function back() {             // « Précédent » / ← : reset puis rejoue 0..idx-2
+      if (busy || idx <= 0 || !resetFn) return;
+      stopRaf();
+      idx--;
+      try { resetFn(); } catch (e) {}
+      for (let j = 0; j < idx; j++) {
+        try { steps[j].step(1); if (steps[j].after) steps[j].after(); } catch (e) {}
       }
-      // En mode pas à pas, même la 1re étape attend un appui (figure vierge).
-      if (stepMode) { pending = next; refreshUI(); }
-      else next();
+      try { board.update(); } catch (e) {}
+      refreshUI();
     }
 
-    function advance() {
-      if (pending) { const f = pending; pending = null; refreshUI(); f(); }
-    }
-
-    /* Ligne de contrôle « Pas à pas » + « Suivante ▶ » ------------------- */
+    /* Ligne de contrôle « Pas à pas » + « Précédent » + « Suivante » ------ */
     const row = document.createElement('div');
     row.className = 'controls step-controls';
     const cbLabel = document.createElement('label');
     const cb = document.createElement('input');
     cb.type = 'checkbox';
+    cb.checked = true;            // coché par défaut
     cb.onchange = function () {
       stepMode = cb.checked;
-      nextBtn.style.display = stepMode ? '' : 'none';
-      if (!stepMode) advance();   // si on décoche pendant une pause, on reprend en auto
+      const disp = stepMode ? '' : 'none';
+      prevBtn.style.display = disp; nextBtn.style.display = disp;
+      if (!stepMode) autoRun();   // si on décoche pendant une pause, on reprend en auto
       refreshUI();
     };
     cbLabel.appendChild(cb);
     cbLabel.appendChild(document.createTextNode(' Pas à pas'));
 
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '◀ Précédent';
+    prevBtn.onclick = back;
+
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Suivante ▶';
-    nextBtn.style.display = 'none';
     nextBtn.onclick = advance;
 
     row.appendChild(cbLabel);
+    row.appendChild(prevBtn);
     row.appendChild(nextBtn);
     document.getElementById('lesson-extras').appendChild(row);
 
-    function refreshUI() { nextBtn.disabled = !pending; }
+    function refreshUI() {
+      prevBtn.disabled = busy || idx <= 0 || !resetFn;
+      nextBtn.disabled = busy || idx >= steps.length;
+    }
     refreshUI();
 
-    /* Barre espace : avance quand une étape est en attente ---------------- */
+    /* Clavier : espace/→ pour avancer, ← pour reculer -------------------- */
     function onKey(e) {
-      if (e.key !== ' ' && e.code !== 'Space') return;
+      if (!stepMode) return;
       const t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
-      if (stepMode && pending) { e.preventDefault(); advance(); }
+      if (e.key === ' ' || e.code === 'Space' || e.key === 'ArrowRight') {
+        if (!busy && idx < steps.length) { e.preventDefault(); advance(); }
+      } else if (e.key === 'ArrowLeft') {
+        if (!busy && idx > 0 && resetFn) { e.preventDefault(); back(); }
+      }
     }
     document.addEventListener('keydown', onKey);
     cleanups.push(function () { stopRaf(); document.removeEventListener('keydown', onKey); });
@@ -401,6 +438,7 @@
       animate: animate,
       cancel: cancel,
       advance: advance,
+      back: back,
       get stepMode() { return stepMode; }
     };
   }
