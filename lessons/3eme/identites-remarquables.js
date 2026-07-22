@@ -59,44 +59,20 @@ MathsView.register({
     var aVal = 3, bVal = 2;
     var items = [];
     var current = null;
-    var raf = null;
+
+    // Moteur d'animation partagé (runSteps / animate) + mode « pas à pas »
+    // (case à cocher, bouton « Suivante » et barre espace) fournis par le harness.
+    var anim = mv.createAnimator();
 
     function A() { return aVal; }
     // Pour (a−b)² et (a+b)(a−b) il faut a > b : on borne b à a − 0,5.
     function B() { return (mode === 'sum') ? bVal : Math.min(bVal, aVal - 0.5); }
 
     function track(o) { items.push(o); return o; }
-    function cancelAnim() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
     function clearFigure() {
-      cancelAnim();
+      anim.cancel();
       items.forEach(function (o) { try { board.removeObject(o); } catch (e) {} });
       items = [];
-    }
-
-    /* ==================================================================== */
-    /* Moteur d'animation                                                    */
-    /* ==================================================================== */
-    function runSteps(steps) {
-      var i = 0;
-      function next() {
-        if (i >= steps.length) return;
-        var s = steps[i++];
-        animate(s.dur, s.step, function () { if (s.after) s.after(); next(); });
-      }
-      next();
-    }
-    function animate(dur, onStep, onDone) {
-      cancelAnim();
-      var t0 = null;
-      function frame(ts) {
-        if (t0 === null) t0 = ts;
-        var p = Math.min(1, (ts - t0) / dur);
-        try { onStep(p); board.update(); }
-        catch (e) { raf = null; return; }   // board libéré (on a quitté la leçon)
-        if (p < 1) raf = requestAnimationFrame(frame);
-        else { raf = null; if (onDone) onDone(); }
-      }
-      raf = requestAnimationFrame(frame);
     }
 
     /* ==================================================================== */
@@ -188,7 +164,7 @@ MathsView.register({
       current = {
         play: function () {
           hideAll();
-          runSteps([
+          anim.runSteps([
             { dur: 380, step: function (p) { reveal(rA, 0.38, p); },
               after: function () { show(lA, true); show(sBa, true); show(sLa, true); } },
             { dur: 520, step: function (p) { reveal(rAb1, 0.42, p); reveal(rAb2, 0.42, p); },
@@ -329,7 +305,7 @@ MathsView.register({
       current = {
         play: function () {
           hideAll();
-          runSteps([
+          anim.runSteps([
             // ① Le carré de côté a, d'aire a².
             { dur: 550, step: function (p) {
                 cap('Carré de côté a : son aire vaut a²');
@@ -489,7 +465,7 @@ MathsView.register({
       current = {
         play: function () {
           hideAll();
-          runSteps([
+          anim.runSteps([
             // ① Carré de côté a (référence en pointillés).
             { dur: 600, step: function (p) {
                 cap('Carré de côté a : notre référence (en pointillés)');

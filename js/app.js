@@ -11,6 +11,9 @@
   const registry = [];          // toutes les illustrations enregistrées
   let currentBoard = null;      // tableau JSXGraph actuellement affiché
   let activeFilter = 'all';     // 'all' ou une clé de LEVELS
+  let cleanups = [];            // fonctions de nettoyage de la leçon courante
+                                // (ex. retirer un écouteur clavier), vidées au
+                                // changement de leçon par freeCurrentBoard().
 
   // Les niveaux, de la 6ème à la Terminale. Cette carte pilote TOUT :
   // l'ordre des clés donne l'ordre des groupes du menu et des filtres,
@@ -205,6 +208,11 @@
       extras: document.getElementById('lesson-extras'),
       typeset: typeset,
       addControls: addControls,
+      // Moteur d'animation partagé + mode « pas à pas » (case à cocher, bouton
+      // « Suivante » et barre espace). Voir createAnimator ci-dessous.
+      createAnimator: createAnimator,
+      // Enregistre une fonction appelée quand on quitte la leçon (nettoyage).
+      onCleanup: function (fn) { if (typeof fn === 'function') cleanups.push(fn); },
       // Masque le repère JSXGraph pour une leçon sans figure (tableau, texte…).
       // Il est réaffiché automatiquement au chargement de la leçon suivante.
       hideBoard: function () { boardEl.style.display = 'none'; }
@@ -222,6 +230,9 @@
   }
 
   function freeCurrentBoard() {
+    // Nettoyages enregistrés par la leçon (écouteurs clavier, timers…).
+    cleanups.forEach(fn => { try { fn(); } catch (e) { /* ignore */ } });
+    cleanups = [];
     if (currentBoard) {
       try { JXG.JSXGraph.freeBoard(currentBoard); } catch (e) { /* ignore */ }
       currentBoard = null;
@@ -290,6 +301,108 @@
 
     document.getElementById('lesson-extras').appendChild(bar);
     return refs;
+  }
+
+  /* --------------------------------------------------------------------- */
+  /* Moteur d'animation partagé + mode « pas à pas »                       */
+  /*                                                                       */
+  /* Une leçon appelle `var anim = mv.createAnimator();` puis utilise      */
+  /* `anim.runSteps([...])` (liste d'étapes { dur, step(p), after }) à la  */
+  /* place de son moteur local. L'animateur ajoute tout seul une ligne     */
+  /* « ☐ Pas à pas  [Suivante ▶] » : quand la case est cochée, l'animation */
+  /* s'interrompt après chaque étape et n'avance qu'au clic sur le bouton  */
+  /* ou à l'appui sur la barre espace — pratique pour commenter en direct. */
+  /* --------------------------------------------------------------------- */
+  function createAnimator() {
+    const board = currentBoard;   // tableau de la leçon courante (au moment de l'appel)
+    let raf = null;
+    let stepMode = false;
+    let pending = null;           // continuation en attente entre deux étapes
+
+    function stopRaf() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+
+    function cancel() { stopRaf(); pending = null; refreshUI(); }
+
+    function animate(dur, onStep, onDone) {
+      stopRaf();
+      let t0 = null;
+      function frame(ts) {
+        if (t0 === null) t0 = ts;
+        const p = Math.min(1, (ts - t0) / dur);
+        try { onStep(p); board.update(); }
+        catch (e) { raf = null; return; }   // board libéré (on a quitté la leçon)
+        if (p < 1) raf = requestAnimationFrame(frame);
+        else { raf = null; if (onDone) onDone(); }
+      }
+      raf = requestAnimationFrame(frame);
+    }
+
+    function runSteps(steps) {
+      cancel();
+      let i = 0;
+      function next() {
+        if (i >= steps.length) { pending = null; refreshUI(); return; }
+        const s = steps[i++];
+        animate(s.dur, s.step, function () {
+          if (s.after) s.after();
+          if (i >= steps.length) { pending = null; refreshUI(); return; }
+          if (stepMode) { pending = next; refreshUI(); }  // pause : on attend l'utilisateur
+          else next();
+        });
+      }
+      // En mode pas à pas, même la 1re étape attend un appui (figure vierge).
+      if (stepMode) { pending = next; refreshUI(); }
+      else next();
+    }
+
+    function advance() {
+      if (pending) { const f = pending; pending = null; refreshUI(); f(); }
+    }
+
+    /* Ligne de contrôle « Pas à pas » + « Suivante ▶ » ------------------- */
+    const row = document.createElement('div');
+    row.className = 'controls step-controls';
+    const cbLabel = document.createElement('label');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.onchange = function () {
+      stepMode = cb.checked;
+      nextBtn.style.display = stepMode ? '' : 'none';
+      if (!stepMode) advance();   // si on décoche pendant une pause, on reprend en auto
+      refreshUI();
+    };
+    cbLabel.appendChild(cb);
+    cbLabel.appendChild(document.createTextNode(' Pas à pas'));
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Suivante ▶';
+    nextBtn.style.display = 'none';
+    nextBtn.onclick = advance;
+
+    row.appendChild(cbLabel);
+    row.appendChild(nextBtn);
+    document.getElementById('lesson-extras').appendChild(row);
+
+    function refreshUI() { nextBtn.disabled = !pending; }
+    refreshUI();
+
+    /* Barre espace : avance quand une étape est en attente ---------------- */
+    function onKey(e) {
+      if (e.key !== ' ' && e.code !== 'Space') return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+      if (stepMode && pending) { e.preventDefault(); advance(); }
+    }
+    document.addEventListener('keydown', onKey);
+    cleanups.push(function () { stopRaf(); document.removeEventListener('keydown', onKey); });
+
+    return {
+      runSteps: runSteps,
+      animate: animate,
+      cancel: cancel,
+      advance: advance,
+      get stepMode() { return stepMode; }
+    };
   }
 
   function escapeHtml(s) {

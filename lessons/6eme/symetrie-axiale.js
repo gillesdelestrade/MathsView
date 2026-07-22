@@ -57,34 +57,12 @@ MathsView.register({
     var INK = '#334155';
 
     /* ==================================================================== */
-    /* Moteur d'animation (identique à la leçon compas)                      */
+    /* Moteur d'animation partagé + mode « pas à pas »                       */
+    /* (case à cocher, bouton « Suivante » et barre espace) — voir app.js.   */
     /* ==================================================================== */
-    var raf = null;
-    function cancelAnim() { if (raf) { cancelAnimationFrame(raf); raf = null; } }
-    function runSteps(steps) {
-      var i = 0;
-      function next() {
-        if (i >= steps.length) return;
-        var s = steps[i++];
-        animate(s.dur, s.step, function () { if (s.after) s.after(); next(); });
-      }
-      next();
-    }
-    function animate(dur, onStep, onDone) {
-      cancelAnim();
-      var t0 = null;
-      function frame(ts) {
-        if (t0 === null) t0 = ts;
-        var p = Math.min(1, (ts - t0) / dur);
-        try {
-          onStep(p);
-          board.update();
-        } catch (e) { raf = null; return; }   // board libéré (on a quitté la leçon)
-        if (p < 1) raf = requestAnimationFrame(frame);
-        else { raf = null; if (onDone) onDone(); }
-      }
-      raf = requestAnimationFrame(frame);
-    }
+    var anim = mv.createAnimator();
+    function cancelAnim() { anim.cancel(); }
+    function runSteps(steps) { anim.runSteps(steps); }
     // Segment de p0 à p1 (fns → [x,y]), révélé de 0 à prog.
     function segCurve(p0, p1, style) {
       var prog = { v: 0 };

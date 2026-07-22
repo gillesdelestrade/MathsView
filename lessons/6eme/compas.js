@@ -73,7 +73,12 @@ MathsView.register({
     var mode = 'mediatrice';
     var items = [];         // objets JSXGraph de la figure courante (à effacer au changement)
     var current = null;     // API { play, reset } de la construction affichée
-    var raf = null;         // animation en cours
+
+    // Moteur d'animation partagé (runSteps / animate) + mode « pas à pas »
+    // (case à cocher, bouton « Suivante » et barre espace) fournis par le harness.
+    var anim = mv.createAnimator();
+    function cancelAnim() { anim.cancel(); }
+    function runSteps(steps) { anim.runSteps(steps); }
 
     function add(obj) { items.push(obj); return obj; }
     function show(obj, v) { obj.setAttribute({ visible: v }); }
@@ -82,37 +87,6 @@ MathsView.register({
       cancelAnim();
       items.forEach(function (o) { try { board.removeObject(o); } catch (e) {} });
       items = [];
-    }
-    function cancelAnim() {
-      if (raf) { cancelAnimationFrame(raf); raf = null; }
-    }
-
-    /* ==================================================================== */
-    /* Moteur d'animation : joue une suite d'étapes l'une après l'autre      */
-    /* ==================================================================== */
-    // Chaque étape : { dur, step(p 0→1), after? }. `step` reçoit l'avancement
-    // et fait grandir le tracé ; `after` révèle les points nouvellement obtenus.
-    function runSteps(steps) {
-      var i = 0;
-      function next() {
-        if (i >= steps.length) return;
-        var s = steps[i++];
-        animate(s.dur, s.step, function () { if (s.after) s.after(); next(); });
-      }
-      next();
-    }
-    function animate(dur, onStep, onDone) {
-      cancelAnim();
-      var t0 = null;
-      function frame(ts) {
-        if (t0 === null) t0 = ts;
-        var p = Math.min(1, (ts - t0) / dur);
-        onStep(p);
-        board.update();
-        if (p < 1) raf = requestAnimationFrame(frame);
-        else { raf = null; if (onDone) onDone(); }
-      }
-      raf = requestAnimationFrame(frame);
     }
 
     /* ==================================================================== */

@@ -191,6 +191,17 @@ body {
   color: #fff;
 }
 
+/* Barre « Pas à pas » (mode présentation, injectée par mv.createAnimator). */
+.step-controls {
+  margin: .2rem 0 .4rem;
+  padding: .35rem .7rem;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: fit-content;
+}
+.step-controls button[disabled] { opacity: .45; cursor: default; }
+
 /* ---------- Panneau de propriétés (leçon quadrilatères) ---------- */
 .props-panel {
   max-width: 640px;
