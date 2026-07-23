@@ -257,6 +257,61 @@ body {
 
 .conv-msg { color: #b45309; font-size: .9rem; margin: .5rem 0; }
 
+/* ---------- Déplacement de la virgule (× / ÷ par 10, 100, 1000…) ---------- */
+.dec-ui { max-width: 680px; }
+.dec-entry { margin-bottom: .8rem; }
+.dec-entry label { font-weight: 600; }
+.dec-val {
+  width: 6rem; margin-left: .4rem; padding: .4rem .55rem; font-size: 1.05rem;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.dec-ops { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .5rem; }
+.dec-oprow { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.dec-oplabel { font-size: .82rem; font-weight: 700; color: var(--ink-soft); min-width: 6.4rem; }
+.dec-opbtns { display: flex; gap: .35rem; flex-wrap: wrap; }
+.dec-op {
+  padding: .35rem .7rem; font-size: .95rem; font-weight: 600;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff; cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.dec-op:hover { background: #f8fafc; }
+.dec-op.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.dec-rule { margin: .5rem 0 .2rem; font-size: .95rem; color: var(--ink); }
+
+.dec-stage { overflow-x: auto; padding: 1.4rem 0 1rem; text-align: center; }
+.dec-caption { height: 1.3rem; font-size: 1rem; margin-bottom: .5rem; }
+.dec-strip {
+  position: relative; display: inline-block; font-size: 0; white-space: nowrap;
+  padding: .1rem 0;
+}
+.dec-cell {
+  display: inline-block; height: 3.2rem; line-height: 3.2rem; text-align: center;
+  font-size: 2rem; font-weight: 700; color: var(--ink);
+  border: 1px solid var(--border); background: #fff; font-variant-numeric: tabular-nums;
+}
+.dec-empty { font-size: 1rem; color: var(--ink-soft); }
+
+/* La virgule rouge mobile (largeur nulle, centrée sur le trait du cran). */
+.dec-comma { position: absolute; top: 0; bottom: 0; width: 0; z-index: 3; pointer-events: none; }
+.dec-comma-tip {
+  position: absolute; top: -0.95rem; left: -7px; width: 0; height: 0;
+  border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-top: 9px solid #dc2626;
+}
+.dec-comma-line { position: absolute; top: 0; bottom: 0; left: -1.5px; width: 3px; background: #dc2626; opacity: .35; }
+.dec-comma-dot {
+  position: absolute; bottom: -0.55rem; left: -0.42rem;
+  color: #dc2626; font-size: 2.4rem; font-weight: 800; line-height: 1;
+}
+
+.dec-eq {
+  margin: .4rem 0 .2rem; font-size: 1.25rem; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.dec-eq .dec-res { color: var(--accent); }
+.dec-msg { color: #b45309; font-size: .9rem; margin: .4rem 0; text-align: center; }
+
 .conv-read { display: flex; flex-wrap: wrap; gap: .3rem .6rem; }
 .conv-read-line {
   display: flex; align-items: baseline; gap: .3rem; padding: .25rem .5rem;
