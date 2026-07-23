@@ -121,13 +121,34 @@ MathsView.register({
     var angLbl = mkText(function () { return ax + 1.4 * Math.cos(TH() / 2); },
                         function () { return ay + 1.4 * Math.sin(TH() / 2); },
                         function () { return thetaDeg + '°'; }, C_ANG);
-    var hypLbl = mkText(function () { return (ax + Bx()) / 2 - 0.8 * Math.sin(TH()); },
-                        function () { return (ay + Cy()) / 2 + 0.8 * Math.cos(TH()); },
-                        function () { return 'hypoténuse<br>AC = ' + fmt(HYP()); }, C_HYP);
-    var adjLbl = mkText(function () { return (ax + Bx()) / 2; }, function () { return ay - 0.7; },
-                        function () { return 'adjacent<br>AB = ' + fmt(ADJ()); }, C_ADJ);
-    var oppLbl = mkText(function () { return Bx() + 1.15; }, function () { return (ay + Cy()) / 2; },
-                        function () { return 'opposé<br>BC = ' + fmt(OPP()); }, C_OPP);
+    var hypLbl = mkText(function () { return (ax + Bx()) / 2 - 1.15 * Math.sin(TH()); },
+                        function () { return (ay + Cy()) / 2 + 1.15 * Math.cos(TH()); },
+                        function () { return 'hypoténuse'; }, C_HYP);
+    var adjLbl = mkText(function () { return (ax + Bx()) / 2; }, function () { return ay - 1.0; },
+                        function () { return 'adjacent'; }, C_ADJ);
+    var oppLbl = mkText(function () { return Bx() + 1.4; }, function () { return (ay + Cy()) / 2; },
+                        function () { return 'opposé'; }, C_OPP);
+
+    /* Cotations : longueur de chaque côté, le long du segment, TOUJOURS visibles.
+       (Le rôle du côté — adjacent/opposé/hypoténuse — reste révélé au fil de
+       l'animation ; la longueur, elle, est toujours affichée pour les quotients.) */
+    function mkCote(fx, fy, contentFn, color, rot) {
+      // display:'internal' (texte SVG) : la rotation `rotate` est alors fiable.
+      return board.create('text', [fx, fy, contentFn],
+        { display: 'internal', anchorX: 'middle', anchorY: 'middle', fontSize: 13,
+          color: color, cssStyle: 'font-weight:700', fixed: true, highlight: false,
+          rotate: rot, layer: 10 });
+    }
+    // AB (adjacent) — horizontale, sous le côté.
+    mkCote(function () { return (ax + Bx()) / 2; }, function () { return ay - 0.4; },
+           function () { return 'AB = ' + fmt(ADJ()); }, C_ADJ, 0);
+    // BC (opposé) — verticale, à droite du côté, texte tourné à 90°.
+    mkCote(function () { return Bx() + 0.45; }, function () { return (ay + Cy()) / 2; },
+           function () { return 'BC = ' + fmt(OPP()); }, C_OPP, 90);
+    // AC (hypoténuse) — le long de la diagonale, tournée de l'angle Â.
+    var coteHyp = mkCote(function () { return (ax + Bx()) / 2 - 0.42 * Math.sin(TH()); },
+                         function () { return (ay + Cy()) / 2 + 0.42 * Math.cos(TH()); },
+                         function () { return 'AC = ' + fmt(HYP()); }, C_HYP, thetaDeg);
 
     /* ==================================================================== */
     /* Panneau : les trois rapports, valeurs en direct                       */
@@ -146,14 +167,18 @@ MathsView.register({
     var rowTan = panel.querySelector('.tg-tan');
 
     function sp(txt, color) { return '<span style="color:' + color + ';font-weight:700">' + txt + '</span>'; }
+    // Longueur mise en évidence (couleur du côté + un peu plus grande) dans le quotient.
+    function num(txt, color) {
+      return '<span style="color:' + color + ';font-weight:700;font-size:1.12em">' + txt + '</span>';
+    }
     function updatePanel() {
       var a = thetaDeg + '°', adj = ADJ(), opp = OPP(), hyp = HYP();
       rowCos.innerHTML = '<strong>cos ' + a + '</strong> = ' + sp('adjacent', C_ADJ) + ' / ' + sp('hypoténuse', C_HYP) +
-        ' = ' + fmt(adj) + ' / ' + fmt(hyp) + ' ≈ <strong>' + fmt2(Math.cos(TH())) + '</strong>';
+        ' = ' + num(fmt(adj), C_ADJ) + ' / ' + num(fmt(hyp), C_HYP) + ' ≈ <strong>' + fmt2(Math.cos(TH())) + '</strong>';
       rowSin.innerHTML = '<strong>sin ' + a + '</strong> = ' + sp('opposé', C_OPP) + ' / ' + sp('hypoténuse', C_HYP) +
-        ' = ' + fmt(opp) + ' / ' + fmt(hyp) + ' ≈ <strong>' + fmt2(Math.sin(TH())) + '</strong>';
+        ' = ' + num(fmt(opp), C_OPP) + ' / ' + num(fmt(hyp), C_HYP) + ' ≈ <strong>' + fmt2(Math.sin(TH())) + '</strong>';
       rowTan.innerHTML = '<strong>tan ' + a + '</strong> = ' + sp('opposé', C_OPP) + ' / ' + sp('adjacent', C_ADJ) +
-        ' = ' + fmt(opp) + ' / ' + fmt(adj) + ' ≈ <strong>' + fmt2(Math.tan(TH())) + '</strong>';
+        ' = ' + num(fmt(opp), C_OPP) + ' / ' + num(fmt(adj), C_ADJ) + ' ≈ <strong>' + fmt2(Math.tan(TH())) + '</strong>';
     }
 
     /* ==================================================================== */
@@ -187,7 +212,7 @@ MathsView.register({
       { type: 'button', id: 'play', label: '▶ Animer', onClick: play },
       { type: 'button', id: 'reset', label: '↺ Réinitialiser', onClick: function () { reset(); } },
       { type: 'slider', id: 'ang', label: 'angle Â (°)', min: 15, max: 75, step: 5, value: 35,
-        onInput: function (v) { thetaDeg = v; board.update(); updatePanel(); } },
+        onInput: function (v) { thetaDeg = v; coteHyp.setAttribute({ rotate: thetaDeg }); board.update(); updatePanel(); } },
       { type: 'slider', id: 'len', label: 'hypoténuse AC', min: 3, max: 6, step: 0.5, value: 5,
         onInput: function (v) { L = v; board.update(); updatePanel(); } }
     ]);
