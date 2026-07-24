@@ -312,6 +312,93 @@ body {
 .dec-eq .dec-res { color: var(--accent); }
 .dec-msg { color: #b45309; font-size: .9rem; margin: .4rem 0; text-align: center; }
 
+/* ---------- Saisie numérateur / dénominateur (fractions égales) ---------- */
+.frac-entry { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin: .2rem 0 .6rem; }
+.frac-entry label { font-weight: 600; display: flex; align-items: center; gap: .4rem; }
+.frac-entry input {
+  width: 3.6rem; padding: .35rem .45rem; font-size: 1.05rem; text-align: center;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.frac-entry .frac-bar { font-size: 1.4rem; color: var(--ink-soft); font-weight: 700; }
+.frac-entry .frac-msg { flex-basis: 100%; color: #b45309; font-size: .88rem; }
+
+/* ---------- Opérations sur les fractions (+, −, ×) ---------- */
+.frops { margin: .2rem 0 .6rem; }
+.frops-line { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.frops-lab { font-weight: 600; font-size: .9rem; color: var(--ink-soft); }
+.frops input {
+  width: 3rem; padding: .35rem .4rem; font-size: 1.05rem; text-align: center;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.frops .frops-sl { font-size: 1.3rem; color: var(--ink-soft); font-weight: 700; }
+.frops-ops { display: inline-flex; gap: .25rem; margin: 0 .5rem; }
+.frops-ops .fr-op {
+  width: 2.2rem; height: 2.2rem; font-size: 1.2rem; font-weight: 800; line-height: 1;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff; cursor: pointer;
+  color: var(--ink);
+}
+.frops-ops .fr-op:hover { background: #f8fafc; }
+.frops-ops .fr-op.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.frops-msg { color: #b45309; font-size: .88rem; margin-top: .35rem; min-height: 1.1rem; }
+.calc-line.calc-warn { color: #b45309; }
+
+/* ---------- Équations du premier degré ---------- */
+.eq-ui { max-width: 680px; }
+.eq-entry { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; margin-bottom: .3rem; }
+.eq-entry-lab { font-weight: 600; margin-right: .3rem; }
+.eq-entry input {
+  width: 3.2rem; padding: .3rem .35rem; font-size: 1rem; text-align: center;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.eq-entry .eq-x { font-weight: 700; font-style: italic; }
+.eq-rand {
+  margin-left: .5rem; padding: .35rem .7rem; font-size: .9rem; font-weight: 600;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff; cursor: pointer;
+  color: var(--ink);
+}
+.eq-rand:hover { background: #f8fafc; }
+.eq-rand:active { background: var(--accent-soft); border-color: var(--accent); }
+.eq-entry .eq-plus, .eq-entry .eq-equals-in { font-size: 1.1rem; color: var(--ink-soft); font-weight: 700; padding: 0 .1rem; }
+.eq-form { font-size: 1.05rem; color: var(--ink-soft); margin-bottom: .6rem; }
+.eq-form-txt { color: var(--ink); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+
+.eq-stage { position: relative; padding: .3rem 0; overflow-x: auto; }
+.eq-lines { display: flex; flex-direction: column; gap: .1rem; }
+.eq-line {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: .5px; padding: .2rem .3rem;
+  border-radius: 8px; font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.eq-line.eq-sol { background: #ecfdf5; color: #047857; box-shadow: inset 0 0 0 1px #a7f3d0; }
+.eq-line-note { font-size: .92rem; font-weight: 400; color: var(--ink-soft); margin: .35rem 0 .05rem; }
+.eq-line-note .hot { color: #dc2626; }
+.eq-line-note b { color: var(--ink); }
+.eq-eqn { display: inline-flex; align-items: center; }
+.eq-equals { color: var(--ink-soft); padding: 0 .15rem; }
+.eq-tok { display: inline-block; transition: none; }
+.eq-op { color: var(--ink-soft); }
+.eq-x, .eq-tok { font-style: normal; }
+
+/* fraction empilée */
+.eq-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 .1rem; }
+.eq-frac .eq-num { padding: 0 .35rem; border-bottom: 2px solid currentColor; line-height: 1.15; }
+.eq-frac .eq-den { padding: 0 .35rem; line-height: 1.15; }
+.eq-approx { font-size: 1.1rem; font-weight: 700; color: var(--ink-soft); }
+
+/* la bulle qui « vole » par-dessus le = */
+.eq-ghost {
+  position: absolute; z-index: 5; pointer-events: none;
+  font-size: 1.6rem; font-weight: 800; color: #dc2626;
+  background: #fff; border: 2px solid #dc2626; border-radius: 8px;
+  padding: 0 .35rem; box-shadow: 0 4px 12px rgba(220,38,38,.25); white-space: nowrap;
+}
+.eq-ghost.eq-ghost-flip { color: #b91c1c; border-color: #b91c1c; }
+
+.eq-note { min-height: 1.3rem; margin-top: .5rem; font-size: .95rem; color: var(--ink); }
+.eq-note .hot { color: #dc2626; }
+
 .conv-read { display: flex; flex-wrap: wrap; gap: .3rem .6rem; }
 .conv-read-line {
   display: flex; align-items: baseline; gap: .3rem; padding: .25rem .5rem;
