@@ -6,6 +6,7 @@ MathsView.register({
   id: 'fonction-affine',
   title: 'Fonction affine (par 2 points)',
   level: '3eme',
+  category: 'analyse',
   theme: 'Fonctions — équation d\'une droite',
   description:
     'La droite passe par les deux points \\( A \\) et \\( B \\). ' +

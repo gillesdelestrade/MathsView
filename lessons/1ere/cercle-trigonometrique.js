@@ -5,6 +5,7 @@ MathsView.register({
   id: 'cercle-trigonometrique',
   title: 'Cercle trigonométrique',
   level: '1ere',
+  category: 'geometrie',
   theme: 'Trigonométrie — cosinus et sinus',
   description:
     'Sur le cercle de rayon 1, à un angle \\( \\theta \\) correspond un point \\( M \\). ' +

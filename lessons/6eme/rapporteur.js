@@ -35,6 +35,8 @@ MathsView.register({
   id: 'rapporteur',
   title: 'Mesurer un angle au rapporteur',
   level: '6eme',
+  category: 'geometrie',
+  subcategory: 'Angles',
   theme: 'Géométrie — mesurer un angle avec le rapporteur',
   description:
     'Le <strong>rapporteur</strong> sert à mesurer un angle en degrés (°). ' +

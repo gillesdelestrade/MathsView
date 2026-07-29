@@ -19,6 +19,8 @@ MathsView.register({
   id: 'fractions-egales',
   title: 'Égalités de fractions',
   level: '6eme',
+  category: 'calcul',
+  subcategory: 'Fractions',
   theme: 'Nombres — fractions égales',
   description:
     'Deux fractions différentes peuvent désigner le <strong>même nombre</strong>. ' +

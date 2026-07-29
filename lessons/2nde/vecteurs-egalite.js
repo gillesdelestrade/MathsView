@@ -23,6 +23,8 @@ MathsView.register({
   id: 'vecteurs-egalite',
   title: 'Vecteurs : direction, sens, longueur',
   level: '2nde',
+  category: 'geometrie',
+  subcategory: 'Vecteurs',
   theme: 'Vecteurs — définition et égalité de deux vecteurs',
   description:
     'Un <strong>vecteur</strong> est déterminé par trois choses : sa ' +

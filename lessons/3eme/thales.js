@@ -5,6 +5,7 @@ MathsView.register({
   id: 'thales',
   title: 'Théorème de Thalès',
   level: '3eme',
+  category: 'geometrie',
   theme: 'Géométrie — configuration de Thalès',
   description:
     'Deux droites passant par un point \\( A \\) sont coupées par deux parallèles \\( (BC) \\) et \\( (DE) \\). ' +

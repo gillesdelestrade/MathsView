@@ -21,6 +21,8 @@ MathsView.register({
   id: 'aires',
   title: 'Les aires',
   level: '6eme',
+  category: 'geometrie',
+  subcategory: 'Grandeurs et mesures',
   theme: 'Grandeurs — aire des figures usuelles',
   description:
     'L\'<strong>aire</strong> d\'une figure, c\'est la taille de la surface qu\'elle ' +

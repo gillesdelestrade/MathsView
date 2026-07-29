@@ -15,6 +15,15 @@
   --n2: #7c3aed;
   --n1: #9333ea;
   --nt: #c026d3;
+  /* Un ton par grand domaine (clés de CATEGORIES dans js/app.js). Volontairement
+     pris hors du dégradé des niveaux ci-dessus : la pastille de domaine et le
+     badge de classe se côtoient, ils ne doivent pas se confondre. Chaque domaine
+     a sa version pleine (texte, point) et sa version pâle (fond de pastille). */
+  --cat-calcul: #ea580c;      --cat-calcul-soft: #ffedd5;
+  --cat-algebre: #e11d48;     --cat-algebre-soft: #ffe4e6;
+  --cat-geometrie: #059669;   --cat-geometrie-soft: #d1fae5;
+  --cat-analyse: #0284c7;     --cat-analyse-soft: #e0f2fe;
+  --cat-autres: #64748b;      --cat-autres-soft: #e2e8f0;
   --border: #e2e8f0;
   --radius: 14px;
   --shadow: 0 1px 3px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.06);
@@ -65,6 +74,28 @@ body {
 }
 .filters button:hover { background: rgba(255,255,255,.12); }
 .filters button.active { background: #fff; color: #0f172a; border-color: #fff; }
+/* Petit trait entre la série « niveaux » et la série « domaines ». */
+.filters-sep {
+  width: 1px;
+  align-self: stretch;
+  background: rgba(255,255,255,.25);
+  margin: 0 .15rem;
+}
+/* Les pastilles de domaine portent leur couleur en point, y compris une fois
+   actives (fond blanc) : c'est le seul repère qui reste. */
+.filters button.cat::before {
+  content: '';
+  display: inline-block;
+  width: .5rem; height: .5rem;
+  margin-right: .4rem;
+  border-radius: 999px;
+  background: currentColor;
+  vertical-align: baseline;
+}
+.filters button.calcul::before { background: var(--cat-calcul); }
+.filters button.algebre::before { background: var(--cat-algebre); }
+.filters button.geometrie::before { background: var(--cat-geometrie); }
+.filters button.analyse::before { background: var(--cat-analyse); }
 
 /* ---------- Mise en page ---------- */
 .layout { display: flex; align-items: flex-start; }
@@ -109,16 +140,75 @@ body {
 }
 .menu a:hover { background: #f8fafc; }
 .menu a.active { background: var(--accent-soft); border-left-color: var(--accent); font-weight: 600; }
+/* Deuxième niveau du menu : le domaine, sous le titre de classe. */
+.menu-cat {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin: .6rem 0 .2rem;
+  padding-left: .2rem;
+}
+/* Troisième niveau : la sous-catégorie libre (« Vecteurs », « Fractions »…). */
+.menu-sub {
+  font-size: .74rem;
+  font-style: italic;
+  color: var(--ink-soft);
+  margin: .35rem 0 .1rem;
+  padding-left: 1rem;
+}
+/* Une leçon rangée dans une sous-catégorie est décalée d'un cran de plus. */
+.menu a.deep { padding-left: 1.4rem; font-size: .89rem; }
+
+/* Le point coloré qui identifie un domaine (menu et accueil). */
+.cat-dot {
+  width: .55rem; height: .55rem;
+  flex-shrink: 0;
+  border-radius: 999px;
+  background: var(--cat-autres);
+}
+.cat-dot.calcul { background: var(--cat-calcul); }
+.cat-dot.algebre { background: var(--cat-algebre); }
+.cat-dot.geometrie { background: var(--cat-geometrie); }
+.cat-dot.analyse { background: var(--cat-analyse); }
 
 .content { flex: 1; padding: 1.6rem 2rem; min-width: 0; }
 
 /* ---------- Accueil ---------- */
 .home h2 { margin-top: 0; }
-.cards {
+/* #cards n'est plus une grille : il empile des rubriques (classe → domaine →
+   sous-catégorie), chacune suivie de SA grille de cartes (.cards-grid). */
+.cards { margin-top: 1.4rem; }
+.cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 1rem;
-  margin-top: 1.4rem;
+  margin-bottom: 1.2rem;
+}
+.home-level {
+  margin: 1.8rem 0 .2rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.home-level:first-child { margin-top: 0; }
+.home-cat {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-soft);
+  margin: 1rem 0 .6rem;
+}
+.home-sub {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin: .2rem 0 .5rem .2rem;
 }
 .card {
   background: var(--panel);
@@ -152,6 +242,26 @@ body {
 .badge.n2 { background: var(--n2); }
 .badge.n1 { background: var(--n1); }
 .badge.nt { background: var(--nt); }
+
+/* Pastille de domaine « Géométrie › Vecteurs » : sur les cartes d'accueil et
+   à côté du badge de classe en tête de leçon. Fond pâle + texte coloré, pour
+   ne pas rivaliser avec le badge de niveau qui, lui, est plein. */
+.cat-chip {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  padding: .18rem .55rem;
+  border-radius: 999px;
+  color: var(--cat-autres);
+  background: var(--cat-autres-soft);
+  white-space: nowrap;
+}
+.cat-chip.calcul { color: var(--cat-calcul); background: var(--cat-calcul-soft); }
+.cat-chip.algebre { color: var(--cat-algebre); background: var(--cat-algebre-soft); }
+.cat-chip.geometrie { color: var(--cat-geometrie); background: var(--cat-geometrie-soft); }
+.cat-chip.analyse { color: var(--cat-analyse); background: var(--cat-analyse-soft); }
+/* Sur une carte, la pastille est un bloc en tête, pas un élément en ligne. */
+.card .cat-chip { display: inline-block; margin-bottom: .15rem; }
 
 .lesson-desc { color: var(--ink); margin: .6rem 0 1rem; max-width: 70ch; }
 .lesson-notes { color: var(--ink); margin-top: 1rem; max-width: 70ch; }

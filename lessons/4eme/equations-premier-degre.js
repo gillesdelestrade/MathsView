@@ -18,6 +18,7 @@ MathsView.register({
   id: 'equations-premier-degre',
   title: 'Équations du premier degré',
   level: '4eme',
+  category: 'algebre',
   theme: 'Calcul littéral — résoudre a·x + b = c·x + d',
   description:
     'Résoudre une équation, c\'est trouver la valeur de <strong>x</strong> qui rend ' +

@@ -11,6 +11,7 @@
   const registry = [];          // toutes les illustrations enregistrées
   let currentBoard = null;      // tableau JSXGraph actuellement affiché
   let activeFilter = 'all';     // 'all' ou une clé de LEVELS
+  let activeCat = 'all';        // 'all' ou une clé de CATEGORIES
   let cleanups = [];            // fonctions de nettoyage de la leçon courante
                                 // (ex. retirer un écouteur clavier), vidées au
                                 // changement de leçon par freeCurrentBoard().
@@ -30,6 +31,50 @@
     'terminale': { label: 'Terminale', short: 'Tle', badge: 'nt' }
   };
 
+  // Les grands domaines. Chaque leçon en déclare un via `category`, et peut
+  // préciser une SOUS-CATÉGORIE libre via `subcategory` (une simple chaîne,
+  // ex. 'Vecteurs' ou 'Fractions') pour regrouper des leçons voisines à
+  // l'intérieur d'un domaine et d'un niveau. Pas de liste à tenir à jour :
+  // deux leçons qui écrivent la même sous-catégorie se retrouvent ensemble,
+  // et une leçon sans sous-catégorie s'affiche directement sous le domaine.
+  // L'ordre des clés ci-dessous est celui du menu, des filtres et de l'accueil.
+  const CATEGORIES = {
+    'calcul':    { label: 'Calcul' },
+    'algebre':   { label: 'Algèbre' },
+    'geometrie': { label: 'Géométrie' },
+    'analyse':   { label: 'Analyse' }
+  };
+  // Filet de sécurité : une leçon sans domaine connu atterrit ici (et la
+  // console prévient) au lieu de disparaître du menu.
+  const OTHER_CAT = 'autres';
+  const OTHER_DEF = { label: 'Autres' };
+
+  function catKey(lesson) {
+    return CATEGORIES[lesson.category] ? lesson.category : OTHER_CAT;
+  }
+  function catDef(key) { return CATEGORIES[key] || OTHER_DEF; }
+
+  // Range une liste de leçons en [{ key, def, subs: [{ name, lessons }] }].
+  // Les domaines suivent l'ordre de CATEGORIES ; à l'intérieur, les leçons
+  // SANS sous-catégorie viennent d'abord, puis les sous-catégories dans leur
+  // ordre d'apparition dans le catalogue (index.html).
+  function groupByCategory(lessons) {
+    return Object.keys(CATEGORIES).concat(OTHER_CAT).map(key => {
+      const inCat = lessons.filter(l => catKey(l) === key);
+      if (!inCat.length) return null;
+      const subs = [];
+      inCat.forEach(l => {
+        const name = l.subcategory || '';
+        let sub = subs.find(s => s.name === name);
+        if (!sub) { sub = { name: name, lessons: [] }; subs.push(sub); }
+        sub.lessons.push(l);
+      });
+      // Tri stable : seul le groupe « sans sous-catégorie » remonte en tête.
+      subs.sort((a, b) => (a.name === '' ? -1 : b.name === '' ? 1 : 0));
+      return { key: key, def: catDef(key), subs: subs };
+    }).filter(Boolean);
+  }
+
   /* --------------------------------------------------------------------- */
   /* API publique : appelée depuis chaque fichier de cours                 */
   /* --------------------------------------------------------------------- */
@@ -47,6 +92,11 @@
     if (!LEVELS[lesson.level]) {
       console.warn('MathsView : niveau inconnu « ' + lesson.level + ' » pour', lesson.id,
                    '— attendu :', Object.keys(LEVELS).join(', '));
+    }
+    // Sans domaine reconnu la leçon reste visible, mais rangée dans « Autres ».
+    if (!CATEGORIES[lesson.category]) {
+      console.warn('MathsView : catégorie inconnue « ' + lesson.category + ' » pour', lesson.id,
+                   '— attendu :', Object.keys(CATEGORIES).join(', '));
     }
     registry.push(lesson);
   }
@@ -67,18 +117,42 @@
   /* --------------------------------------------------------------------- */
   /* Construction de l'interface                                           */
   /* --------------------------------------------------------------------- */
+  function rebuildLists() { buildFilters(); buildMenu(); buildCards(); }
+
+  function chip(label, active, onClick) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    if (active) b.classList.add('active');
+    b.onclick = onClick;
+    return b;
+  }
+
+  // Deux séries de pastilles : les niveaux, puis les domaines. Les deux
+  // filtres se combinent (ex. « 2de » + « Géométrie »).
   function buildFilters() {
     const box = document.getElementById('filters');
-    // Dérivé de LEVELS : pas de liste de niveaux en double à maintenir.
-    const opts = [{ key: 'all', label: 'Tout' }].concat(
-      Object.keys(LEVELS).map(k => ({ key: k, label: LEVELS[k].short }))
-    );
     box.innerHTML = '';
-    opts.forEach(o => {
-      const b = document.createElement('button');
-      b.textContent = o.label;
-      b.className = o.key === activeFilter ? 'active' : '';
-      b.onclick = () => { activeFilter = o.key; buildFilters(); buildMenu(); buildCards(); };
+
+    // Dérivé de LEVELS : pas de liste de niveaux en double à maintenir.
+    box.appendChild(chip('Tout', activeFilter === 'all',
+      () => { activeFilter = 'all'; rebuildLists(); }));
+    Object.keys(LEVELS).forEach(k => {
+      box.appendChild(chip(LEVELS[k].short, activeFilter === k,
+        () => { activeFilter = k; rebuildLists(); }));
+    });
+
+    const sep = document.createElement('span');
+    sep.className = 'filters-sep';
+    box.appendChild(sep);
+
+    const all = chip('Tous domaines', activeCat === 'all',
+      () => { activeCat = 'all'; rebuildLists(); });
+    all.classList.add('cat');
+    box.appendChild(all);
+    Object.keys(CATEGORIES).forEach(k => {
+      const b = chip(CATEGORIES[k].label, activeCat === k,
+        () => { activeCat = k; rebuildLists(); });
+      b.classList.add('cat', k);
       box.appendChild(b);
     });
   }
@@ -87,12 +161,15 @@
     const q = (document.getElementById('search').value || '').trim().toLowerCase();
     return registry.filter(l => {
       const okLevel = activeFilter === 'all' || l.level === activeFilter;
-      const hay = (l.title + ' ' + (l.theme || '') + ' ' + (l.description || '')).toLowerCase();
+      const okCat = activeCat === 'all' || catKey(l) === activeCat;
+      const hay = (l.title + ' ' + (l.theme || '') + ' ' + (l.subcategory || '') + ' ' +
+                   catDef(catKey(l)).label + ' ' + (l.description || '')).toLowerCase();
       const okSearch = !q || hay.includes(q);
-      return okLevel && okSearch;
+      return okLevel && okCat && okSearch;
     });
   }
 
+  // Menu à trois niveaux : classe → domaine → (sous-catégorie) → leçons.
   function buildMenu() {
     const menu = document.getElementById('menu');
     menu.innerHTML = '';
@@ -107,12 +184,28 @@
       title.textContent = LEVELS[levelKey].label;
       menu.appendChild(title);
 
-      group.forEach(l => {
-        const a = document.createElement('a');
-        a.textContent = l.title;
-        a.href = '#' + l.id;
-        a.dataset.id = l.id;
-        menu.appendChild(a);
+      groupByCategory(group).forEach(cat => {
+        const ct = document.createElement('div');
+        ct.className = 'menu-cat';
+        ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
+        menu.appendChild(ct);
+
+        cat.subs.forEach(sub => {
+          if (sub.name) {
+            const st = document.createElement('div');
+            st.className = 'menu-sub';
+            st.textContent = sub.name;
+            menu.appendChild(st);
+          }
+          sub.lessons.forEach(l => {
+            const a = document.createElement('a');
+            a.textContent = l.title;
+            a.href = '#' + l.id;
+            a.dataset.id = l.id;
+            if (sub.name) a.classList.add('deep');
+            menu.appendChild(a);
+          });
+        });
       });
     });
 
@@ -126,21 +219,60 @@
     highlightMenu();
   }
 
+  // Accueil : mêmes rubriques que le menu (classe → domaine → sous-catégorie),
+  // avec une grille de cartes par rubrique.
   function buildCards() {
     const box = document.getElementById('cards');
     box.innerHTML = '';
-    visibleLessons().forEach(l => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.onclick = () => { location.hash = l.id; };
-      const badge = LEVELS[l.level] ? LEVELS[l.level].badge : '';
-      card.innerHTML =
-        '<span class="badge ' + badge + '">' +
-          escapeHtml(LEVELS[l.level] ? LEVELS[l.level].label : l.level) + '</span>' +
-        '<h3>' + escapeHtml(l.title) + '</h3>' +
-        '<p>' + escapeHtml(l.theme || '') + '</p>';
-      box.appendChild(card);
+    const lessons = visibleLessons();
+
+    Object.keys(LEVELS).forEach(levelKey => {
+      const group = lessons.filter(l => l.level === levelKey);
+      if (!group.length) return;
+
+      const lt = document.createElement('h3');
+      lt.className = 'home-level';
+      lt.innerHTML = '<span class="badge ' + LEVELS[levelKey].badge + '">' +
+        escapeHtml(LEVELS[levelKey].label) + '</span>';
+      box.appendChild(lt);
+
+      groupByCategory(group).forEach(cat => {
+        const ct = document.createElement('div');
+        ct.className = 'home-cat';
+        ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
+        box.appendChild(ct);
+
+        cat.subs.forEach(sub => {
+          if (sub.name) {
+            const st = document.createElement('div');
+            st.className = 'home-sub';
+            st.textContent = sub.name;
+            box.appendChild(st);
+          }
+          const grid = document.createElement('div');
+          grid.className = 'cards-grid';
+          sub.lessons.forEach(l => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => { location.hash = l.id; };
+            card.innerHTML =
+              '<span class="cat-chip ' + cat.key + '">' + escapeHtml(cat.def.label) +
+                (sub.name ? ' › ' + escapeHtml(sub.name) : '') + '</span>' +
+              '<h3>' + escapeHtml(l.title) + '</h3>' +
+              '<p>' + escapeHtml(l.theme || '') + '</p>';
+            grid.appendChild(card);
+          });
+          box.appendChild(grid);
+        });
+      });
     });
+
+    if (!lessons.length) {
+      const p = document.createElement('p');
+      p.style.color = 'var(--ink-soft)';
+      p.textContent = 'Aucun cours ne correspond à cette recherche.';
+      box.appendChild(p);
+    }
   }
 
   function wireSearch() {
@@ -176,6 +308,13 @@
     const badge = document.getElementById('lesson-level');
     badge.textContent = LEVELS[lesson.level] ? LEVELS[lesson.level].label : lesson.level;
     badge.className = 'badge ' + (LEVELS[lesson.level] ? LEVELS[lesson.level].badge : '');
+
+    // Fil d'Ariane du domaine : « Géométrie › Vecteurs ».
+    const key = catKey(lesson);
+    const chipEl = document.getElementById('lesson-cat');
+    chipEl.className = 'cat-chip ' + key;
+    chipEl.textContent = catDef(key).label +
+      (lesson.subcategory ? ' › ' + lesson.subcategory : '');
 
     document.getElementById('lesson-title').textContent = lesson.title;
     document.getElementById('lesson-desc').innerHTML = lesson.description || '';

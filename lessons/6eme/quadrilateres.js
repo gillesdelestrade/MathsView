@@ -35,6 +35,8 @@ MathsView.register({
   id: 'quadrilateres',
   title: 'Les quadrilatères',
   level: '6eme',
+  category: 'geometrie',
+  subcategory: 'Figures planes',
   theme: 'Géométrie — familles de quadrilatères',
   description:
     'Un <strong>quadrilatère</strong> a quatre côtés. Selon que ses côtés sont ' +

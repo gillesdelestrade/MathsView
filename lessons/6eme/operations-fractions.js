@@ -24,6 +24,8 @@ MathsView.register({
   id: 'operations-fractions',
   title: 'Additionner, soustraire, multiplier des fractions',
   level: '6eme',
+  category: 'calcul',
+  subcategory: 'Fractions',
   theme: 'Nombres — opérations sur les fractions',
   description:
     'Choisis l\'opération, puis les deux fractions.' +

@@ -5,6 +5,7 @@ MathsView.register({
   id: 'derivee-tangente',
   title: 'Dérivée et tangente',
   level: '1ere',
+  category: 'analyse',
   theme: 'Analyse — nombre dérivé',
   description:
     'Le <strong>nombre dérivé</strong> \\( f\'(a) \\) est le coefficient directeur de la ' +

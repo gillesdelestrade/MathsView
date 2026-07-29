@@ -30,6 +30,8 @@ MathsView.register({
   id: 'fractions',
   title: 'Les fractions',
   level: '6eme',
+  category: 'calcul',
+  subcategory: 'Fractions',
   theme: 'Nombres — partager l\'unité',
   description:
     'Une <strong>fraction</strong> \\( \\frac{a}{b} \\) se lit « a sur b » : on partage ' +

@@ -28,6 +28,8 @@ MathsView.register({
   id: 'conversions',
   title: 'Les conversions (tableau)',
   level: '6eme',
+  category: 'geometrie',
+  subcategory: 'Grandeurs et mesures',
   theme: 'Grandeurs — unités et tableau de conversion',
   description:
     'Pour changer d\'unité, on range les chiffres dans un <strong>tableau de ' +

@@ -24,6 +24,8 @@ MathsView.register({
   id: 'multiplier-diviser-10',
   title: 'Multiplier et diviser par 10, 100, 1000',
   level: '6eme',
+  category: 'calcul',
+  subcategory: 'Nombres décimaux',
   theme: 'Nombres décimaux — multiplier et diviser par 10, 100, 1000 ; 0,1 ; 0,01 ; 0,001',
   description:
     'Pour multiplier ou diviser un nombre décimal par 10, 100, 1000 (ou par ' +

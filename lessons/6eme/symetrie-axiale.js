@@ -28,6 +28,8 @@ MathsView.register({
   id: 'symetrie-axiale',
   title: 'Symétrie axiale',
   level: '6eme',
+  category: 'geometrie',
+  subcategory: 'Transformations',
   theme: 'Géométrie — symétrie par rapport à une droite',
   description:
     'Le <strong>symétrique</strong> d\'une figure par rapport à un <strong>axe</strong> : ' +
