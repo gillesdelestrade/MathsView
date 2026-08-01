@@ -245,9 +245,11 @@ MathsView.register({
 
     var DOTS = [];
     LINE.forEach(function (d) {
+      // Au-dessus de la droite pleine de ℝ : jusqu'à ℚ, les cercles blancs
+      // des irrationnels doivent rester visibles comme des trous.
       var p = board.create('point', [px(d.v), YL], {
         size: 3.5, face: 'o', fillColor: C_OUT, strokeColor: C_OUT, strokeWidth: 1.5,
-        fixed: true, highlight: false, withLabel: false, showInfobox: false, layer: 8
+        fixed: true, highlight: false, withLabel: false, showInfobox: false, layer: 9
       });
       var lab = null;
       if (d.t) {
@@ -291,10 +293,13 @@ MathsView.register({
     }
     var cloudQ = cloud(fracs, 0.15, 3);
 
-    // ℝ : plus un seul trou, toute la droite est rouge.
-    var fullR = board.create('segment', [[px(-4.55), YL], [px(4.55), YL]], {
-      strokeColor: C_IN, strokeWidth: 5, fixed: true, highlight: false,
-      visible: false, layer: 6
+    // ℝ : plus un seul trou. La droite est reprise EN ENTIER, flèches
+    // comprises, en trait épais et au-dessus de tout le reste : ni les
+    // graduations ni les nuages ne doivent la trouer.
+    var fullR = board.create('segment', [[-9.3, YL], [9.3, YL]], {
+      strokeColor: C_IN, strokeWidth: 8,
+      firstArrow: { type: 2, size: 6 }, lastArrow: { type: 2, size: 6 },
+      fixed: true, highlight: false, visible: false, layer: 8
     });
 
     /* Légendes autour de la droite ---------------------------------------- */
@@ -348,13 +353,15 @@ MathsView.register({
       });
 
       // Les nuages et la droite pleine, avec un fondu à l'apparition.
-      function fade(o, level) {
-        var on = sel >= level;
+      // `upto` : les nuages s'effacent une fois ℝ atteint — la droite pleine
+      // les remplace, et leurs traits ne dépassent plus autour d'elle.
+      function fade(o, level, upto) {
+        var on = sel >= level && (upto === undefined || sel <= upto);
         attr(o, 'visible', on);
         attr(o, 'strokeOpacity', sel === level ? Math.round(100 * reveal.v) / 100 : 1);
       }
-      fade(cloudD, 2);
-      fade(cloudQ, 3);
+      fade(cloudD, 2, 3);
+      fade(cloudQ, 3, 3);
       fade(fullR, 4);
     }
 
