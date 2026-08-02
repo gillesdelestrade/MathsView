@@ -39,7 +39,7 @@
   // et une leçon sans sous-catégorie s'affiche directement sous le domaine.
   // L'ordre des clés ci-dessous est celui du menu, des filtres et de l'accueil.
   const CATEGORIES = {
-    'calcul':    { label: 'Calcul' },
+    'calcul':    { label: 'Nombres et calculs' },
     'algebre':   { label: 'Algèbre' },
     'geometrie': { label: 'Géométrie' },
     'analyse':   { label: 'Analyse' }
