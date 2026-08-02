@@ -684,6 +684,26 @@ body {
 .fx-say { margin: 0 0 .2rem; font-size: .9rem; color: var(--ink-soft); }
 .fx-note { margin: .2rem 0 0; font-size: .92rem; }
 
+/* Résoudre f(x) = k : la lecture graphique et le calcul, côte à côte. */
+.eqx-rels button { min-width: 5.4rem; }
+.eqx-two {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+  gap: .3rem 1.6rem; margin: .2rem 0 .5rem;
+}
+.eqx-col { min-width: 0; }
+.eqx-steps { margin: .1rem 0 .4rem; padding-left: 1.3rem; font-size: .93rem; }
+.eqx-steps li { margin: .18rem 0; }
+.eqx-steps li::marker { color: var(--ink-soft); font-weight: 700; }
+.eqx-why {
+  display: block; font-size: .82rem; font-style: italic; color: var(--ink-soft);
+}
+.eqx-S {
+  font-size: 1.2rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  padding: .2rem 0 .1rem;
+}
+.eqx-ok { margin: .2rem 0 0; font-size: .9rem; color: #047857; font-weight: 600; }
+.eqx-warn { margin: .2rem 0 0; font-size: .9rem; color: #b45309; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }

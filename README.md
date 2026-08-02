@@ -57,7 +57,7 @@ C'est le cœur du projet : **une illustration = un fichier JS**.
 
 Les leçons sur les fonctions n'écrivent **pas** leurs propres formules : elles piochent
 dans le pool commun `js/fonctions-base.js` (identité, affine `ax + b`, valeur absolue,
-carré, racine carrée). Ajouter une fonction **là-bas** la fait apparaître, avec ses
+carré, racine carrée, inverse `1/x`). Ajouter une fonction **là-bas** la fait apparaître, avec ses
 paramètres, son domaine et ses calculs détaillés, dans **toutes** les leçons qui
 utilisent le pool — sans toucher aux leçons.
 
@@ -69,10 +69,26 @@ var p  = POOL.defauts(f);         // { a: 2, b: -1 } pour l'affine, {} sinon
 POOL.valeur(f, 3, p);             // f(3)
 POOL.defini(f, -2, p);            // −2 a-t-il une image ? (√ : non)
 POOL.domaine(f, -5, 5);           // la portion de [−5 ; 5] où f est définie
+POOL.branches(f, -5, 5);          // cette portion en morceaux d'un seul tenant :
+                                  // une courbe par morceau (1/x : deux branches)
 f.expr(p);                        // « 2x − 1 » (HTML)   f.tex(p) → LaTeX
 POOL.chaine(f.calcul(3, p));      // « 2 × 3 − 1 = 6 − 1 = 5 »
 POOL.nb(1.4142);                  // « 1,41 »  (virgule française, vrai signe −)
 ```
+
+Le pool sait aussi **résoudre** \(f(x) = k\) et les quatre inéquations, exactement et
+sur tout l'ensemble de définition :
+
+```js
+POOL.solutions(f, '<', 4, p);     // { txt: ']−2 ; 2[', morceaux: [...], points, vide }
+POOL.etapes(f, '<', 4, p);        // le raisonnement algébrique, ligne à ligne
+POOL.relations;                   // ['=', '<', '⩽', '>', '⩾']
+POOL.relHtml('<');                // « &lt; » : à utiliser dans un innerHTML
+```
+
+Une fonction n'a pour cela qu'une chose à fournir — `antec(k, p)`, ses antécédents de
+`k` avec leur écriture exacte (`−√5` et non `−2,24`) : le découpage du domaine, le
+choix des crochets et la réunion des intervalles sont déduits tout seuls.
 
 Le format complet d'une fonction du pool est documenté en tête de `js/fonctions-base.js`.
 

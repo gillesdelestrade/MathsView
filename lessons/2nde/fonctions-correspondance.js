@@ -57,8 +57,10 @@ MathsView.register({
     'coordonnées \\((x\\,;f(x))\\). Un point est sur la courbe <em>si et seulement si</em> ' +
     'son ordonnée est l\'image de son abscisse.</li>' +
     '<li><strong>L\'ensemble de définition.</strong> Certains \\(x\\) n\'ont pas d\'image : ' +
-    '\\(\\sqrt{x}\\) n\'existe pas pour \\(x&lt;0\\). Ces colonnes restent barrées dans le ' +
-    'tableau, et la courbe ne commence qu\'en \\(0\\).</li>' +
+    '\\(\\sqrt{x}\\) n\'existe pas pour \\(x&lt;0\\), et \\(\\frac{1}{x}\\) n\'existe pas pour ' +
+    '\\(x=0\\) — on ne divise jamais par \\(0\\). Ces colonnes restent barrées dans le ' +
+    'tableau, et la courbe s\'arrête là : elle ne commence qu\'en \\(0\\) pour la racine ' +
+    'carrée, elle est coupée en <em>deux branches</em> pour l\'inverse.</li>' +
     '<li><strong>Lire une image.</strong> On part de \\(x\\) sur l\'axe des abscisses, on ' +
     'monte (ou on descend) jusqu\'à la courbe, puis on lit l\'ordonnée : c\'est ' +
     '\\(f(x)\\). Les pointillés de la figure font exactement ce trajet.</li>' +
@@ -104,8 +106,9 @@ MathsView.register({
     function ok(x) { return POOL.defini(fn(), x, par); }
     function nb(v, d) { return POOL.nb(v, d); }
 
-    // La portion de [−5 ; 5] où la fonction est définie (√ : [0 ; 5]).
-    function dom() { return POOL.domaine(fn(), -5, 5); }
+    // Les morceaux de [−5 ; 5] où la fonction est définie, un par branche de la
+    // courbe : [[0 ; 5]] pour √x, [[−5 ; 0[, ]0 ; 5]] pour 1/x.
+    function brs() { return POOL.branches(fn(), -5, 5); }
 
     var C_CUR = '#dc2626';             // le rouge du curseur de lecture
     var SOFT = '#64748b';              // le gris des traits de construction
@@ -134,13 +137,30 @@ MathsView.register({
       });
     });
 
-    // La courbe, tracée progressivement : sa borne droite avance avec `traced`.
-    var courbe = board.create('curve', [
-      function (t) { return t; },
-      function (t) { return F(t); },
-      function () { return dom()[0]; },
-      function () { var d = dom(); return d[0] + traced * (d[1] - d[0]); }
-    ], { strokeWidth: 3, strokeColor: FN[0].couleur, highlight: false, visible: false, layer: 8 });
+    /* La courbe, tracée progressivement : la borne droite de chaque morceau
+       avance avec `traced`. Une fonction peut avoir un TROU (1/x en 0) : sa
+       courbe est alors faite de plusieurs branches, tracées chacune par une
+       courbe distincte — sinon un trait vertical viendrait les relier. On
+       prépare le nombre maximal de branches du pool ; les inutiles restent
+       invisibles. */
+    var NB_BR = 1;
+    FN.forEach(function (f) { NB_BR = Math.max(NB_BR, (f.trous || []).length + 1); });
+
+    var courbes = [];
+    for (var b = 0; b < NB_BR; b++) {
+      courbes.push(board.create('curve', [
+        function (t) { return t; },
+        function (t) { return F(t); },
+        (function (i) { return function () { var m = brs()[i]; return m ? m[0] : 0; }; })(b),
+        (function (i) {
+          return function () {
+            var m = brs()[i];
+            return m ? m[0] + traced * (m[1] - m[0]) : 0;
+          };
+        })(b)
+      ], { strokeWidth: 3, strokeColor: FN[0].couleur, highlight: false,
+           visible: false, layer: 8 }));
+    }
 
     // Le trait vertical qui accompagne le point en cours de placement : il
     // relie l'abscisse lue dans le tableau au point (x ; f(x)).
@@ -262,9 +282,12 @@ MathsView.register({
       if (placing) guideX.v = XS[hc];
       attr(guide, 'visible', placing);
 
-      // La courbe.
-      attr(courbe, 'visible', traced > 0);
-      attr(courbe, 'strokeColor', f.couleur);
+      // La courbe, branche par branche.
+      var nbr = brs().length;
+      courbes.forEach(function (c, i) {
+        attr(c, 'visible', traced > 0 && i < nbr);
+        attr(c, 'strokeColor', f.couleur);
+      });
 
       // Le curseur de lecture : il n'apparaît qu'une fois la courbe tracée.
       var on = cursorOn(), def = on && ok(P.X());
