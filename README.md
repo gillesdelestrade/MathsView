@@ -53,6 +53,29 @@ C'est le cœur du projet : **une illustration = un fichier JS**.
   (ex. le tableau de conversion, entièrement en HTML dans `mv.extras`). Le repère
   est réaffiché automatiquement à la leçon suivante.
 
+### Le pool de fonctions (leçons « Fonctions »)
+
+Les leçons sur les fonctions n'écrivent **pas** leurs propres formules : elles piochent
+dans le pool commun `js/fonctions-base.js` (identité, affine `ax + b`, valeur absolue,
+carré, racine carrée). Ajouter une fonction **là-bas** la fait apparaître, avec ses
+paramètres, son domaine et ses calculs détaillés, dans **toutes** les leçons qui
+utilisent le pool — sans toucher aux leçons.
+
+```js
+var POOL = MathsView.fonctions;
+var FN = POOL.liste();            // toutes les fonctions, dans l'ordre pédagogique
+var f  = FN[0];
+var p  = POOL.defauts(f);         // { a: 2, b: -1 } pour l'affine, {} sinon
+POOL.valeur(f, 3, p);             // f(3)
+POOL.defini(f, -2, p);            // −2 a-t-il une image ? (√ : non)
+POOL.domaine(f, -5, 5);           // la portion de [−5 ; 5] où f est définie
+f.expr(p);                        // « 2x − 1 » (HTML)   f.tex(p) → LaTeX
+POOL.chaine(f.calcul(3, p));      // « 2 × 3 − 1 = 6 − 1 = 5 »
+POOL.nb(1.4142);                  // « 1,41 »  (virgule française, vrai signe −)
+```
+
+Le format complet d'une fonction du pool est documenté en tête de `js/fonctions-base.js`.
+
 ## Structure
 
 ```
@@ -60,6 +83,7 @@ MathsView/
 ├── index.html          ← page + catalogue des illustrations
 ├── css/style.css
 ├── js/app.js           ← moteur (menu, recherche, routage). À ne pas modifier.
+├── js/fonctions-base.js ← pool de fonctions partagé par les leçons « Fonctions »
 ├── vendor/             ← JSXGraph + MathJax (locaux)
 └── lessons/           ← un dossier par niveau
     ├── 6eme/

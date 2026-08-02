@@ -608,6 +608,82 @@ body {
 }
 .calc-warn { color: #b91c1c; font-weight: 600; margin-top: .3rem; }
 
+/* ---------- Leçons « Fonctions » (pool js/fonctions-base.js) ---------- */
+
+/* Choix de la fonction : un bouton par fonction du pool, à sa couleur. */
+.fx-pick { display: flex; gap: .4rem; flex-wrap: wrap; margin: .8rem 0 .5rem; }
+.fx-pick button {
+  padding: .4rem .8rem; border: 1px solid var(--border); background: #fff;
+  border-radius: 8px; cursor: pointer; font-size: 1rem; font-weight: 700;
+  color: var(--ink-soft); font-variant-numeric: tabular-nums;
+}
+.fx-pick button:hover { background: #f8fafc; }
+.fx-pick button.active {
+  color: var(--fx-col, var(--accent));
+  border-color: var(--fx-col, var(--accent));
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--fx-col, var(--accent));
+}
+.fx-btn-fx { font-size: .8rem; font-weight: 600; color: var(--ink-soft); }
+.fx-pick button.active .fx-btn-fx { color: inherit; opacity: .75; }
+
+/* Curseurs des paramètres (a et b de la fonction affine). */
+.fx-params { display: flex; gap: 1.2rem; flex-wrap: wrap; margin: 0 0 .6rem; }
+.fx-params label { display: flex; align-items: center; gap: .4rem; font-size: .9rem; }
+.fx-param-name { font-style: italic; font-weight: 700; }
+.fx-param-val {
+  min-width: 2.6rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+/* Tableau de valeurs. */
+.fx-tablewrap { overflow-x: auto; margin: .6rem 0 0; max-width: 640px; }
+.fx-table {
+  border-collapse: collapse; font-variant-numeric: tabular-nums;
+  background: #fff; border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.fx-table th {
+  padding: .35rem .6rem; font-size: .95rem; font-weight: 800; font-style: italic;
+  background: #f1f5f9; border: 1px solid var(--border); color: var(--ink);
+  white-space: nowrap;
+}
+.fx-table td {
+  padding: .35rem .3rem; min-width: 3.1rem; text-align: center; font-size: .9rem;
+  border: 1px solid var(--border); cursor: pointer; height: 2.1rem;
+}
+.fx-table .fx-x { color: var(--ink-soft); font-weight: 600; }
+.fx-table .fx-fx { font-weight: 700; }
+.fx-table td.is-hot { background: #fef9c3; }
+.fx-table td.is-read { background: var(--accent-soft); color: var(--accent); }
+.fx-table td.is-undef { background: #f8fafc; }
+.fx-no { color: #b45309; font-weight: 800; }
+.fx-approx { color: var(--ink-soft); font-weight: 600; margin-right: .1em; }
+
+/* Panneau : formule, machine x → f → f(x), calcul détaillé. */
+.fx-formula { font-size: 1.5rem; font-weight: 800; margin: .1rem 0 .2rem; }
+.fx-sub { margin: 0 0 .4rem; font-size: .88rem; color: var(--ink-soft); }
+.fx-hint { margin: .4rem 0; font-size: .92rem; color: var(--ink-soft); font-style: italic; }
+.fx-machine {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: .2rem 0 .5rem; font-size: 1.15rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.fx-in, .fx-out {
+  padding: .15rem .6rem; border-radius: 8px; background: #f1f5f9; color: var(--ink);
+}
+.fx-out { background: var(--accent-soft); color: var(--accent); }
+.fx-arrow { color: var(--ink-soft); font-weight: 400; }
+.fx-box {
+  padding: .15rem .8rem; border: 2px solid var(--accent); border-radius: 10px;
+  font-style: italic; background: #fff;
+}
+.fx-no-txt { color: #b45309; font-weight: 700; font-size: .9rem; }
+.fx-calc { margin: .1rem 0 .35rem; font-size: 1.02rem; font-variant-numeric: tabular-nums; }
+.fx-calc.fx-warn { color: #b45309; font-weight: 600; }
+.fx-say { margin: 0 0 .2rem; font-size: .9rem; color: var(--ink-soft); }
+.fx-note { margin: .2rem 0 0; font-size: .92rem; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
