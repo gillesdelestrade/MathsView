@@ -704,6 +704,49 @@ body {
 .eqx-ok { margin: .2rem 0 0; font-size: .9rem; color: #047857; font-weight: 600; }
 .eqx-warn { margin: .2rem 0 0; font-size: .9rem; color: #b45309; }
 
+/* Tableau de variations : ligne des x, ligne des flèches (SVG). */
+.var-wrap { overflow-x: auto; margin: .7rem 0 .2rem; }
+.var-tab {
+  border-collapse: collapse; background: #fff; box-shadow: var(--shadow);
+  border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+.var-tab .var-head {
+  padding: .35rem .7rem; font-size: .95rem; font-weight: 800; font-style: italic;
+  background: #f1f5f9; border-right: 1px solid var(--border); color: var(--ink);
+  white-space: nowrap;
+}
+.var-tab tr + tr td, .var-tab tr + tr th { border-top: 1px solid var(--border); }
+.var-x {
+  padding: .3rem .5rem; text-align: center; font-size: .92rem; font-weight: 700;
+  color: var(--ink-soft); white-space: nowrap;
+}
+.var-v {
+  height: 78px; padding: .25rem .5rem; text-align: center; font-size: 1rem;
+  font-weight: 800; white-space: nowrap;
+}
+.var-a { padding: 0; line-height: 0; }
+.var-a.is-hot, .var-x.is-hot { background: #fef9c3; }
+.var-svg { display: block; }
+/* La double barre d'une valeur interdite : deux traits verticaux. */
+.var-bar {
+  display: inline-block; width: 5px; height: 58px; vertical-align: middle;
+  border-left: 2px solid #334155; border-right: 2px solid #334155;
+}
+
+/* Parité : la symétrie mise à l'épreuve, le verdict, les deux images comparées. */
+.par-tests button { min-width: 12rem; }
+.par-verdict {
+  font-size: 1.3rem; font-weight: 800; letter-spacing: .2px; margin: .5rem 0 .1rem;
+}
+.par-cmp {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: .2rem 0 .35rem; font-size: 1.02rem; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.par-cmp > span:nth-child(even) { color: var(--ink-soft); font-weight: 800; }
+.par-eq { padding: .15rem .6rem; border-radius: 8px; background: #f1f5f9; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }

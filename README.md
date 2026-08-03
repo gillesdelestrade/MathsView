@@ -90,6 +90,40 @@ Une fonction n'a pour cela qu'une chose à fournir — `antec(k, p)`, ses antéc
 `k` avec leur écriture exacte (`−√5` et non `−2,24`) : le découpage du domaine, le
 choix des crochets et la réunion des intervalles sont déduits tout seuls.
 
+Le pool sait enfin dire si une fonction est **paire** (\(f(-x)=f(x)\)) ou **impaire**
+(\(f(-x)=-f(x)\)) :
+
+```js
+POOL.parite(f, p);                // { type, sym, calcul, contre, … }
+                                  // type : 'paire', 'impaire', 'deux' (la fonction
+                                  //   nulle), 'aucune', ou 'domaine' quand le domaine
+                                  //   n'est pas symétrique (√x : la question ne se
+                                  //   pose pas)
+                                  // sym  : la symétrie de la courbe, 'ordonnees' ou
+                                  //   'origine'
+```
+
+Le verdict est établi par le pool lui-même, en comparant `f(−x)` et `f(x)` sur une série
+de nombres d'essai : une fonction ajoutée est **classée toute seule**. Elle ne fournit
+que `oppose(p)`, l'écriture de `f(−x)` étape par étape (`['(−x)²', 'x²']`), pour que la
+leçon puisse montrer le calcul.
+
+Le pool construit enfin le **tableau de variations** sur un intervalle :
+
+```js
+POOL.variations(f, p, -5, 5);     // { cols, arcs }
+                                  // cols : les colonnes — bornes, sommets, valeurs
+                                  //   interdites (bar: true → double barre) — avec
+                                  //   l'image exacte de chacune (txtVal)
+                                  // arcs : entre deux colonnes, { a, b, sens } où sens
+                                  //   vaut 'croissante', 'decroissante' ou 'constante'
+```
+
+Là encore une seule chose est demandée à la fonction : `sommets(p)`, les abscisses où
+elle **change de sens** (`[{ v: 0, txt: '0' }]` pour le carré). Le découpage du domaine,
+le sens de chaque morceau et la double barre des valeurs interdites sont déduits tout
+seuls.
+
 Le format complet d'une fonction du pool est documenté en tête de `js/fonctions-base.js`.
 
 ## Structure

@@ -32,6 +32,17 @@
  *                 pour la fonction carré et x = −3 → ['(−3)²', '9']
  *   image(x, p)  l'image de x ÉCRITE exactement quand elle ne tombe pas juste
  *                (1/x en −3 → « −1/3 », plutôt que l'arrondi −0,33)
+ *   oppose(p)  l'écriture de f(−x), étape par étape, comme au tableau :
+ *                pour la fonction carré → ['(−x)²', 'x²']. C'est la SEULE chose
+ *                à fournir pour que la leçon sur la parité montre le calcul ;
+ *                le verdict (paire, impaire, ni l'une ni l'autre), lui, est
+ *                établi tout seul — voir parite() plus bas.
+ *   sommets(p) les abscisses où la fonction CHANGE DE SENS — le sommet de la
+ *                parabole, la pointe du « V » — avec leur écriture exacte :
+ *                  [{ v: 0, txt: '0' }]
+ *                C'est la SEULE chose à fournir pour que le tableau de
+ *                variations se construise (voir variations() plus bas) ; le sens
+ *                de chaque morceau, lui, est trouvé tout seul.
  *   antec(k, p)  les ANTÉCÉDENTS de k, c'est-à-dire les solutions de f(x) = k,
  *                avec leur écriture exacte :
  *                  { sols: [{ v: -2.236…, txt: '−√5' }, { v: 2.236…, txt: '√5' }] }
@@ -172,6 +183,59 @@
   function coefTxt(a) { return a === 1 ? '' : a === -1 ? '−' : nb(a); }
 
   /* ===================================================================== */
+  /* Parité                                                                */
+  /*                                                                       */
+  /* Les nombres d'essai qui servent à classer une fonction (voir parite() */
+  /* plus bas) : on compare f(−x) et f(x) sur chacun d'eux. Les premiers   */
+  /* sont ronds — ce sont eux que l'on montrera à l'élève en cas de        */
+  /* contre-exemple ; les suivants sont là pour ne pas conclure trop vite  */
+  /* sur une coïncidence.                                                  */
+  /* ===================================================================== */
+  var ESSAIS = [1, 2, 3, 0.5, 1.5, 2.5, 4, 5, 0.75, 3.25, 4.6];
+
+  /* Le domaine est-il SYMÉTRIQUE par rapport à 0 ? C'est la condition pour que
+     la question de la parité ait un sens : il faut que −x ait une image dès que
+     x en a une, sinon f(−x) et f(x) ne sont pas comparables (√x). */
+  function symetrique(fn, p) {
+    var xmin = fn.xmin === undefined ? -Infinity : fn.xmin;
+    var xmax = fn.xmax === undefined ?  Infinity : fn.xmax;
+    if (xmin !== -xmax) return false;
+    if (!fn.defini) return true;
+    return ESSAIS.every(function (t) {
+      return fn.defini(t, p) === fn.defini(-t, p);
+    });
+  }
+
+  /* ===================================================================== */
+  /* Sens de variation                                                     */
+  /*                                                                       */
+  /* Sur quel sens la fonction va-t-elle de a à b ? On la regarde en une   */
+  /* douzaine de points : si elle ne fait que monter, elle est croissante ;*/
+  /* que descendre, décroissante ; si elle ne bouge pas, constante. Les    */
+  /* bornes où elle n'est pas définie sont sautées (1/x tout près de 0).   */
+  /* Le résultat n'est sûr que si l'intervalle ne contient pas de          */
+  /* changement de sens : c'est le rôle de sommets() de les donner.        */
+  /* ===================================================================== */
+  function sensSur(fn, p, a, b) {
+    var N = 12, prev = null, monte = 0, descend = 0;
+    for (var i = 0; i <= N; i++) {
+      var t = a + (b - a) * (i / N);
+      if (fn.defini && !fn.defini(t, p)) continue;
+      var v = fn.f(t, p);
+      if (!isFinite(v)) continue;
+      if (prev !== null) {
+        if (v - prev > 1e-9) monte++;
+        else if (v - prev < -1e-9) descend++;
+      }
+      prev = v;
+    }
+    if (monte && !descend) return 'croissante';
+    if (descend && !monte) return 'decroissante';
+    if (!monte && !descend) return 'constante';
+    return 'variable';                     // sommet oublié : la leçon le dira
+  }
+
+  /* ===================================================================== */
   /* Le pool                                                               */
   /*                                                                       */
   /* L'ordre ci-dessous est celui des boutons dans les leçons : on va du    */
@@ -189,6 +253,7 @@
       ensemble: 'ℝ',
       courbe: 'une droite passant par l\'origine',
       calcul: function (x) { return [nb(x)]; },
+      oppose: function () { return ['−x']; },
       antec: function (k) { return { sols: [{ v: k, txt: nb(k) }] }; },
       etapes: function (rel, k) {
         return ['La condition s\'écrit directement <b>x ' + relHtml(rel) + ' ' + nb(k) + '</b> : ' +
@@ -216,6 +281,17 @@
         var s = [nb(p.a) + ' × ' + par(x) + ajout(p.b)];
         if (p.b !== 0) s.push(nb(p.a * x) + ajout(p.b));
         s.push(nb(p.a * x + p.b));
+        return s;
+      },
+      /* On remplace x par (−x), puis on range : a(−x) + b = −ax + b. Avec a = 0
+         il n'y a pas de x à remplacer (la fonction est constante), et le
+         deuxième temps ne sert que s'il change l'écriture. */
+      oppose: function (p) {
+        if (p.a === 0) return [nb(p.b)];
+        var t = p.a === 1 ? '(−x)' : p.a === -1 ? '−(−x)' : nb(p.a) + ' × (−x)';
+        var s = [t + (p.b === 0 ? '' : ajout(p.b))];
+        var fin = linHtml(-p.a, p.b);
+        if (fin !== s[0]) s.push(fin);
         return s;
       },
       antec: function (k, p) {
@@ -263,6 +339,9 @@
       ensemble: 'ℝ',
       courbe: 'deux demi-droites qui forment un « V »',
       calcul: function (x) { return ['|' + nb(x) + '|', nb(Math.abs(x))]; },
+      // x et −x sont à la même distance de 0 : la valeur absolue ne les distingue pas.
+      oppose: function () { return ['|−x|', '|x|']; },
+      sommets: function () { return [{ v: 0, txt: '0' }]; },   // la pointe du « V »
       antec: function (k) {
         if (k < 0) return { sols: [] };
         if (k === 0) return { sols: [{ v: 0, txt: '0' }] };
@@ -307,6 +386,9 @@
       ensemble: 'ℝ',
       courbe: 'une parabole',
       calcul: function (x) { return [par(x) + '²', nb(x * x)]; },
+      // Le carré d'un nombre et celui de son opposé sont égaux : (−x)² = x².
+      oppose: function () { return ['(−x)²', 'x²']; },
+      sommets: function () { return [{ v: 0, txt: '0' }]; },   // le sommet de la parabole
       antec: function (k) {
         if (k < 0) return { sols: [] };
         if (k === 0) return { sols: [{ v: 0, txt: '0' }] };
@@ -367,6 +449,9 @@
         var v = Math.sqrt(x);
         return exact(v) ? ['√' + nb(x), nb(v)] : ['√' + nb(x), '≈ ' + nb(v)];
       },
+      /* Pas d'oppose() ici : pour x > 0, √(−x) n'existe pas. Le domaine n'étant
+         pas symétrique par rapport à 0, la question de la parité ne se pose même
+         pas — parite() le dit sans avoir besoin d'un calcul. */
       antec: function (k) {
         return k < 0 ? { sols: [] } : { sols: [{ v: k * k, txt: nb(k * k) }] };
       },
@@ -414,6 +499,8 @@
         return s;
       },
       image: function (x) { return frac1(x); },
+      // Le signe « moins » du dénominateur remonte devant la fraction.
+      oppose: function () { return ['1/(−x)', '−1/x']; },
       antec: function (k) {
         return k === 0 ? { sols: [] } : { sols: [{ v: 1 / k, txt: fracTxt(1, k) }] };
       },
@@ -626,6 +713,119 @@
         out.sort(function (m, n) { return m.a - n.a; });
       }
       return fini(out, sols);
+    },
+
+    /* VARIATIONS — le tableau de variations de f sur [x1 ; x2], prêt à être
+       dessiné : les COLONNES (les bornes, les sommets, les valeurs interdites)
+       et, entre deux colonnes consécutives, le SENS de variation.
+       ---------------------------------------------------------------------
+       Une seule chose est demandée à la fonction : sommets(p), les abscisses où
+       elle change de sens. Elles découpent le domaine ; sur chaque morceau le
+       sens ne change plus, il suffit donc de regarder la fonction en quelques
+       points pour le trouver (voir sensSur() plus haut). Les valeurs interdites
+       découpent elles aussi — elles donnent la double barre du tableau.
+       ---------------------------------------------------------------------
+       Renvoie { cols, arcs } avec arcs.length === cols.length − 1 :
+         cols[i]  { v, txt, bar, defini, val, txtVal, sommet }
+                  bar : la colonne est une valeur interdite (double barre) ;
+                  txtVal : l'image écrite exactement (« 1/3 », et non 0,33) ;
+         arcs[i]  { a, b, sens } entre cols[i] et cols[i+1], sens valant
+                  'croissante', 'decroissante', 'constante' — ou 'variable'
+                  si un changement de sens a été oublié dans sommets(). */
+    variations: function (fn, p, x1, x2) {
+      p = p || {};
+      var self = this;
+      var ms = this.morceaux(fn, x1, x2);
+      var somm = (fn.sommets ? fn.sommets(p) : []) || [];
+      var cols = [], arcs = [];
+
+      function colonne(v, txt) {
+        var def = self.defini(fn, v, p);
+        return { v: v, txt: txt !== undefined ? txt : borneTxt(v), bar: false,
+                 defini: def, sommet: false,
+                 val: def ? fn.f(v, p) : null,
+                 txtVal: def ? self.ecrire(fn, v, p) : null };
+      }
+
+      ms.forEach(function (m, im) {
+        // La colonne de gauche : la borne du domaine pour le premier morceau,
+        // la double barre déjà posée pour les suivants (une valeur interdite
+        // sépare deux morceaux qui se touchent — c'est le cas de 1/x en 0).
+        if (im === 0) cols.push(colonne(m.a));
+        var prev = m.a;
+        somm.filter(function (s) { return s.v > m.a && s.v < m.b; })
+            .sort(function (u, w) { return u.v - w.v; })
+            .forEach(function (s) {
+              arcs.push({ a: prev, b: s.v, sens: sensSur(fn, p, prev, s.v) });
+              var c = colonne(s.v, s.txt);
+              c.sommet = true;
+              cols.push(c);
+              prev = s.v;
+            });
+        arcs.push({ a: prev, b: m.b, sens: sensSur(fn, p, prev, m.b) });
+        var suiv = ms[im + 1];
+        if (suiv && Math.abs(suiv.a - m.b) < 1e-12) {
+          cols.push({ v: m.b, txt: borneTxt(m.b), bar: true, defini: false,
+                      sommet: false, val: null, txtVal: null });
+        } else {
+          cols.push(colonne(m.b));
+        }
+      });
+      return { cols: cols, arcs: arcs };
+    },
+
+    /* PARITÉ — f est PAIRE lorsque f(−x) = f(x) pour TOUT x du domaine (sa
+       courbe est alors symétrique par rapport à l'axe des ordonnées), IMPAIRE
+       lorsque f(−x) = −f(x) (symétrique par rapport à l'origine du repère).
+       ---------------------------------------------------------------------
+       Le verdict est établi ICI, en comparant f(−x) et f(x) sur les nombres
+       d'essai : une fonction ajoutée au pool est donc classée toute seule, sans
+       rien avoir à déclarer. Elle ne fournit, si elle veut que le CALCUL soit
+       montré à l'élève, que oppose(p) — l'écriture de f(−x), étape par étape.
+       ---------------------------------------------------------------------
+       Renvoie { type, sym, calcul, contreP, contreI, contre } :
+         type    'paire', 'impaire', 'deux' (la fonction nulle est les deux),
+                 'aucune', ou 'domaine' quand le domaine n'est pas symétrique
+                 par rapport à 0 — la question ne se pose alors même pas ;
+         sym     la symétrie de la courbe : 'ordonnees', 'origine' ou null ;
+         calcul  les étapes de f(−x), ou null si la fonction n'en donne pas ;
+         contreP / contreI  un nombre x qui suffit à écarter « paire » (resp.
+                 « impaire »), avec les deux images en jeu : { x, fx, fmx } ;
+         contre  celui à montrer — de préférence un x qui écarte les deux. */
+    parite: function (fn, p) {
+      p = p || {};
+      var self = this;
+      var out = { type: 'domaine', sym: null, calcul: null,
+                  contreP: null, contreI: null, contre: null };
+      if (!symetrique(fn, p)) return out;
+
+      var paire = true, impaire = true, refP = [], refI = [];
+      ESSAIS.forEach(function (t) {
+        if (!self.defini(fn, t, p) || !self.defini(fn, -t, p)) return;
+        var a = fn.f(t, p), b = fn.f(-t, p);
+        if (!isFinite(a) || !isFinite(b)) return;
+        if (Math.abs(b - a) > 1e-9) { paire = false; refP.push(t); }
+        if (Math.abs(b + a) > 1e-9) { impaire = false; refI.push(t); }
+      });
+
+      out.type = paire && impaire ? 'deux' : paire ? 'paire'
+               : impaire ? 'impaire' : 'aucune';
+      out.sym = out.type === 'impaire' ? 'origine'
+              : (out.type === 'paire' || out.type === 'deux') ? 'ordonnees' : null;
+      out.calcul = fn.oppose ? fn.oppose(p) : null;
+
+      function temoin(t) {
+        return t === undefined ? null
+                               : { x: t, fx: fn.f(t, p), fmx: fn.f(-t, p) };
+      }
+      out.contreP = temoin(refP[0]);
+      out.contreI = temoin(refI[0]);
+      // Un SEUL nombre suffit souvent à écarter les deux à la fois : c'est
+      // celui-là qu'on montre, plutôt que deux contre-exemples différents.
+      var commun = refP.filter(function (t) { return refI.indexOf(t) >= 0; })[0];
+      out.contre = temoin(commun !== undefined ? commun
+                          : refP.length ? refP[0] : refI[0]);
+      return out;
     },
 
     // Le raisonnement algébrique, ligne à ligne (HTML simple), ou null si la
