@@ -876,6 +876,32 @@ body {
   .pri-rule.active { transform: none; }
 }
 
+/* ---------- Distributivité : l'égalité qui s'écrit sous la figure (5ème) ---------- */
+.dis-panel {
+  max-width: 640px; margin: .8rem 0; padding: .7rem .9rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #f8fafc;
+}
+.dis-cap { font-size: .95rem; color: var(--ink); min-height: 2.6em; }
+.dis-eq {
+  font-size: 1.2rem; font-weight: 800; letter-spacing: .2px; padding: .12rem 0;
+  min-height: 1.5em; white-space: nowrap; overflow-x: auto;
+  font-variant-numeric: tabular-nums;
+}
+.dis-num { font-size: 1.05rem; }
+.dis-egal { color: var(--ink-soft); margin: 0 .45em; }
+.dis-check {
+  margin-top: .45rem; padding-top: .45rem; border-top: 1px dashed var(--border);
+  font-size: .95rem; font-weight: 700; display: flex; align-items: center;
+  gap: .1rem; flex-wrap: wrap;
+}
+.dis-ok { color: #16a34a; font-size: 1.05rem; margin-right: .45rem; }
+.dis-et { color: var(--ink-soft); font-weight: 600; margin: 0 .55rem; }
+.dis-meme {
+  margin-left: .6rem; padding: .05rem .5rem; border-radius: 999px;
+  background: #dcfce7; color: #15803d; font-size: .82rem;
+}
+.dis-warn { margin-top: .4rem; color: #b45309; font-size: .85rem; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
