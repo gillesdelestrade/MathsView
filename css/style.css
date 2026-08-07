@@ -747,6 +747,135 @@ body {
 .par-cmp > span:nth-child(even) { color: var(--ink-soft); font-weight: 800; }
 .par-eq { padding: .15rem .6rem; border-radius: 8px; background: #f1f5f9; }
 
+/* ---------- Enchaînement d'opérations et priorités (5ème) ---------- */
+/* Un ton par niveau de priorité, réutilisé partout : la pastille de la règle,
+   l'encadré de l'opération en cours, le signe lui-même et l'étiquette du
+   commentaire. Violet = parenthèses, rouge = × ÷, bleu = + −. */
+.pri-ui { max-width: 760px; }
+.pri-entry { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.pri-entry-lab { font-weight: 800; font-size: 1.1rem; color: var(--ink-soft); }
+.pri-input {
+  flex: 1 1 18rem; min-width: 12rem; padding: .45rem .7rem; font-size: 1.05rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+}
+.pri-rand {
+  padding: .4rem .7rem; font-size: .85rem; border: 1px solid var(--border);
+  border-radius: 8px; background: #fff; cursor: pointer; white-space: nowrap;
+}
+.pri-rand:hover { background: #f8fafc; }
+.pri-ex { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .9rem; }
+.pri-ex button {
+  padding: .22rem .6rem; font-size: .84rem; border: 1px solid var(--border);
+  border-radius: 999px; background: #fff; cursor: pointer; white-space: nowrap;
+}
+.pri-ex button:hover { background: #f8fafc; }
+.pri-ex button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Le calcul à gauche, les trois lignes de priorité à droite : c'est le panneau
+   de droite qui mène la danse (une ligne s'allume, on fait ses opérations,
+   on descend). */
+.pri-work { display: flex; align-items: flex-start; gap: 1.1rem; }
+.pri-left { flex: 1 1 auto; min-width: 0; }
+.pri-rules {
+  flex: 0 0 16rem; display: flex; flex-direction: column; gap: .4rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+  padding: .5rem; box-shadow: var(--shadow);
+}
+.pri-rule {
+  display: flex; align-items: center; gap: .5rem; padding: .45rem .5rem;
+  border: 1px solid transparent; border-radius: 10px; font-size: .9rem;
+  background: #f8fafc; color: var(--ink-soft); opacity: .72;
+  transition: background .25s, opacity .25s, border-color .25s, transform .25s;
+}
+/* La ligne en cours : couleur pleine de sa priorité, et un léger pas vers le
+   calcul, à sa gauche. */
+.pri-rule.active { opacity: 1; transform: translateX(-4px); }
+.pri-rule.active.par { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+.pri-rule.active.mul { background: #fee2e2; border-color: #dc2626; color: #991b1b; }
+.pri-rule.active.add { background: #dbeafe; border-color: #2563eb; color: #1e40af; }
+/* La ligne déjà passée : effacée, son intitulé barré. */
+.pri-rule.done { opacity: .5; background: #fff; }
+.pri-rule.done .pri-rule-txt b { text-decoration: line-through; }
+.pri-rule-txt { display: flex; flex-direction: column; line-height: 1.25; }
+.pri-rule-txt small { font-size: .73rem; opacity: .85; }
+.pri-rank {
+  width: 1.35rem; height: 1.35rem; flex: 0 0 auto; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #e2e8f0; color: var(--ink-soft); font-size: .78rem; font-weight: 800;
+}
+.pri-rule.active.par .pri-rank { background: #7c3aed; color: #fff; }
+.pri-rule.active.mul .pri-rank { background: #dc2626; color: #fff; }
+.pri-rule.active.add .pri-rank { background: #2563eb; color: #fff; }
+.pri-rule.done .pri-rank { background: #dcfce7; color: #16a34a; }
+/* Ce qu'il reste à faire sur la ligne : « 2 à faire », « rien », puis ✔. */
+.pri-count {
+  margin-left: auto; flex: 0 0 auto; font-size: .74rem; font-weight: 800;
+  padding: .08rem .45rem; border-radius: 999px; white-space: nowrap;
+  background: #fff; border: 1px solid var(--border); color: var(--ink-soft);
+}
+.pri-rule.active .pri-count { border-color: currentColor; color: inherit; }
+.pri-rule.done .pri-count { background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; }
+.pri-badge {
+  flex: 0 0 auto; min-width: 2.4rem; text-align: center; font-weight: 800;
+  padding: .05rem .4rem; border-radius: 6px; font-size: .92rem;
+}
+.pri-badge.par, .pri-tag.par { color: #7c3aed; background: #ede9fe; }
+.pri-badge.mul, .pri-tag.mul { color: #dc2626; background: #fee2e2; }
+.pri-badge.add, .pri-tag.add { color: #2563eb; background: #dbeafe; }
+
+/* Les lignes du calcul, façon tableau : A = … , une ligne par opération. */
+/* Une seule barre de défilement pour tout le bloc (et non une par ligne) :
+   les calculs longs restent lisibles sur un écran étroit. */
+.pri-stage { min-height: 4.5rem; margin: .2rem 0 .5rem; overflow-x: auto; padding: .2rem 0; }
+.pri-line {
+  font-size: 1.32rem; font-weight: 700; padding: .16rem 0; white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.pri-name { font-weight: 800; color: var(--ink-soft); }
+.pri-egal { margin: 0 .45em; color: var(--ink-soft); font-weight: 800; }
+.pri-op { margin: 0 .28em; font-weight: 800; }
+.pri-op.mul { color: #dc2626; }
+.pri-op.add { color: #2563eb; }
+.pri-par { color: #7c3aed; font-weight: 800; }
+/* L'opération en cours : encadrée. Les lignes déjà faites gardent leur encadré
+   en fond pâle — on relit ainsi l'ordre dans lequel on a calculé. */
+.pri-hl { border-radius: 8px; padding: .05rem .25rem; }
+.pri-hl.par { background: #ede9fe; }
+.pri-hl.mul { background: #fee2e2; }
+.pri-hl.add { background: #dbeafe; }
+.pri-hl.hot.par { box-shadow: 0 0 0 2px #7c3aed; }
+.pri-hl.hot.mul { box-shadow: 0 0 0 2px #dc2626; }
+.pri-hl.hot.add { box-shadow: 0 0 0 2px #2563eb; }
+/* Le nombre qui vient d'être calculé. */
+.pri-res { background: #dcfce7; color: #15803d; border-radius: 6px; padding: .05rem .3rem; }
+.pri-sol .pri-res { box-shadow: 0 0 0 2px #16a34a; }
+.pri-done { color: #16a34a; font-weight: 800; margin-left: .5rem; }
+/* Une fraction non décimale (10 ÷ 3), écrite empilée. */
+.pri-frac {
+  display: inline-flex; flex-direction: column; align-items: center;
+  vertical-align: -.45em; line-height: 1.05; font-size: .72em;
+}
+.pri-fn { padding: 0 .25em; }
+.pri-fd { padding: 0 .25em; border-top: 2px solid currentColor; }
+
+.pri-tag { padding: .05rem .4rem; border-radius: 6px; font-size: .82rem; margin-right: .4rem; }
+.pri-tag.stop { color: #b91c1c; background: #fee2e2; }
+.pri-note { min-height: 3.2em; font-size: .95rem; max-width: 70ch; }
+.pri-note .hot { color: #dc2626; }
+.pri-trap {
+  margin-top: .3rem; padding: .45rem .7rem; font-size: .9rem; max-width: 70ch;
+  color: #92400e; background: #fffbeb; border-left: 3px solid #f59e0b;
+  border-radius: 0 8px 8px 0;
+}
+.pri-msg { color: #b45309; font-size: .9rem; min-height: 1.4em; }
+/* Écran étroit : les trois lignes passent sous le calcul. */
+@media (max-width: 880px) {
+  .pri-work { flex-direction: column; }
+  .pri-rules { flex: none; width: 100%; }
+  .pri-rule.active { transform: none; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
