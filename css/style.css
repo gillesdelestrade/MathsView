@@ -902,6 +902,110 @@ body {
 }
 .dis-warn { margin-top: .4rem; color: #b45309; font-size: .85rem; }
 
+/* ---------- Critères de divisibilité (6ème) ---------- */
+/* Trois familles, trois couleurs : ce qu'un critère regarde dans le nombre.
+   bleu = le chiffre des unités, ambre = les deux derniers, violet = tous. */
+.div-ui { max-width: 780px; }
+.div-ui .fam-u { color: #2563eb; }
+.div-ui .fam-dd { color: #b45309; }
+.div-ui .fam-s { color: #7c3aed; }
+.div-entry { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .6rem; }
+.div-entry-lab { font-weight: 700; }
+.div-input {
+  flex: 0 1 12rem; padding: .45rem .7rem; font-size: 1.1rem; font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: .5px;
+  border: 1px solid var(--border); border-radius: 8px; background: #fff;
+}
+.div-rand {
+  padding: .4rem .7rem; font-size: .85rem; border: 1px solid var(--border);
+  border-radius: 8px; background: #fff; cursor: pointer; white-space: nowrap;
+}
+.div-rand:hover { background: #f8fafc; }
+.div-ex { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .5rem; }
+.div-ex button {
+  padding: .22rem .6rem; font-size: .84rem; font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border); border-radius: 999px; background: #fff; cursor: pointer;
+}
+.div-ex button:hover { background: #f8fafc; }
+.div-ex button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.div-msg { color: #b45309; font-size: .9rem; min-height: 1.4em; }
+
+.div-work { display: flex; align-items: flex-start; gap: 1.1rem; }
+.div-left { flex: 1 1 auto; min-width: 0; }
+.div-look { font-size: .95rem; color: var(--ink); min-height: 1.6em; }
+
+/* Le nombre, chiffre par chiffre : ceux que le critère regarde s'allument. */
+.div-cells { display: flex; gap: 2px; margin: .5rem 0 .7rem; flex-wrap: wrap; }
+.div-cell {
+  min-width: 2.1rem; padding: .3rem .1rem; text-align: center;
+  font-size: 1.7rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  border-radius: 8px; background: #f1f5f9; color: var(--ink);
+  transition: background .25s, color .25s, transform .25s;
+}
+.div-cell.div-grp { margin-left: .55rem; }     /* le groupe de 3 chiffres */
+.div-cell.on { transform: translateY(-3px); color: #fff; }
+.div-cell.on.fam-u { background: #2563eb; }
+.div-cell.on.fam-dd { background: #b45309; }
+.div-cell.on.fam-s { background: #7c3aed; }
+
+.div-detail { font-size: .95rem; max-width: 60ch; min-height: 3.4em; }
+.div-line { padding: .1rem 0; }
+.div-val { padding: .02rem .35rem; border-radius: 6px; background: #f1f5f9; }
+.div-again { color: var(--ink-soft); font-size: .88rem; }
+.div-verdict-big {
+  margin-top: .4rem; min-height: 2.4em; display: flex; flex-direction: column;
+  gap: .1rem; font-size: 1.02rem;
+}
+.div-verdict-big.oui { color: #15803d; }
+.div-verdict-big.non { color: #b91c1c; }
+.div-egal {
+  font-size: .9rem; font-weight: 700; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.div-oui { color: #15803d; }
+.div-non { color: #b91c1c; }
+.div-rem { margin-top: .4rem; font-size: .88rem; color: var(--ink-soft); }
+
+/* Les six critères, à droite : celui qu'on teste s'allume, les autres attendent. */
+.div-rules {
+  flex: 0 0 17.5rem; display: flex; flex-direction: column; gap: .3rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+  padding: .5rem; box-shadow: var(--shadow);
+}
+.div-rule {
+  display: flex; align-items: center; gap: .5rem; padding: .35rem .45rem;
+  border: 1px solid transparent; border-radius: 10px; font-size: .85rem;
+  background: #f8fafc; color: var(--ink-soft); opacity: .7;
+  transition: background .25s, opacity .25s, border-color .25s, transform .25s;
+}
+.div-rule.active { opacity: 1; transform: translateX(-4px); }
+.div-rule.active.fam-u { background: #dbeafe; border-color: #2563eb; color: #1e40af; }
+.div-rule.active.fam-dd { background: #fef3c7; border-color: #b45309; color: #92400e; }
+.div-rule.active.fam-s { background: #ede9fe; border-color: #7c3aed; color: #5b21b6; }
+.div-rule.done { opacity: .62; background: #fff; }
+/* La pastille du diviseur porte la couleur de la famille du critère. */
+.div-d {
+  width: 1.7rem; height: 1.7rem; flex: 0 0 auto; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: .9rem; font-weight: 800; color: #fff; background: #94a3b8;
+}
+.div-rule.fam-u .div-d { background: #2563eb; }
+.div-rule.fam-dd .div-d { background: #b45309; }
+.div-rule.fam-s .div-d { background: #7c3aed; }
+.div-txt { line-height: 1.25; }
+.div-verdict {
+  margin-left: auto; flex: 0 0 auto; width: 1.5rem; text-align: center;
+  font-size: 1rem; font-weight: 800; color: #cbd5e1;
+}
+.div-verdict.oui { color: #16a34a; }
+.div-verdict.non { color: #dc2626; }
+
+@media (max-width: 880px) {
+  .div-work { flex-direction: column; }
+  .div-rules { flex: none; width: 100%; }
+  .div-rule.active { transform: none; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
