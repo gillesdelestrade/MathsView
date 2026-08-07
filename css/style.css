@@ -1006,6 +1006,63 @@ body {
   .div-rule.active { transform: none; }
 }
 
+/* ---------- Nombres relatifs sur une droite (5ème) ---------- */
+.rel-ui { max-width: 660px; margin-top: .6rem; }
+.rel-cap { font-size: .98rem; color: var(--ink); min-height: 1.7em; }
+.rel-cap .rel-d { color: #dc2626; }
+.rel-cap .rel-g { color: #2563eb; }
+.rel-calc {
+  font-size: 1.25rem; font-weight: 800; min-height: 1.9em; padding: .2rem 0;
+  display: flex; align-items: baseline; gap: .1rem; flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+}
+.rel-egal { color: var(--ink-soft); margin: 0 .45em; }
+.rel-sep { color: var(--ink-soft); margin: 0 .5em; }
+.rel-why {
+  margin-left: .6rem; padding: .05rem .5rem; border-radius: 999px;
+  background: #ede9fe; color: #5b21b6; font-size: .74rem; font-weight: 700;
+}
+.rel-res { padding: .05rem .4rem; border-radius: 8px; background: #dcfce7; }
+
+/* Le tableau des quatre cas : le résumé de la leçon, et le choix du calcul. */
+.rel-table {
+  border-collapse: separate; border-spacing: 4px; margin-top: .5rem; width: 100%;
+}
+.rel-table th {
+  font-size: .78rem; font-weight: 700; color: var(--ink-soft); text-align: center;
+  padding: .2rem .4rem;
+}
+.rel-table th.rel-corner { text-align: left; font-style: italic; font-weight: 600; }
+.rel-table th.rel-op {
+  text-align: right; font-size: .9rem; color: var(--ink); text-transform: uppercase;
+  letter-spacing: .4px; white-space: nowrap;
+}
+.rel-table th.rel-h.pos b { color: #15803d; }
+.rel-table th.rel-h.neg b { color: #b91c1c; }
+.rel-table td {
+  padding: .45rem .5rem; border: 1px solid var(--border); border-radius: 10px;
+  background: #f8fafc; text-align: center; cursor: pointer; width: 38%;
+  transition: background .2s, border-color .2s, transform .2s, box-shadow .2s;
+}
+.rel-table td:hover { background: #fff; border-color: #cbd5e1; }
+/* La case du calcul en cours. */
+.rel-table td.on {
+  background: #fff; border-color: var(--ink); transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, .1);
+}
+.rel-dir { display: block; font-size: .92rem; font-weight: 800; }
+.rel-mini {
+  display: block; margin-top: .12rem; font-size: .82rem; color: var(--ink-soft);
+  font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.rel-table td.on .rel-mini { color: var(--ink); }
+
+@media (max-width: 620px) {
+  .rel-table th.rel-corner { font-size: .7rem; }
+  .rel-table th.rel-op { font-size: .78rem; }
+  .rel-dir { font-size: .82rem; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
