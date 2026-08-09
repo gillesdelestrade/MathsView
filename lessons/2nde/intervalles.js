@@ -31,6 +31,7 @@ MathsView.register({
   level: '2nde',
   category: 'calcul',
   subcategory: 'Ensembles de nombres',
+  exercices: ['intervalles-ecriture'],
   theme: 'Nombres — intervalles de ℝ, crochets ouverts ou fermés, appartenance',
   description:
     'Un <strong>intervalle</strong> est un morceau de la droite des réels : tous les ' +

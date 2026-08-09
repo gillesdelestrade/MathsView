@@ -1,0 +1,290 @@
+/* ===================================================================== */
+/* Module exercices — ce que css/style.css ne couvre pas déjà.            */
+/*                                                                       */
+/* Les couleurs, la typo, les cartes et les badges viennent de style.css :*/
+/* on reste volontairement dans le même vocabulaire visuel que les leçons.*/
+/* Cibles tactiles : 44 px minimum (SPEC §11.3).                          */
+/* ===================================================================== */
+
+.exo-content { max-width: 780px; }
+.exo-lien-lecons {
+  color: #fff; text-decoration: none; font-size: .9rem; font-weight: 600;
+  opacity: .85; padding: .4rem .6rem;
+}
+.exo-lien-lecons:hover { opacity: 1; }
+
+.exo-intro h2 { margin: 0 0 .3rem; }
+.exo-intro p { color: var(--ink-soft); max-width: 60ch; margin: 0 0 1rem; }
+
+.exo-card { cursor: pointer; }
+.exo-paliers { color: var(--ink-soft); font-size: .85rem; margin: .2rem 0 0; }
+.exo-mixte {
+  margin-left: .6rem; border: 1px solid var(--border); background: #fff;
+  border-radius: 999px; padding: .2rem .7rem; font-size: .78rem; cursor: pointer;
+  color: var(--accent); font-weight: 700; text-transform: none; letter-spacing: 0;
+}
+.exo-mixte:hover { background: var(--accent-soft); }
+
+/* ---------- La barre de progression de la série ---------- */
+.exo-entete h2 { margin: 0 0 .8rem; }
+.exo-barre {
+  display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+  margin-bottom: .6rem; font-size: .85rem; color: var(--ink-soft);
+}
+.exo-compte { font-weight: 700; }
+.exo-pastilles { display: flex; gap: .25rem; align-items: center; }
+.exo-pastille {
+  width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+  background: var(--border);
+}
+.exo-pastille.ok { background: #16a34a; }
+.exo-pastille.ko { background: #dc2626; }
+.exo-pastille.en-cours { background: var(--accent); transform: scale(1.25); }
+.exo-palier { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* ---------- La carte de la question ---------- */
+.exo-carte {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 1.1rem 1.2rem;
+}
+.exo-titre {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft); font-weight: 700; margin-bottom: .4rem;
+}
+.exo-enonce { margin: 0 0 .5rem; font-size: 1.05rem; }
+.exo-tex {
+  text-align: center; font-size: 1.35rem; margin: .8rem 0 1rem;
+  padding: .6rem; background: #f8fafc; border-radius: 10px;
+}
+.exo-sous { color: var(--ink-soft); font-size: .9rem; margin: .4rem 0 0; }
+
+/* ---------- La saisie ---------- */
+.exo-palette { display: flex; gap: .3rem; flex-wrap: wrap; margin-bottom: .45rem; }
+.exo-touche {
+  min-width: 44px; min-height: 40px; border: 1px solid var(--border);
+  background: #f8fafc; border-radius: 8px; cursor: pointer;
+  font-size: 1.05rem; color: var(--ink);
+}
+.exo-touche:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+.exo-ligne { display: flex; align-items: center; gap: .5rem; }
+.exo-champ {
+  flex: 1; min-height: 48px; padding: .5rem .8rem; font-size: 1.15rem;
+  border: 2px solid var(--border); border-radius: 10px; background: #fff;
+  color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.exo-champ:focus { outline: none; border-color: var(--accent); }
+.exo-champ:disabled { background: #f8fafc; color: var(--ink-soft); }
+.exo-unite { font-weight: 700; color: var(--ink-soft); }
+
+.exo-choix {
+  display: block; width: 100%; min-height: 48px; margin-bottom: .45rem;
+  padding: .6rem .9rem; text-align: left; font-size: 1rem;
+  border: 2px solid var(--border); border-radius: 10px; background: #fff;
+  cursor: pointer; color: var(--ink);
+}
+.exo-choix:hover:not(:disabled) { border-color: var(--accent); background: #f8fafc; }
+.exo-choix.choisi { border-color: var(--accent); background: var(--accent-soft); }
+.exo-choix.bonne { border-color: #16a34a; background: #dcfce7; }
+.exo-choix.mauvaise { border-color: #dc2626; background: #fee2e2; }
+.exo-choix:disabled { cursor: default; }
+
+.exo-board {
+  width: 100%; max-width: 640px; height: 300px; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+
+/* ---------- Indices, retour, correction ---------- */
+.exo-indice {
+  background: #fef9c3; border-left: 3px solid #eab308; border-radius: 0 8px 8px 0;
+  padding: .5rem .7rem; margin-top: .5rem; font-size: .95rem;
+}
+.exo-flou {
+  margin-top: .6rem; padding: .5rem .7rem; border-radius: 8px;
+  background: #f1f5f9; color: var(--ink-soft); font-size: .95rem;
+}
+.exo-ok, .exo-ko {
+  margin-top: .7rem; padding: .55rem .8rem; border-radius: 10px; font-weight: 700;
+}
+.exo-ok { background: #dcfce7; color: #15803d; }
+.exo-ko { background: #fee2e2; color: #b91c1c; }
+.exo-reponse { margin-top: .5rem; font-size: .95rem; }
+.exo-correction {
+  margin-top: .7rem; padding: .7rem .9rem; background: #f8fafc;
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.exo-correction-titre {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft); font-weight: 700; margin-bottom: .35rem;
+}
+.exo-etape { margin: .25rem 0; }
+.exo-etape i { color: var(--ink-soft); font-size: .9em; }
+
+/* ---------- Les boutons d'action ---------- */
+.exo-actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+.exo-btn {
+  min-height: 44px; padding: .5rem 1rem; border: 1px solid var(--border);
+  background: #fff; border-radius: 10px; cursor: pointer; font-size: .95rem;
+  color: var(--ink); font-weight: 600;
+}
+.exo-btn:hover { background: #f8fafc; }
+.exo-btn.primaire {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.exo-btn.primaire:hover { filter: brightness(1.08); }
+
+/* ---------- L'écran de fin ---------- */
+.exo-fin { text-align: center; }
+.exo-fin-titre { font-size: 1.1rem; font-weight: 800; color: var(--ink-soft); }
+.exo-score {
+  font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.exo-jauge {
+  height: 10px; background: var(--border); border-radius: 999px; overflow: hidden;
+  max-width: 320px; margin: .5rem auto;
+}
+.exo-jauge i { display: block; height: 100%; background: var(--accent);
+               transition: width .6s ease; }
+.exo-mot { color: var(--ink-soft); margin: .4rem 0 1rem; }
+.exo-fin .exo-actions { justify-content: center; }
+
+.exo-erreurs { text-align: left; margin-top: .8rem; }
+.exo-erreur {
+  border-top: 1px solid var(--border); padding: .6rem 0;
+}
+.exo-erreur-enonce { font-size: .95rem; }
+.exo-erreur-ligne { font-size: .9rem; color: var(--ink-soft); margin-top: .2rem; }
+.exo-erreur-ligne b.ko { color: #b91c1c; }
+.exo-erreur-ligne b.ok { color: #15803d; }
+
+/* ---------- Le lien depuis une leçon (SPEC §11.2) ---------- */
+.lecon-exos {
+  display: inline-flex; align-items: center; gap: .5rem; margin-top: 1rem;
+  padding: .6rem 1rem; background: var(--accent); color: #fff;
+  border-radius: 10px; text-decoration: none; font-weight: 700; font-size: .95rem;
+  box-shadow: var(--shadow);
+}
+.lecon-exos:hover { filter: brightness(1.08); }
+
+@media (max-width: 620px) {
+  .exo-tex { font-size: 1.15rem; }
+  .exo-score { font-size: 2.4rem; }
+}
+
+/* ===================================================================== */
+/* Lot 2 — profils, jardin, ceintures                                    */
+/* ===================================================================== */
+
+/* ---------- Le bandeau du haut ---------- */
+.exo-profil-actif {
+  display: inline-flex; align-items: center; gap: .45rem; min-height: 40px;
+  padding: .25rem .7rem .25rem .3rem; border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.1); color: #fff; border-radius: 999px;
+  cursor: pointer; font-size: .9rem; font-weight: 700;
+}
+.exo-profil-actif:hover { background: rgba(255,255,255,.2); }
+.exo-xp-mini { font-weight: 600; opacity: .75; font-size: .8rem; }
+.exo-avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%; font-size: 1rem; color: #fff;
+}
+.exo-avatar.grand { width: 56px; height: 56px; font-size: 1.8rem; background: var(--border); }
+
+/* ---------- Choix du profil ---------- */
+.exo-profils { display: flex; gap: .8rem; flex-wrap: wrap; margin: .6rem 0 1rem; }
+.exo-profil-carte {
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  min-width: 150px; min-height: 150px; padding: 1rem;
+  background: #fff; border: 2px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); cursor: pointer; color: var(--ink);
+}
+.exo-profil-carte:hover { border-color: var(--accent); transform: translateY(-2px); }
+.exo-profil-carte.nouveau { border-style: dashed; box-shadow: none; }
+.exo-profil-nom { font-weight: 800; font-size: 1.05rem; }
+.exo-profil-info { font-size: .8rem; color: var(--ink-soft); }
+
+/* ---------- Formulaire de profil ---------- */
+.exo-form label { display: block; margin: .2rem 0 .6rem; font-weight: 600; }
+.exo-form .exo-champ { margin-top: .2rem; }
+.exo-choix-emoji, .exo-choix-couleur { display: flex; gap: .35rem; flex-wrap: wrap; }
+.exo-pastille-choix {
+  width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--border);
+  background: #fff; cursor: pointer; font-size: 1.3rem;
+}
+.exo-pastille-choix.couleur { border-radius: 50%; }
+.exo-pastille-choix.on { border-color: var(--accent); transform: scale(1.08); }
+.exo-select {
+  min-height: 44px; padding: .4rem .6rem; border: 2px solid var(--border);
+  border-radius: 10px; background: #fff; font-size: 1rem; color: var(--ink);
+}
+
+/* ---------- Le jardin ---------- */
+.exo-arroser { font-size: 1.05rem; padding: .7rem 1.3rem; margin: .3rem 0 1rem; }
+.exo-jardin {
+  display: grid; gap: .7rem; margin-bottom: 1.2rem;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+.exo-plante {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .7rem .8rem; box-shadow: var(--shadow); cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.exo-plante:hover { transform: translateY(-2px); border-color: var(--accent); }
+.exo-plante.vierge { background: #f8fafc; box-shadow: none; }
+/* Une plante qui a soif : un liseré, pas une punition. */
+.exo-plante.assoiffee { border-color: #fbbf24; background: #fffbeb; }
+.exo-plante-haut { display: flex; align-items: center; justify-content: space-between; }
+.exo-pousse { font-size: 1.6rem; line-height: 1; }
+.exo-plante-nom { font-weight: 700; margin: .3rem 0 .35rem; font-size: .95rem; }
+.exo-plante-info { font-size: .78rem; color: var(--ink-soft); margin-top: .3rem; }
+
+/* ---------- Ceintures et jauges ---------- */
+.exo-belt {
+  display: inline-block; padding: .1rem .5rem; border-radius: 999px;
+  font-size: .72rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .04em; border: 1px solid rgba(15,23,42,.12);
+}
+.exo-belt i { font-style: normal; opacity: .8; }   /* le point « à entretenir » */
+.exo-comp-jauge {
+  display: block; height: 6px; background: var(--border); border-radius: 999px;
+  overflow: hidden;
+}
+.exo-comp-jauge i { display: block; height: 100%; background: var(--accent); }
+
+/* ---------- Le bilan de fin de série ---------- */
+.exo-recompenses {
+  margin: .8rem 0; padding: .8rem; background: #f8fafc;
+  border: 1px solid var(--border); border-radius: var(--radius); text-align: left;
+}
+.exo-gains { display: flex; gap: .8rem; justify-content: center; margin-bottom: .4rem; }
+.exo-xp, .exo-pieces {
+  font-weight: 800; font-size: 1.1rem; padding: .2rem .8rem; border-radius: 999px;
+}
+.exo-xp { background: var(--accent-soft); color: var(--accent); }
+.exo-pieces { background: #fef3c7; color: #b45309; }
+.exo-ceinture-neuve {
+  text-align: center; font-weight: 700; margin: .35rem 0; padding: .4rem;
+  background: #fff; border-radius: 8px;
+}
+.exo-comp-ligne {
+  display: flex; align-items: center; gap: .5rem; margin-top: .4rem; font-size: .88rem;
+}
+.exo-comp-nom { flex: 0 0 auto; }
+.exo-comp-ligne .exo-comp-jauge { flex: 1; }
+.exo-comp-score { color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+/* ---------- Sauvegarde ---------- */
+.exo-sauvegarde {
+  margin-top: 1.6rem; padding: .9rem 1.1rem; background: #fff;
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.exo-sauvegarde p { margin: .2rem 0 .5rem; font-size: .9rem; color: var(--ink-soft); }
+.exo-sauvegarde label.exo-btn { display: inline-flex; align-items: center; }
+.exo-rappel { color: #b45309 !important; font-weight: 700; }
+.exo-ok-mini { color: #15803d !important; }
+.exo-taille { font-size: .8rem !important; }
+.exo-confirm {
+  margin-top: .7rem; padding: .7rem .9rem; background: #fffbeb;
+  border: 1px solid #fbbf24; border-radius: 10px; font-size: .9rem;
+}

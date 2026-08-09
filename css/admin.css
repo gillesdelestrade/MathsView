@@ -1,0 +1,125 @@
+/* ===================================================================== */
+/* Page parent — ce qui lui est propre. Le reste vient de style.css et de */
+/* exos.css (cartes, boutons, ceintures, jauges).                        */
+/* ===================================================================== */
+
+.adm-content { max-width: 900px; }
+
+/* ---------- Écran de verrouillage ---------- */
+.adm-verrou {
+  max-width: 420px; margin: 3rem auto; padding: 1.6rem; text-align: center;
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.adm-cadenas { font-size: 2.4rem; }
+.adm-verrou h2 { margin: .3rem 0; }
+.adm-verrou p { color: var(--ink-soft); font-size: .92rem; }
+.adm-code {
+  display: block; width: 8rem; margin: .5rem auto; padding: .6rem;
+  font-size: 1.8rem; text-align: center; letter-spacing: .5em; text-indent: .5em;
+  border: 2px solid var(--border); border-radius: 10px; background: #fff;
+  color: var(--ink);
+}
+.adm-code:focus { outline: none; border-color: var(--accent); }
+.adm-msg { color: #b91c1c; font-weight: 700; min-height: 1.3em; font-size: .9rem; }
+.adm-verrou .exo-actions { justify-content: center; }
+.adm-oubli {
+  margin-top: 1rem; font-size: .78rem !important; color: var(--ink-soft);
+  border-top: 1px solid var(--border); padding-top: .6rem;
+}
+.adm-oubli code { background: #f1f5f9; padding: 0 .25rem; border-radius: 4px; }
+
+/* ---------- Onglets ---------- */
+.adm-onglets {
+  display: flex; gap: .4rem; margin: .2rem 0 1rem; flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.adm-onglet {
+  min-height: 44px; padding: .5rem 1rem; border: none; background: none;
+  cursor: pointer; font-size: .95rem; font-weight: 700; color: var(--ink-soft);
+  border-bottom: 3px solid transparent; margin-bottom: -1px;
+}
+.adm-onglet:hover { color: var(--ink); }
+.adm-onglet.on { color: var(--accent); border-bottom-color: var(--accent); }
+.adm-corps > .exo-carte { margin-bottom: 1rem; }
+
+/* ---------- Tableaux ---------- */
+.adm-table {
+  width: 100%; border-collapse: collapse; font-size: .88rem;
+  font-variant-numeric: tabular-nums;
+}
+.adm-table th {
+  text-align: left; padding: .35rem .5rem; font-size: .75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--ink-soft);
+  border-bottom: 1px solid var(--border);
+}
+.adm-table td { padding: .4rem .5rem; border-bottom: 1px solid var(--border); }
+.adm-table tbody tr { cursor: pointer; }
+.adm-table tbody tr:hover { background: #f8fafc; }
+.adm-table tbody tr.on { background: var(--accent-soft); }
+.adm-table tr.pale td { opacity: .5; }
+.adm-table tr.soif td { background: #fffbeb; }
+.adm-table td .exo-avatar { width: 22px; height: 22px; font-size: .8rem; vertical-align: middle; }
+.adm-perte { color: #b45309; font-style: normal; font-size: .85em; }
+.adm-archive { color: var(--ink-soft); font-size: .8em; }
+.adm-note { color: var(--ink-soft); font-size: .85rem; margin: .5rem 0 0; }
+
+/* ---------- Histogramme des 12 semaines ---------- */
+.adm-hist {
+  display: flex; align-items: flex-end; gap: .3rem; height: 130px;
+  margin-top: .6rem; padding-top: .4rem;
+}
+.adm-barre {
+  flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
+  align-items: center; height: 100%; gap: .25rem;
+}
+.adm-barre i {
+  display: block; width: 100%; min-height: 2px; background: var(--accent);
+  border-radius: 4px 4px 0 0; opacity: .85;
+}
+.adm-barre:hover i { opacity: 1; }
+.adm-barre span {
+  font-size: .62rem; color: var(--ink-soft); white-space: nowrap;
+  transform: rotate(-45deg); transform-origin: center; height: 1.2em;
+}
+
+/* ---------- Là où ça bloque ---------- */
+.adm-bloc-ligne {
+  display: flex; align-items: center; gap: .6rem; margin: .45rem 0; font-size: .9rem;
+}
+.adm-bloc-nom { flex: 0 0 40%; font-weight: 600; }
+.adm-bloc-ligne .exo-comp-jauge { flex: 1; height: 8px; }
+
+/* ---------- Les erreurs rejouées ---------- */
+.adm-erreur { border-top: 1px solid var(--border); padding: .6rem 0; }
+.adm-erreur-tete {
+  font-size: .75rem; color: var(--ink-soft); text-transform: uppercase;
+  letter-spacing: .03em;
+}
+.adm-erreur-enonce { margin: .2rem 0; }
+.adm-erreur-rep { font-size: .9rem; }
+.adm-erreur-rep b.ko { color: #b91c1c; }
+.adm-erreur-rep b.ok { color: #15803d; }
+
+/* ---------- Profils ---------- */
+.adm-profil-tete { display: flex; align-items: center; gap: .8rem; }
+.adm-form {
+  display: grid; gap: .6rem; margin-top: .8rem;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+.adm-champ { display: flex; flex-direction: column; gap: .2rem; font-size: .8rem; }
+.adm-champ span { font-weight: 700; color: var(--ink-soft); }
+.exo-champ.court { max-width: 5rem; font-size: 1.3rem; text-align: center; }
+.adm-couleur {
+  width: 100%; min-height: 44px; padding: 2px; border: 2px solid var(--border);
+  border-radius: 10px; background: #fff; cursor: pointer;
+}
+
+.exo-btn.danger { border-color: #fecaca; color: #b91c1c; background: #fff; }
+.exo-btn.danger:hover { background: #fee2e2; }
+
+@media (max-width: 620px) {
+  .adm-table { font-size: .8rem; }
+  .adm-table th:nth-child(5), .adm-table td:nth-child(5) { display: none; }
+  .adm-bloc-nom { flex-basis: 50%; }
+}

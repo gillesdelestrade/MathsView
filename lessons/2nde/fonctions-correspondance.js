@@ -25,6 +25,7 @@ MathsView.register({
   level: '2nde',
   category: 'analyse',
   subcategory: 'Fonctions',
+  exercices: ['fn-image', 'fn-domaine'],
   theme: 'Fonctions — image, tableau de valeurs et courbe représentative',
   description:
     'Une <strong>fonction</strong> \\(f\\) est une machine à transformer les nombres : ' +

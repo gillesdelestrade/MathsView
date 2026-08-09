@@ -33,6 +33,7 @@ MathsView.register({
   level: '2nde',
   category: 'analyse',
   subcategory: 'Fonctions',
+  exercices: ['fn-parite'],
   theme: 'Fonctions — parité : f(−x) = f(x), f(−x) = −f(x) et les symétries de la courbe',
   description:
     'Comparer \\(f(-x)\\) et \\(f(x)\\), c\'est se demander ce que devient l\'image ' +

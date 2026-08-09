@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MathsView — Entraînement</title>
+  <link rel="stylesheet" href="vendor/jsxgraph.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/exos.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">△</span>
+      <div>
+        <h1>Entraînement</h1>
+        <p class="tagline">Des exercices générés, avec leur correction</p>
+      </div>
+    </div>
+    <div class="filters">
+      <span id="profil-actif"></span>
+      <a class="exo-lien-lecons" href="index.html">← Retour aux leçons</a>
+    </div>
+  </header>
+
+  <main class="content exo-content">
+    <section id="accueil"></section>
+    <section id="session" hidden></section>
+  </main>
+
+  <!-- Bibliothèques (locales, hors-ligne) -->
+  <script src="vendor/jsxgraphcore.js"></script>
+  <script src="vendor/tex-svg.js" id="MathJax-script"></script>
+
+  <!-- Le moteur des leçons : les générateurs « Fonctions » consomment son pool.
+       Rien n'est démarré ici (pas de MathsView.start()). -->
+  <script src="js/app.js"></script>
+  <script src="js/fonctions-base.js"></script>
+
+  <!-- Le module exercices -->
+  <script src="js/alea.js"></script>
+  <script src="js/reponse.js"></script>
+  <script src="js/profils.js"></script>
+  <script src="js/progression.js"></script>
+  <script src="js/exos-base.js"></script>
+  <script src="exos/catalogue.js"></script>
+
+  <!-- Les générateurs. `outils.js` d'abord : les fn-*.js s'en servent. -->
+  <script src="exos/fonctions/outils.js"></script>
+  <script src="exos/fonctions/fn-image.js"></script>
+  <script src="exos/fonctions/fn-domaine.js"></script>
+  <script src="exos/fonctions/fn-resolution.js"></script>
+  <script src="exos/fonctions/fn-parite.js"></script>
+  <script src="exos/2nde/ensembles-nombres.js"></script>
+  <script src="exos/2nde/intervalles.js"></script>
+  <script src="exos/2nde/encadrement-decimal.js"></script>
+  <script src="exos/2nde/valeur-absolue.js"></script>
+
+  <script>
+  /* ---------------------------------------------------------------------
+     La page. Trois écrans, et un routage minimal :
+        #profils        choisir (ou créer) un profil
+        #accueil        le jardin, et la liste des entraînements
+        #exo/<id>       une série sur un générateur
+        #chap/<code>    une série mixte sur tout un chapitre
+        #revision       « Arroser mon jardin » : le moteur choisit les
+                        compétences qui ont le plus fané
+     --------------------------------------------------------------------- */
+  (function () {
+    'use strict';
+
+    var NIVEAUX = { '6eme': '6ème', '5eme': '5ème', '4eme': '4ème', '3eme': '3ème',
+                    '2nde': '2nde', '1ere': '1ère', 'terminale': 'Terminale' };
+    var BADGE = { '6eme': 'n6', '5eme': 'n5', '4eme': 'n4', '3eme': 'n3',
+                  '2nde': 'n2', '1ere': 'n1', 'terminale': 'nt' };
+    var CHAPITRES = { fonctions: 'Fonctions', nombres: 'Nombres et ensembles' };
+    // L'état de la plante, de la graine à la fleur.
+    var POUSSE = ['🌰', '🌱', '🌿', '🌷', '🌻'];
+
+    var accueil = document.getElementById('accueil');
+    var session = document.getElementById('session');
+    var bandeauProfil = document.getElementById('profil-actif');
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function el(tag, cls, html) {
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (html !== undefined) e.innerHTML = html;
+      return e;
+    }
+
+    /* ================================================================= */
+    /* Le bandeau du haut : qui travaille                                */
+    /* ================================================================= */
+    function majBandeau() {
+      var id = MathsProfils.courant();
+      var p = id && MathsProfils.profil(id);
+      if (!p) { bandeauProfil.innerHTML = ''; return; }
+      var r = MathsProgression.resume(id);
+      bandeauProfil.innerHTML =
+        '<button class="exo-profil-actif" id="btn-changer">' +
+          '<span class="exo-avatar" style="background:' + p.couleur + '">' +
+            p.emoji + '</span>' + esc(p.prenom) +
+          '<span class="exo-xp-mini">' + r.xp + ' XP</span>' +
+        '</button>';
+      document.getElementById('btn-changer').onclick = function () {
+        location.hash = 'profils';
+      };
+    }
+
+    /* ================================================================= */
+    /* Écran « profils »                                                 */
+    /* ================================================================= */
+    function rendreProfils() {
+      session.hidden = true;
+      accueil.hidden = false;
+      accueil.innerHTML = '';
+
+      // Un profil archivé reste dans l'admin, mais n'apparaît plus ici.
+      var liste = MathsProfils.profils().filter(function (p) { return !p.archive; });
+      accueil.appendChild(el('div', 'exo-intro',
+        '<h2>' + (liste.length ? 'Qui travaille ?' : 'Bienvenue !') + '</h2>' +
+        '<p>' + (liste.length
+          ? 'Chaque profil garde sa propre progression : ses ceintures, son jardin, ses points.'
+          : 'Commence par créer un profil. Il gardera ta progression sur cet ordinateur.') +
+        '</p>'));
+
+      var grille = el('div', 'exo-profils');
+      liste.forEach(function (p) {
+        var r = MathsProgression.resume(p.id);
+        var c = el('button', 'exo-profil-carte');
+        c.innerHTML =
+          '<span class="exo-avatar grand" style="background:' + p.couleur + '">' +
+            p.emoji + '</span>' +
+          '<span class="exo-profil-nom">' + esc(p.prenom) + '</span>' +
+          '<span class="exo-profil-info">' + r.xp + ' XP · ' +
+            r.travaillees + '/' + r.total + ' compétences</span>';
+        c.onclick = function () {
+          MathsProfils.setCourant(p.id);
+          location.hash = 'accueil';
+        };
+        grille.appendChild(c);
+      });
+
+      var plus = el('button', 'exo-profil-carte nouveau',
+        '<span class="exo-avatar grand">+</span>' +
+        '<span class="exo-profil-nom">Nouveau profil</span>');
+      plus.onclick = function () { formulaireProfil(); };
+      grille.appendChild(plus);
+      accueil.appendChild(grille);
+
+      if (liste.length) accueil.appendChild(blocSauvegarde());
+    }
+
+    function formulaireProfil() {
+      var boite = el('div', 'exo-carte exo-form');
+      boite.innerHTML =
+        '<div class="props-label">Nouveau profil</div>' +
+        '<label>Prénom <input id="np-prenom" class="exo-champ" maxlength="20"></label>' +
+        '<div class="props-label">Emoji</div><div id="np-emojis" class="exo-choix-emoji"></div>' +
+        '<div class="props-label">Couleur</div><div id="np-couleurs" class="exo-choix-couleur"></div>' +
+        '<div class="props-label">Niveau</div>' +
+        '<select id="np-niveau" class="exo-select"></select>';
+      accueil.appendChild(boite);
+
+      var choix = { emoji: MathsProfils.emojis[0], couleur: MathsProfils.couleurs[0] };
+      var ze = document.getElementById('np-emojis');
+      MathsProfils.emojis.forEach(function (e, i) {
+        var b = el('button', 'exo-pastille-choix' + (i === 0 ? ' on' : ''), e);
+        b.onclick = function () {
+          choix.emoji = e;
+          Array.prototype.forEach.call(ze.children, function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+        };
+        ze.appendChild(b);
+      });
+      var zc = document.getElementById('np-couleurs');
+      MathsProfils.couleurs.forEach(function (c, i) {
+        var b = el('button', 'exo-pastille-choix couleur' + (i === 0 ? ' on' : ''), '');
+        b.style.background = c;
+        b.onclick = function () {
+          choix.couleur = c;
+          Array.prototype.forEach.call(zc.children, function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+        };
+        zc.appendChild(b);
+      });
+      var sel = document.getElementById('np-niveau');
+      Object.keys(NIVEAUX).forEach(function (k) {
+        var o = document.createElement('option');
+        o.value = k; o.textContent = NIVEAUX[k];
+        if (k === '2nde') o.selected = true;
+        sel.appendChild(o);
+      });
+
+      var actions = el('div', 'exo-actions');
+      var ok = el('button', 'exo-btn primaire', 'Créer ce profil');
+      ok.onclick = function () {
+        var prenom = (document.getElementById('np-prenom').value || '').trim();
+        if (!prenom) { document.getElementById('np-prenom').focus(); return; }
+        var p = MathsProfils.creer({
+          prenom: prenom, emoji: choix.emoji, couleur: choix.couleur,
+          niveau: sel.value
+        });
+        MathsProfils.setCourant(p.id);
+        location.hash = 'accueil';
+        router();
+      };
+      actions.appendChild(ok);
+      var annule = el('button', 'exo-btn', 'Annuler');
+      annule.onclick = rendreProfils;
+      actions.appendChild(annule);
+      boite.appendChild(actions);
+      document.getElementById('np-prenom').focus();
+    }
+
+    /* ================================================================= */
+    /* Écran d'accueil : le jardin, puis les entraînements               */
+    /* ================================================================= */
+    function rendreAccueil() {
+      var id = MathsProfils.courant();
+      if (!id || !MathsProfils.profil(id)) { rendreProfils(); return; }
+
+      session.hidden = true;
+      accueil.hidden = false;
+      accueil.innerHTML = '';
+      majBandeau();
+
+      var p = MathsProfils.profil(id);
+      var jardin = MathsProgression.jardin(id);
+      var r = MathsProgression.resume(id);
+
+      accueil.appendChild(el('div', 'exo-intro',
+        '<h2>Bonjour ' + esc(p.prenom) + ' !</h2>' +
+        '<p>' + (r.travaillees === 0
+          ? 'Ton jardin est encore vide : chaque compétence travaillée y fait pousser une plante.'
+          : 'Ton jardin compte <b>' + r.travaillees + '</b> plante' +
+            (r.travaillees > 1 ? 's' : '') + ' sur ' + r.total + '.' +
+            (r.aArroser ? ' <b>' + r.aArroser + '</b> ' +
+              (r.aArroser > 1 ? 'ont' : 'a') + ' besoin d\'être arrosée' +
+              (r.aArroser > 1 ? 's' : '') + '.'
+             : ' Tout est bien arrosé.')) + '</p>'));
+
+      // Le bouton principal de la page (SPEC §5.3).
+      var arroser = el('button', 'exo-btn primaire exo-arroser',
+        '💧 Arroser mon jardin');
+      arroser.onclick = function () { location.hash = 'revision'; };
+      accueil.appendChild(arroser);
+
+      /* --- le jardin ------------------------------------------------- */
+      accueil.appendChild(el('div', 'home-cat', 'Mon jardin'));
+      var g = el('div', 'exo-jardin');
+      jardin.slice().sort(function (a, b) { return b.besoin - a.besoin; })
+        .forEach(function (c) {
+          var carte = el('div', 'exo-plante' + (c.jamais ? ' vierge' : '') +
+                                (c.besoin > 5 ? ' assoiffee' : ''));
+          carte.innerHTML =
+            '<div class="exo-plante-haut">' +
+              '<span class="exo-pousse">' + POUSSE[c.pousse] + '</span>' +
+              '<span class="exo-belt" style="background:' + c.ceinture.couleur +
+                ';color:' + c.ceinture.encre + '">' + c.ceinture.nom +
+                (c.ceinture.aEntretenir ? ' <i title="à entretenir">•</i>' : '') +
+              '</span>' +
+            '</div>' +
+            '<div class="exo-plante-nom">' + esc(c.libelle) + '</div>' +
+            '<div class="exo-comp-jauge"><i style="width:' + c.score + '%"></i></div>' +
+            '<div class="exo-plante-info">' +
+              (c.jamais ? 'jamais travaillée'
+                        : c.score + '/100 · palier ' + c.palier + ' · ' +
+                          (c.jours === 0 ? 'aujourd\'hui' :
+                           c.jours === 1 ? 'hier' : 'il y a ' + c.jours + ' jours')) +
+            '</div>';
+          carte.onclick = function () { location.hash = 'comp/' + c.code; };
+          g.appendChild(carte);
+        });
+      accueil.appendChild(g);
+
+      /* --- les entraînements ----------------------------------------- */
+      var gens = MathsExos.liste();
+      Object.keys(NIVEAUX).forEach(function (niv) {
+        var duNiveau = gens.filter(function (x) { return x.level === niv; });
+        if (!duNiveau.length) return;
+
+        var t = el('h3', 'home-level',
+          '<span class="badge ' + BADGE[niv] + '">' + NIVEAUX[niv] + '</span>');
+        accueil.appendChild(t);
+
+        var chaps = [];
+        duNiveau.forEach(function (x) {
+          var c = MathsExos.competence(x.competence).chapitre || 'autres';
+          if (chaps.indexOf(c) < 0) chaps.push(c);
+        });
+        chaps.forEach(function (c) {
+          var dedans = duNiveau.filter(function (x) {
+            return (MathsExos.competence(x.competence).chapitre || 'autres') === c;
+          });
+          var ct = el('div', 'home-cat', esc(CHAPITRES[c] || c) +
+            (dedans.length > 1
+              ? ' <button class="exo-mixte" data-chap="' + esc(c) + '">' +
+                'Série mixte (10 questions)</button>' : ''));
+          accueil.appendChild(ct);
+
+          var grille = el('div', 'cards-grid');
+          dedans.forEach(function (x) {
+            var m = MathsProgression.maitrise(id, x.competence);
+            var cei = MathsProgression.ceintureAffichee(m);
+            var carte = el('div', 'card exo-card');
+            carte.onclick = function () { location.hash = 'exo/' + x.id; };
+            carte.innerHTML =
+              '<span class="cat-chip calcul">' +
+                esc(MathsExos.competence(x.competence).libelle) + '</span>' +
+              '<h3>' + esc(x.titre) + '</h3>' +
+              '<p class="exo-paliers">' +
+                '<span class="exo-belt" style="background:' + cei.couleur +
+                  ';color:' + cei.encre + '">' + cei.nom + '</span> ' +
+                (m.tentatives ? Math.round(m.score) + '/100 · palier ' + m.palier
+                              : 'jamais travaillé') + '</p>';
+            grille.appendChild(carte);
+          });
+          accueil.appendChild(grille);
+        });
+      });
+
+      Array.prototype.forEach.call(accueil.querySelectorAll('.exo-mixte'), function (b) {
+        b.onclick = function (e) {
+          e.stopPropagation();
+          location.hash = 'chap/' + b.dataset.chap;
+        };
+      });
+
+      accueil.appendChild(blocSauvegarde());
+    }
+
+    /* ================================================================= */
+    /* Pied de page : le rappel de sauvegarde, et la porte de l'espace    */
+    /* parent — où vivent l'export, l'import et le suivi (§7.5, §9).      */
+    /* ================================================================= */
+    function blocSauvegarde() {
+      var jours = MathsProfils.joursDepuisExport();
+      var bloc = el('div', 'exo-sauvegarde');
+      bloc.innerHTML =
+        '<div class="props-label">Sauvegarde</div>' +
+        '<p>Toute la progression vit dans ce navigateur : <b>effacer les données ' +
+        'du site l\'effacerait aussi</b>. L\'export se fait dans l\'espace parent.</p>' +
+        (jours === null
+          ? '<p class="exo-rappel">Aucune sauvegarde exportée pour l\'instant.</p>'
+          : jours > 30
+            ? '<p class="exo-rappel">Dernière sauvegarde il y a ' + jours + ' jours.</p>'
+            : '<p class="exo-ok-mini">Dernière sauvegarde il y a ' + jours + ' jour' +
+              (jours > 1 ? 's' : '') + '.</p>');
+      var act = el('div', 'exo-actions');
+      var lien = el('a', 'exo-btn', '🔒 Espace parent');
+      lien.href = 'admin.html';
+      act.appendChild(lien);
+      bloc.appendChild(act);
+      return bloc;
+    }
+
+    function rendreAccueilOuProfils() {
+      if (MathsProfils.courant()) rendreAccueil(); else rendreProfils();
+    }
+
+    /* ================================================================= */
+    /* Les séries                                                        */
+    /* ================================================================= */
+    function lancer(ids, titre, nb) {
+      accueil.hidden = true;
+      session.hidden = false;
+      session.innerHTML = '';
+      session.appendChild(el('div', 'exo-entete', '<h2>' + esc(titre) + '</h2>'));
+      var boite = el('div');
+      session.appendChild(boite);
+      MathsExos.monter(boite, {
+        generateurs: ids, nb: nb || 8, titre: titre,
+        profil: MathsProfils.courant(),
+        surFin: function () { location.hash = 'accueil'; }
+      });
+      window.scrollTo(0, 0);
+    }
+
+    function generateursDe(codes) {
+      var out = [];
+      codes.forEach(function (c) {
+        MathsExos.parCompetence(c).forEach(function (g) { out.push(g.id); });
+      });
+      return out;
+    }
+
+    /* ================================================================= */
+    /* Routage                                                           */
+    /* ================================================================= */
+    function router() {
+      var h = location.hash.replace(/^#/, '');
+      majBandeau();
+
+      if (h === 'profils') { rendreProfils(); return; }
+      if (!MathsProfils.courant() || !MathsProfils.profil(MathsProfils.courant())) {
+        rendreProfils(); return;
+      }
+
+      var m = /^exo\/(.+)$/.exec(h);
+      if (m) {
+        var g = MathsExos.get(m[1]);
+        if (g) { lancer([g.id], g.titre, 8); return; }
+      }
+      m = /^comp\/(.+)$/.exec(h);
+      if (m) {
+        var ids = generateursDe([m[1]]);
+        if (ids.length) { lancer(ids, MathsExos.competence(m[1]).libelle, 8); return; }
+      }
+      m = /^chap\/(.+)$/.exec(h);
+      if (m) {
+        var dedans = MathsExos.liste().filter(function (x) {
+          return (MathsExos.competence(x.competence).chapitre || 'autres') === m[1];
+        });
+        if (dedans.length) {
+          lancer(dedans.map(function (x) { return x.id; }),
+                 CHAPITRES[m[1]] || m[1], 10);
+          return;
+        }
+      }
+      if (h === 'revision') {
+        var codes = MathsProgression.aReviser(MathsProfils.courant(), 3);
+        var gens = generateursDe(codes);
+        if (gens.length) { lancer(gens, 'Arrosage : ' + codes.map(function (c) {
+          return MathsExos.competence(c).libelle;
+        }).join(', '), 9); return; }
+      }
+      rendreAccueil();
+    }
+
+    window.addEventListener('hashchange', router);
+    router();
+  })();
+  </script>
+</body>
+</html>

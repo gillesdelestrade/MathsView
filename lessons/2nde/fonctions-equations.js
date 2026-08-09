@@ -30,6 +30,7 @@ MathsView.register({
   level: '2nde',
   category: 'analyse',
   subcategory: 'Fonctions',
+  exercices: ['fn-resolution'],
   theme: 'Fonctions — résoudre une équation ou une inéquation, graphiquement et par le calcul',
   description:
     'Résoudre <strong>\\(f(x)=k\\)</strong>, c\'est chercher tous les nombres \\(x\\) dont ' +

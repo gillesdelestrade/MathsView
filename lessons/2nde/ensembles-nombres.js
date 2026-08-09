@@ -29,6 +29,7 @@ MathsView.register({
   level: '2nde',
   category: 'calcul',
   subcategory: 'Ensembles de nombres',
+  exercices: ['ens-nombres'],
   theme: 'Nombres — ℕ, ℤ, 𝔻, ℚ, ℝ : emboîtement et droite graduée',
   description:
     'Les nombres sont rangés dans des ensembles <strong>emboîtés</strong> : ' +

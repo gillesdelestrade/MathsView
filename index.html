@@ -6,6 +6,7 @@
   <title>MathsView — Illustrations de cours de mathématiques</title>
   <link rel="stylesheet" href="vendor/jsxgraph.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/exos.css">
 </head>
 <body>
   <header class="topbar">
@@ -59,6 +60,12 @@
   <!-- Pool de fonctions de référence, partagé par les leçons « Fonctions ».
        À charger APRÈS le moteur et AVANT le catalogue. -->
   <script src="js/fonctions-base.js"></script>
+  <!-- Module exercices : seul le moteur est chargé ici, pour que les leçons
+       qui déclarent un champ `exercices` puissent proposer un entraînement
+       (SPEC §11.2). Les générateurs, eux, ne sont chargés que par
+       exercices.html. -->
+  <script src="js/exos-base.js"></script>
+  <script src="exos/catalogue.js"></script>
 
   <!-- Catalogue : ajoute ici chaque nouvelle illustration.
        L'ordre ci-dessous est celui des cartes de l'accueil : on le garde par

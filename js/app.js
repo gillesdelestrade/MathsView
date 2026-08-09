@@ -319,6 +319,7 @@
     document.getElementById('lesson-title').textContent = lesson.title;
     document.getElementById('lesson-desc').innerHTML = lesson.description || '';
     document.getElementById('lesson-notes').innerHTML = lesson.notes || '';
+    lienExercices(lesson);
 
     // (Re)création du tableau JSXGraph
     freeCurrentBoard();
@@ -366,6 +367,21 @@
     typeset();
     highlightMenu();
     window.scrollTo(0, 0);
+  }
+
+  // Seule couture avec le module exercices (SPEC §11.2). Une leçon qui ne
+  // déclare pas de champ `exercices` fonctionne exactement comme avant, et
+  // MathsExos absent n'y change rien non plus.
+  function lienExercices(lesson) {
+    const vieux = document.getElementById('lesson-exos');
+    if (vieux) vieux.remove();
+    if (!global.MathsExos || !lesson.exercices || !lesson.exercices.length) return;
+    const a = document.createElement('a');
+    a.id = 'lesson-exos';
+    a.className = 'lecon-exos';
+    a.href = 'exercices.html#exo/' + lesson.exercices[0];
+    a.textContent = '✏️ S\'entraîner sur cette notion';
+    document.getElementById('lesson-notes').insertAdjacentElement('beforebegin', a);
   }
 
   function freeCurrentBoard() {
