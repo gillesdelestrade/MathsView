@@ -28,5 +28,39 @@ MathsExos.catalogue = [
   { code: 'encadrement',  libelle: 'Encadrement décimal',       niveau: '2nde',
     chapitre: 'nombres', prerequis: ['ensembles'] },
   { code: 'val-abs',      libelle: 'Valeur absolue et distance', niveau: '2nde',
-    chapitre: 'nombres', prerequis: ['intervalles'] }
+    chapitre: 'nombres', prerequis: ['intervalles'] },
+
+  /* --- 6ème -------------------------------------------------------------- */
+  { code: 'divisibilite', libelle: 'Critères de divisibilité', niveau: '6eme',
+    chapitre: 'nombres-6e', prerequis: [] },
+  { code: 'fractions',    libelle: 'Fractions',                niveau: '6eme',
+    chapitre: 'nombres-6e', prerequis: ['divisibilite'] },
+  { code: 'mult-div-10',  libelle: 'Multiplier et diviser par 10', niveau: '6eme',
+    chapitre: 'nombres-6e', prerequis: [] },
+  { code: 'aires',        libelle: 'Périmètres et aires',      niveau: '6eme',
+    chapitre: 'grandeurs', prerequis: [] },
+  { code: 'conversions',  libelle: 'Conversions d\'unités',    niveau: '6eme',
+    chapitre: 'grandeurs', prerequis: ['mult-div-10'] },
+
+  /* --- 5ème -------------------------------------------------------------- */
+  { code: 'relatifs',       libelle: 'Nombres relatifs',       niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: [] },
+  { code: 'priorites',      libelle: 'Priorités opératoires',  niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: [] },
+  { code: 'distributivite', libelle: 'Distributivité',         niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: ['priorites'] },
+
+  /* --- 4ème -------------------------------------------------------------- */
+  { code: 'eq1',       libelle: 'Équations du 1er degré', niveau: '4eme',
+    chapitre: 'litteral', prerequis: ['relatifs'] },
+  { code: 'pythagore', libelle: 'Théorème de Pythagore',  niveau: '4eme',
+    chapitre: 'geometrie', prerequis: [] },
+
+  /* --- 3ème -------------------------------------------------------------- */
+  { code: 'identites', libelle: 'Identités remarquables', niveau: '3eme',
+    chapitre: 'litteral', prerequis: ['distributivite'] },
+  { code: 'thales',    libelle: 'Théorème de Thalès',     niveau: '3eme',
+    chapitre: 'geometrie', prerequis: ['fractions'] },
+  { code: 'trigo',     libelle: 'Trigonométrie',          niveau: '3eme',
+    chapitre: 'geometrie', prerequis: ['pythagore'] }
 ];

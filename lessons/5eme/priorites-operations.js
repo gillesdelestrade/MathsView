@@ -31,6 +31,7 @@ MathsView.register({
   level: '5eme',
   category: 'calcul',
   subcategory: 'Enchaînement d\'opérations',
+  exercices: ['priorites'],
   theme: 'Priorités opératoires — parenthèses, puis × et ÷, puis + et −',
   description:
     'Dans un calcul à plusieurs opérations, on ne calcule <strong>pas</strong> dans ' +

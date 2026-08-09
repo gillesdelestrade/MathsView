@@ -21,6 +21,7 @@ MathsView.register({
   level: '6eme',
   category: 'calcul',
   subcategory: 'Fractions',
+  exercices: ['fractions'],
   theme: 'Nombres — fractions égales',
   description:
     'Deux fractions différentes peuvent désigner le <strong>même nombre</strong>. ' +

@@ -21,6 +21,7 @@ MathsView.register({
   title: 'Cosinus, sinus, tangente',
   level: '3eme',
   category: 'geometrie',
+  exercices: ['trigo'],
   theme: 'Trigonométrie — cosinus, sinus, tangente dans le triangle rectangle',
   description:
     'Dans un triangle rectangle, les rapports entre les côtés ne dépendent que ' +

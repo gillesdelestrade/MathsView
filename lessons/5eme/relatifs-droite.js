@@ -39,6 +39,7 @@ MathsView.register({
   level: '5eme',
   category: 'calcul',
   subcategory: 'Nombres relatifs',
+  exercices: ['relatifs'],
   theme: 'Nombres relatifs — opposé, addition et soustraction sur une droite graduée',
   description:
     'Un nombre relatif, c\'est un <strong>point</strong> sur une droite graduée ; ' +

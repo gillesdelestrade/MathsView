@@ -37,6 +37,7 @@ MathsView.register({
   level: '5eme',
   category: 'algebre',
   subcategory: 'Calcul littéral',
+  exercices: ['distributivite'],
   theme: 'Calcul littéral — k(a + b) = ka + kb, prouvé par les aires',
   description:
     'Un rectangle de largeur <strong>k</strong> et de longueur <strong>a + b</strong> ' +

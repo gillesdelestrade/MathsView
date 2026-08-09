@@ -29,6 +29,7 @@ MathsView.register({
   level: '6eme',
   category: 'calcul',
   subcategory: 'Nombres entiers',
+  exercices: ['divisibilite'],
   theme: 'Nombres entiers — reconnaître les multiples de 2, 3, 4, 5, 9 et 10',
   description:
     'Un <strong>critère de divisibilité</strong>, c\'est un moyen de savoir si un nombre ' +

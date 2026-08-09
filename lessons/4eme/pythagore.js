@@ -7,6 +7,7 @@ MathsView.register({
   title: 'Théorème de Pythagore',
   level: '4eme',
   category: 'geometrie',
+  exercices: ['pythagore'],
   theme: 'Géométrie — triangle rectangle',
   description:
     'Dans un triangle rectangle, l\'aire du grand carré (sur l\'hypoténuse) est ' +

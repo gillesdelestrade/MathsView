@@ -19,6 +19,7 @@ MathsView.register({
   title: 'Identités remarquables',
   level: '3eme',
   category: 'algebre',
+  exercices: ['identites'],
   theme: 'Calcul littéral — preuve des identités par les aires',
   description:
     'Chaque identité remarquable se lit sur une figure : l\'aire d\'un grand carré ' +

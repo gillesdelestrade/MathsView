@@ -26,6 +26,7 @@ MathsView.register({
   level: '6eme',
   category: 'calcul',
   subcategory: 'Fractions',
+  exercices: ['fractions'],
   theme: 'Nombres — opérations sur les fractions',
   description:
     'Choisis l\'opération, puis les deux fractions.' +

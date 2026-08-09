@@ -26,6 +26,7 @@ MathsView.register({
   level: '6eme',
   category: 'calcul',
   subcategory: 'Nombres décimaux',
+  exercices: ['mult-div-10'],
   theme: 'Nombres décimaux — multiplier et diviser par 10, 100, 1000 ; 0,1 ; 0,01 ; 0,001',
   description:
     'Pour multiplier ou diviser un nombre décimal par 10, 100, 1000 (ou par ' +
