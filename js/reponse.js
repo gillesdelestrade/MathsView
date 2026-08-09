@@ -54,6 +54,8 @@
     if (/^\d+(\.\d+)?$/.test(t)) return parseFloat(t);
     var m = /^√(\d+(\.\d+)?)$/.exec(t);              // √5
     if (m) return Math.sqrt(parseFloat(m[1]));
+    m = /^∛(\d+(\.\d+)?)$/.exec(t);                  // ∛5
+    if (m) return Math.cbrt(parseFloat(m[1]));
     if (/^(π|pi)$/i.test(t)) return Math.PI;
     m = /^(\d+(\.\d+)?)(π|pi)$/i.exec(t);            // 2π
     if (m) return parseFloat(m[1]) * Math.PI;

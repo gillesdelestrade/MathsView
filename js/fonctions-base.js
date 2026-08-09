@@ -149,6 +149,13 @@
   }
 
   // Une borne d'intervalle : les infinis s'écrivent, le reste se lit.
+  // L'écriture exacte d'une racine cubique : « 2 » si le cube est parfait,
+  // « ∛5 » ou « −∛5 » sinon (le signe sort du radical, comme au tableau).
+  function cubeTxt(k, r) {
+    if (exact(r)) return nb(r);
+    return k < 0 ? '−∛' + nb(-k) : '∛' + nb(k);
+  }
+
   function borneTxt(v) {
     return v === -Infinity ? '−∞' : v === Infinity ? '+∞' : nb(v);
   }
@@ -262,6 +269,48 @@
       remarque: 'Cette fonction associe à chaque nombre… ce même nombre. Sa courbe ' +
                 'est la droite d\'équation y = x, celle qui coupe le repère en deux ' +
                 '(la « première bissectrice »).'
+    },
+    {
+      key: 'oppose',
+      nom: 'La fonction opposé',
+      court: '−x',
+      couleur: '#e11d48',
+      expr: function () { return '−x'; },
+      tex:  function () { return '-x'; },
+      f:    function (x) { return -x; },
+      ensemble: 'ℝ',
+      courbe: 'une droite qui descend, passant par l\'origine',
+      /* Pour un x positif, « −3 » se suffit à lui-même ; c'est pour un x négatif
+         que la deuxième étape apprend quelque chose : −(−3) = 3. */
+      calcul: function (x) {
+        var e = ['−' + par(x)];
+        if (x < 0) e.push(nb(-x));
+        return e;
+      },
+      oppose: function () { return ['−(−x)', 'x']; },
+      antec: function (k) { return { sols: [{ v: -k, txt: nb(-k) }] }; },
+      sommets: function () { return []; },
+      /* C'est LA fonction qui fait changer le sens d'une inégalité : diviser
+         par −1, c'est prendre les opposés, et l'ordre s'inverse. Tout l'intérêt
+         de la faire figurer à part de « ax + b ». */
+      etapes: function (rel, k) {
+        var e = ['Pour isoler x, on prend les <b>opposés</b> des deux membres ' +
+                 '(autrement dit, on divise par −1).'];
+        if (rel === '=') {
+          e.push('−x = ' + nb(k) + ' équivaut à <b>x = ' + nb(-k) + '</b>.');
+        } else {
+          e.push('Prendre les opposés <b>renverse l\'ordre</b> : sur la droite ' +
+                 'graduée, ce qui était à droite passe à gauche. Le sens de ' +
+                 'l\'inégalité <b>change</b>.');
+          e.push('−x ' + relHtml(rel) + ' ' + nb(k) + ' équivaut donc à <b>x ' +
+                 relHtml(retourne(rel)) + ' ' + nb(-k) + '</b>.');
+        }
+        return e;
+      },
+      remarque: 'C\'est la seule fonction de référence <b>décroissante sur ℝ tout ' +
+                'entier</b> : plus x augmente, plus −x diminue. C\'est aussi elle qui ' +
+                'explique pourquoi une inégalité change de sens quand on multiplie ' +
+                'ou divise par un nombre négatif.'
     },
     {
       key: 'affine',
@@ -433,6 +482,39 @@
                 'Elle monte vite : f(5) = 25.'
     },
     {
+      key: 'cube',
+      nom: 'La fonction cube',
+      court: 'x³',
+      couleur: '#0891b2',
+      expr: function () { return 'x³'; },
+      tex:  function () { return 'x^{3}'; },
+      f:    function (x) { return x * x * x; },
+      ensemble: 'ℝ',
+      courbe: 'une courbe en S, symétrique par rapport à l\'origine',
+      calcul: function (x) { return [par(x) + '³', nb(x * x * x)]; },
+      /* (−x)³ = −x³ : la fonction est impaire. On ne fournit ici que le calcul
+         à MONTRER — le verdict, lui, est constaté par parite(). */
+      oppose: function () { return ['(−x)³', '−x³']; },
+      /* Tout réel a exactement UN antécédent par la fonction cube (elle est
+         strictement croissante sur ℝ), et son écriture exacte est une racine
+         cubique dès que k n'est pas un cube parfait. */
+      antec: function (k) {
+        var r = Math.cbrt(k);
+        return { sols: [{ v: r, txt: cubeTxt(k, r) }] };
+      },
+      etapes: function (rel, k) {
+        return ['Contrairement au carré, la fonction cube <b>range les nombres dans ' +
+                'le même ordre</b> que x, et cela sur ℝ tout entier : elle est ' +
+                'strictement croissante.',
+                'On peut donc « défaire » le cube <b>sans changer le sens</b> de la ' +
+                'relation : x³ ' + relHtml(rel) + ' ' + nb(k) + ' équivaut à <b>x ' +
+                relHtml(rel) + ' ' + cubeTxt(k, Math.cbrt(k)) + '</b>.'];
+      },
+      remarque: 'Le cube garde le signe : le cube d\'un négatif est négatif. C\'est ' +
+                'ce qui la distingue de la fonction carré, ce qui la rend impaire, et ' +
+                'ce qui explique qu\'elle soit croissante sur ℝ tout entier.'
+    },
+    {
       key: 'racine',
       nom: 'La fonction racine carrée',
       court: '√x',
@@ -528,6 +610,42 @@
                 'd\'image. Sa courbe, une hyperbole, est faite de deux branches qui ' +
                 'ne se rejoignent jamais. Plus x est grand, plus 1/x s\'approche de 0 ; ' +
                 'plus x s\'approche de 0, plus 1/x devient grand.'
+    },
+    {
+      key: 'cubique',
+      nom: 'Une cubique : x³ − 3x',
+      court: 'x³ − 3x',
+      couleur: '#b45309',
+      expr: function () { return 'x³ − 3x'; },
+      tex:  function () { return 'x^{3} - 3x'; },
+      f:    function (x) { return x * x * x - 3 * x; },
+      ensemble: 'ℝ',
+      courbe: 'une cubique, avec une bosse puis un creux',
+      calcul: function (x) {
+        var c = x * x * x, d = 3 * x;
+        return [par(x) + '³ − 3 × ' + par(x),
+                nb(c) + (d < 0 ? ' + ' + nb(-d) : ' − ' + nb(d)),
+                nb(c - d)];
+      },
+      oppose: function () { return ['(−x)³ − 3 × (−x)', '−x³ + 3x', '−(x³ − 3x)']; },
+      /* Les deux abscisses où elle change de sens. C'est la SEULE chose à
+         fournir : le tableau de variations en déduit tout seul croissante,
+         décroissante, croissante. C'est aussi la première fonction du pool à
+         en avoir deux — les autres en ont zéro ou une. */
+      sommets: function () {
+        return [{ v: -1, txt: '−1' }, { v: 1, txt: '1' }];
+      },
+      /* Pas d'antec() ici, et c'est volontaire : résoudre x³ − 3x = k demande
+         les formules de Cardan, hors programme du lycée. Le pool renvoie donc
+         null pour les solutions, et les leçons se rabattent sur la LECTURE
+         GRAPHIQUE — ce qui est justement la bonne façon de traiter cette
+         équation à ce niveau. */
+      remarque: 'Elle monte, redescend, puis remonte : c\'est la première ' +
+                'fonction du pool à changer deux fois de sens. Elle atteint un ' +
+                'maximum local en x = −1 (f(−1) = 2) et un minimum local en x = 1 ' +
+                '(f(1) = −2) — des extremums LOCAUX seulement, puisqu\'elle finit ' +
+                'par dépasser 2 et descendre sous −2. Ses solutions se lisent sur ' +
+                'le graphique : on ne sait pas les calculer au lycée.'
     }
   ];
 
@@ -679,10 +797,16 @@
       dom.forEach(function (m) {
         // Les bornes du morceau, plus les solutions de f(x) = k qui tombent
         // dedans : entre deux bornes consécutives, la relation ne change pas.
-        var bornes = [{ v: m.a, txt: borneTxt(m.a), ouv: m.oa }]
+        /* Une borne du DOMAINE peut être elle-même une racine — √x en 0, par
+           exemple. Sans ce marquage, elle gardait le statut « fermée » que lui
+           donne le domaine, et √x > 0 répondait [0 ; +∞[ au lieu de ]0 ; +∞[. */
+        function estRacine(v) {
+          return sols.some(function (s) { return Math.abs(s.v - v) < 1e-9; });
+        }
+        var bornes = [{ v: m.a, txt: borneTxt(m.a), ouv: m.oa, racine: estRacine(m.a) }]
           .concat(sols.filter(function (s) { return s.v > m.a && s.v < m.b; })
                       .map(function (s) { return { v: s.v, txt: s.txt, racine: true }; }))
-          .concat([{ v: m.b, txt: borneTxt(m.b), ouv: m.ob }]);
+          .concat([{ v: m.b, txt: borneTxt(m.b), ouv: m.ob, racine: estRacine(m.b) }]);
 
         for (var i = 0; i < bornes.length - 1; i++) {
           var g = bornes[i], d = bornes[i + 1];
@@ -690,9 +814,10 @@
                                 : (isFinite(d.v) ? d.v - 1 : 0);
           if (!verifie(fn.f(t, p), rel, k)) continue;
           // Une borne qui est une solution de f(x) = k n'appartient à
-          // l'ensemble que si la relation est large (⩽, ⩾).
-          var oa = g.racine ? !large(rel) : g.ouv;
-          var ob = d.racine ? !large(rel) : d.ouv;
+          // l'ensemble que si la relation est large (⩽, ⩾) — et, s'il s'agit
+          // d'une borne du domaine, que si le domaine l'inclut déjà.
+          var oa = g.racine ? (g.ouv || !large(rel)) : g.ouv;
+          var ob = d.racine ? (d.ouv || !large(rel)) : d.ouv;
           var prec = out[out.length - 1];
           if (prec && prec.b === g.v && !prec.ob && !oa) {   // la borne commune convient
             prec.b = d.v; prec.tb = d.txt; prec.ob = ob;     // → un seul intervalle

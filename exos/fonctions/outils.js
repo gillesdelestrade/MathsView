@@ -14,11 +14,15 @@
 
   function P() { return MathsView.fonctions; }
 
-  // Les fonctions disponibles à ce palier : le pool est rangé du plus simple au
-  // plus difficile, il suffit donc d'en prendre un préfixe de plus en plus long.
-  function fonctions(palier, base) {
+  /* Les fonctions disponibles à ce palier. Le pool est rangé du plus simple au
+     plus difficile : on en prend un préfixe de plus en plus long. La part est
+     PROPORTIONNELLE au nombre de fonctions, et non un nombre fixe — ainsi le
+     dernier palier atteint toujours la fin du pool, même après y avoir ajouté
+     une fonction. `maxPalier` est le nombre de paliers du générateur appelant. */
+  function fonctions(palier, maxPalier) {
     var L = P().liste();
-    return L.slice(0, Math.min(L.length, (base === undefined ? 2 : base) + palier));
+    var n = Math.round(L.length * palier / (maxPalier || 4));
+    return L.slice(0, Math.max(2, Math.min(L.length, n)));
   }
 
   // Les paramètres (a, b…) : imposés au palier 1 (valeurs par défaut du pool),
