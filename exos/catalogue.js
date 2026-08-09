@@ -41,6 +41,8 @@ MathsExos.catalogue = [
     chapitre: 'grandeurs', prerequis: [] },
   { code: 'conversions',  libelle: 'Conversions d\'unités',    niveau: '6eme',
     chapitre: 'grandeurs', prerequis: ['mult-div-10'] },
+  { code: 'quadrilateres', libelle: 'Propriétés des quadrilatères', niveau: '6eme',
+    chapitre: 'geometrie-6e', prerequis: [] },
 
   /* --- 5ème -------------------------------------------------------------- */
   { code: 'relatifs',       libelle: 'Nombres relatifs',       niveau: '5eme',

@@ -96,6 +96,7 @@
       rappelsFaits: 0,            // combien on en a déjà programmé (plafond)
       palier: {},                 // palier courant, par générateur (cf. en-tête)
       serie: {},                  // réussites d'affilée, par générateur
+      vues: {},                   // signatures des questions déjà posées
       profil: opts.profil !== undefined ? opts.profil
               : (global.MathsProfils ? MathsProfils.courant() : null),
       // Boss et défi : le palier est IMPOSÉ (pour un défi, c'est celui de la
@@ -152,6 +153,46 @@
     }
   }
 
+  /* La signature d'une question : ce que l'élève VOIT. Deux tirages qui
+     donnent le même énoncé sont la même question, même si les choix d'un QCM
+     ont été mélangés autrement. */
+  function signature(g, q) {
+    return g.id + '‖' + (q.enonce || '') + '‖' + (q.tex || '');
+  }
+
+  /* 25 essais, et non une poignée : certains générateurs ont une distribution
+     très déséquilibrée — « l'ensemble de définition de √x » n'a qu'une seule
+     formulation possible et revient une fois sur quatre. Douze essais laissaient
+     alors passer un doublon environ une série sur trois ; vingt-cinq le rendent
+     négligeable, et la boucle ne tourne de toute façon que lorsqu'elle tombe
+     effectivement sur du déjà-vu. */
+  var MAX_TIRAGES = 25;
+
+  /* Tire une question en évitant celles déjà posées dans la série. Certains
+     générateurs ont un petit vivier — six propriétés, quatre nombres, cinq
+     unités : au bout de MAX_TIRAGES essais on accepte le doublon plutôt que de
+     boucler indéfiniment. Mieux vaut une répétition qu'une page figée.
+
+     Le tirage reste DÉTERMINISTE : à graine égale, la suite des essais est la
+     même, donc un défi rejoué depuis sa graine redonne exactement la même
+     série. */
+  function tire(S, g, palier) {
+    var t = null;
+    for (var essai = 0; essai < MAX_TIRAGES; essai++) {
+      var seed = S.alea.entier(1, 2147483646);
+      var q;
+      try { q = g.genere(MathsAlea(seed), palier); }
+      catch (e) {
+        console.error('Générateur « ' + g.id + ' » : ' + e.message, e);
+        return null;
+      }
+      t = { gen: g, q: q, palier: palier, seed: seed };
+      if (!S.vues[signature(g, q)]) break;
+    }
+    if (t) S.vues[signature(g, t.q)] = true;
+    return t;
+  }
+
   // Tire la question suivante. Renvoie null quand la série est finie.
   function prochaine(S) {
     var g, palier;
@@ -167,15 +208,7 @@
     } else {
       return null;
     }
-    var seed = S.alea.entier(1, 2147483646);
-    var q;
-    try {
-      q = g.genere(MathsAlea(seed), palier);
-    } catch (e) {
-      console.error('Générateur « ' + g.id + ' » : ' + e.message, e);
-      return null;
-    }
-    return { gen: g, q: q, palier: palier, seed: seed };
+    return tire(S, g, palier);
   }
 
   // Rejoue exactement une question à partir de sa graine (SPEC §2.1).
@@ -208,14 +241,10 @@
     S.file = [];
     var secondes = 0;
     for (var k = 0; k < S.nb; k++) {
-      var g = S.gens[k % S.gens.length];
-      var palier = palierDe(S, g);
-      var seed = S.alea.entier(1, 2147483646);
-      var q;
-      try { q = g.genere(MathsAlea(seed), palier); }
-      catch (e) { console.error('Générateur « ' + g.id + ' » : ' + e.message, e); continue; }
-      S.file.push({ gen: g, q: q, palier: palier, seed: seed });
-      secondes += q.duree || 60;
+      var t = tire(S, S.gens[k % S.gens.length], palierDe(S, S.gens[k % S.gens.length]));
+      if (!t) continue;
+      S.file.push(t);
+      secondes += t.q.duree || 60;
     }
     S.nb = S.file.length;
     if (!S.chrono) S.chrono = Math.round(secondes * 1.1);   // 10 % de marge
@@ -308,21 +337,35 @@
   function construireSaisie(S, zone) {
     var q = S.courante.q;
 
-    if (q.type === 'qcm' || q.type === 'vraifaux') {
+    if (q.type === 'qcm' || q.type === 'vraifaux' || q.type === 'qcm-multi') {
+      var multi = q.type === 'qcm-multi';
       var choix = q.type === 'vraifaux' ? ['Vrai', 'Faux'] : q.choix;
       S.boutons = [];
+      if (multi) S.saisie = [];
       choix.forEach(function (c, i) {
-        var b = el('button', 'exo-choix', c);
+        var b = el('button', 'exo-choix' + (multi ? ' coche' : ''),
+          (multi ? '<i class="exo-case"></i>' : '') + c);
         b.type = 'button';
         b.onclick = function () {
           if (S.repondu) return;
-          S.boutons.forEach(function (x) { x.classList.remove('choisi'); });
-          b.classList.add('choisi');
-          S.saisie = i;
+          if (!multi) {
+            S.boutons.forEach(function (x) { x.classList.remove('choisi'); });
+            b.classList.add('choisi');
+            S.saisie = i;
+            return;
+          }
+          // Choix multiple : chaque clic bascule une case.
+          var j = S.saisie.indexOf(i);
+          if (j >= 0) { S.saisie.splice(j, 1); b.classList.remove('choisi'); }
+          else { S.saisie.push(i); b.classList.add('choisi'); }
         };
         S.boutons.push(b);
         zone.appendChild(b);
       });
+      if (multi) {
+        zone.appendChild(el('p', 'exo-sous',
+          'Coche <b>toutes</b> les bonnes réponses, puis vérifie.'));
+      }
       typeset(zone);
       return;
     }
@@ -410,7 +453,8 @@
   function valider(S) {
     if (S.repondu) return;
     var t = S.courante, q = t.q;
-    var saisie = (q.type === 'qcm' || q.type === 'vraifaux') ? S.saisie
+    var saisie = (q.type === 'qcm' || q.type === 'vraifaux' || q.type === 'qcm-multi')
+               ? S.saisie
                : (q.type === 'jsx' ? null : (S.champ ? S.champ.value : ''));
 
     var v = MathsReponse.valide(q, saisie, S.ctx);
@@ -468,9 +512,17 @@
     vide(retour);
     if (S.champ) S.champ.disabled = true;
     if (S.boutons) {
+      var attendus = q.type === 'qcm-multi'
+        ? (q.corrects || []).map(Number) : [Number(q.correct)];
+      var cochees = q.type === 'qcm-multi'
+        ? [].concat(S.saisie || []).map(Number) : [Number(S.saisie)];
       S.boutons.forEach(function (b, i) {
-        if (i === Number(q.correct)) b.classList.add('bonne');
-        else if (i === Number(S.saisie)) b.classList.add('mauvaise');
+        var attendu = attendus.indexOf(i) >= 0, coche = cochees.indexOf(i) >= 0;
+        // Trois états à distinguer, sinon l'élève ne sait pas ce qu'il a manqué :
+        // bonne case cochée, case cochée à tort, bonne case oubliée.
+        if (attendu && coche) b.classList.add('bonne');
+        else if (attendu) b.classList.add('manquee');
+        else if (coche) b.classList.add('mauvaise');
         b.disabled = true;
       });
     }
@@ -504,7 +556,10 @@
   // Ce qu'il fallait répondre, écrit selon le type.
   function bonneReponse(q) {
     var txt;
-    if (q.type === 'qcm') txt = q.choix[q.correct];
+    if (q.type === 'qcm-multi') {
+      txt = (q.corrects || []).map(function (i) { return q.choix[i]; }).join(' · ');
+    }
+    else if (q.type === 'qcm') txt = q.choix[q.correct];
     else if (q.type === 'vraifaux') txt = q.correct === 0 ? 'Vrai' : 'Faux';
     else if (q.type === 'jsx') txt = q.solutionTxt || '';
     else txt = [].concat(q.reponse)[0];
@@ -690,12 +745,19 @@
   }
 
   function saisieLisible(f) {
+    if (f.q.type === 'qcm-multi') {
+      var l = [].concat(f.saisie || []).map(function (i) { return f.q.choix[i]; });
+      return l.length ? l.join(' · ') : '—';
+    }
     if (f.q.type === 'qcm') return f.q.choix[f.saisie] === undefined ? '—' : f.q.choix[f.saisie];
     if (f.q.type === 'vraifaux') return f.saisie === 0 ? 'Vrai' : f.saisie === 1 ? 'Faux' : '—';
     if (f.q.type === 'jsx') return 'position posée sur la figure';
     return f.saisie === '' || f.saisie === null ? '—' : String(f.saisie);
   }
   function attenduLisible(q) {
+    if (q.type === 'qcm-multi') {
+      return (q.corrects || []).map(function (i) { return q.choix[i]; }).join(' · ');
+    }
     if (q.type === 'qcm') return q.choix[q.correct];
     if (q.type === 'vraifaux') return q.correct === 0 ? 'Vrai' : 'Faux';
     if (q.type === 'jsx') return q.solutionTxt || '';

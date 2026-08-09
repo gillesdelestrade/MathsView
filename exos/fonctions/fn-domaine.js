@@ -22,7 +22,13 @@ MathsExos.register({
     var restreintes = POOL.liste().filter(function (f) { return !!f.defini; });
     var toutes = ExosFonctions.fonctions(palier);
 
-    var f = (rnd.booleen(0.7) && restreintes.length)
+    /* Le biais vers les fonctions à domaine restreint ne vaut que pour la
+       question fermée : demander si f(−2) existe n'apprend rien d'une fonction
+       définie partout. Pour la question ouverte, en revanche, il appauvrit —
+       « l'ensemble de définition de √x » n'a qu'UNE formulation, et la même
+       question revenait sans cesse. */
+    var biais = palier <= 2 ? 0.7 : 0.4;
+    var f = (rnd.booleen(biais) && restreintes.length)
       ? rnd.choix(restreintes) : rnd.choix(toutes);
     var p = ExosFonctions.params(rnd, f, palier);
     var def = ExosFonctions.defTex(f, p);

@@ -212,6 +212,22 @@
         }
         return Number(saisie) === Number(q.correct) ? juste() : faux();
 
+      /* Cases à cocher : la réponse est un ENSEMBLE d'indices, comparé comme
+         tel. Le message distingue « il en manque » de « il y en a trop » —
+         c'est une aide réelle, qui ne donne pas la réponse pour autant. */
+      case 'qcm-multi': {
+        var att = (q.corrects || []).map(Number).sort(function (u, v) { return u - v; });
+        var lu = [].concat(saisie || []).map(Number).sort(function (u, v) { return u - v; });
+        if (!lu.length) return malformee('Coche au moins une case.');
+        var memes = lu.length === att.length && lu.every(function (v, i) { return v === att[i]; });
+        if (memes) return juste();
+        var tousDedans = lu.every(function (v) { return att.indexOf(v) >= 0; });
+        var toutTrouve = att.every(function (v) { return lu.indexOf(v) >= 0; });
+        return faux(tousDedans ? 'Ce que tu as coché est juste, mais il en manque.'
+                  : toutTrouve ? 'Tu as bien tout trouvé, mais tu en as coché en trop.'
+                  : '');
+      }
+
       case 'jsx':
         return q.verifie(ctx && ctx.board, ctx) ? juste() : faux();
 

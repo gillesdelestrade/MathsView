@@ -431,3 +431,28 @@
 .exo-lancer-ligne {
   display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-top: .5rem;
 }
+
+/* ---------- Cases à cocher (questions à réponses multiples) ---------- */
+.exo-choix.coche { padding-left: .7rem; }
+.exo-case {
+  display: inline-block; width: 20px; height: 20px; margin-right: .6rem;
+  border: 2px solid var(--border); border-radius: 5px; vertical-align: -4px;
+  position: relative; background: #fff;
+}
+.exo-choix.choisi .exo-case { border-color: var(--accent); background: var(--accent); }
+.exo-choix.choisi .exo-case::after {
+  content: '✓'; color: #fff; position: absolute; inset: 0; line-height: 16px;
+  text-align: center; font-size: .8rem; font-weight: 800;
+}
+/* Une bonne case oubliée : ni verte ni rouge — signalée, pour qu'on voie ce
+   qui manquait sans faire croire à une faute de plus. */
+.exo-choix.manquee {
+  border-color: #16a34a; border-style: dashed; background: #f0fdf4;
+}
+.exo-choix.manquee .exo-case { border-color: #16a34a; }
+.exo-choix.manquee::after {
+  content: 'il fallait la cocher'; float: right; font-size: .78rem;
+  color: #15803d; font-weight: 700;
+}
+.exo-choix.bonne .exo-case { border-color: #16a34a; background: #16a34a; }
+.exo-choix.mauvaise .exo-case { border-color: #dc2626; background: #dc2626; }

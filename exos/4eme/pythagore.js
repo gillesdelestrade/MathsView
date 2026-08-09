@@ -14,7 +14,8 @@
   var O = ExosOutils;
 
   var TRIPLETS = [[3, 4, 5], [6, 8, 10], [5, 12, 13], [8, 15, 17],
-                  [9, 12, 15], [7, 24, 25], [20, 21, 29], [12, 16, 20]];
+                  [9, 12, 15], [7, 24, 25], [20, 21, 29], [12, 16, 20],
+                  [10, 24, 26], [15, 20, 25], [18, 24, 30], [12, 35, 37]];
 
   MathsExos.register({
     id: 'pythagore', competence: 'pythagore', level: '4eme',
@@ -22,7 +23,7 @@
 
     genere: function (rnd, palier) {
       var t = rnd.choix(TRIPLETS);
-      var k = palier >= 3 ? rnd.entier(1, 3) : 1;
+      var k = palier >= 3 ? rnd.entier(1, 3) : (palier === 2 ? rnd.entier(1, 2) : 1);
       var a = t[0] * k, b = t[1] * k, c = t[2] * k;
 
       /* --- palier 4 : la réciproque -------------------------------------- */
@@ -54,7 +55,7 @@
       }
 
       /* --- calculer l'hypoténuse ----------------------------------------- */
-      if (palier <= 2 || rnd.booleen(0.5)) {
+      if (palier <= 1 || rnd.booleen(0.5)) {
         return {
           enonce: 'Le triangle \\(ABC\\) est rectangle en \\(A\\), avec \\(AB = ' + a +
                   '\\) cm et \\(AC = ' + b + '\\) cm. Calcule \\(BC\\).',

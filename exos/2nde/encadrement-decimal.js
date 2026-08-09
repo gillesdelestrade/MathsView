@@ -44,7 +44,7 @@
       var x = palier === 1
         ? rnd.choix(NOMBRES.filter(function (m) { return m.dec; }))
         : rnd.choix(NOMBRES);
-      var n = palier === 1 ? rnd.entier(1, 2)
+      var n = palier === 1 ? rnd.entier(1, 3)
             : palier === 2 ? rnd.entier(1, 3)
             : rnd.entier(1, 4);
 

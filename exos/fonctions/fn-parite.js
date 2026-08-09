@@ -26,7 +26,9 @@ MathsExos.register({
     var f, p, par;
     for (var essai = 0; essai < 60; essai++) {
       f = rnd.choix(ExosFonctions.fonctions(palier, 3));
-      p = ExosFonctions.params(rnd, f, palier);
+      // Les paramètres sont tirés dès le palier 1 : sinon « ax + b » vaut
+      // toujours 2x − 1, et le générateur ne sait produire que trois questions.
+      p = ExosFonctions.params(rnd, f, Math.max(2, palier));
       par = POOL.parite(f, p);
       if (par.type !== 'domaine' && par.type !== 'deux') break;
     }
