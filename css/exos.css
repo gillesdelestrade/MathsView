@@ -364,3 +364,70 @@
 .exo-demande.en-attente { border-left-color: #f59e0b; }
 .exo-demande.valide { border-left-color: #16a34a; }
 .exo-demande.refuse { border-left-color: #dc2626; }
+
+/* ===================================================================== */
+/* Lot 7 — boss, défis, objectif commun                                  */
+/* ===================================================================== */
+
+.exo-chrono {
+  margin-left: .6rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  color: var(--ink); background: #f1f5f9; padding: .1rem .5rem; border-radius: 999px;
+}
+.exo-chrono.urgent { background: #fee2e2; color: #b91c1c; animation: exo-pulse 1s infinite; }
+@keyframes exo-pulse { 50% { opacity: .55; } }
+
+.exo-mixte.boss { color: #b45309; border-color: #fbbf24; }
+.exo-mixte.boss:hover { background: #fef3c7; }
+.exo-boss-verrou { font-size: .78rem; color: var(--ink-soft); margin-left: .5rem; }
+.exo-boss-gagne, .exo-boss-perdu {
+  text-align: center; padding: .7rem; border-radius: 10px; font-size: 1rem;
+  margin-bottom: .5rem; animation: exo-pop .45s ease-out;
+}
+.exo-boss-gagne { background: linear-gradient(#dcfce7, #bbf7d0); color: #14532d; }
+.exo-boss-perdu { background: #f1f5f9; color: var(--ink-soft); }
+
+/* ---------- Objectif commun et classement ---------- */
+.exo-famille { margin-top: 1.4rem; }
+.exo-objectif {
+  background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--accent);
+  border-radius: 10px; padding: .7rem .9rem; margin-bottom: .6rem;
+}
+.exo-objectif.atteint { border-left-color: #16a34a; background: #f0fdf4; }
+.exo-obj-lignes { display: flex; gap: .8rem; flex-wrap: wrap; margin: .4rem 0; }
+.exo-obj-ligne {
+  display: inline-flex; align-items: center; gap: .3rem; font-size: .9rem;
+  color: var(--ink-soft);
+}
+.exo-obj-ligne.ok { color: #15803d; font-weight: 700; }
+.exo-obj-gagne { color: #15803d; font-weight: 700; margin-top: .3rem; }
+
+.exo-classement {
+  background: #fff; border: 1px solid var(--border); border-radius: 10px;
+  padding: .7rem .9rem;
+}
+.exo-classement-ligne {
+  display: flex; align-items: center; gap: .5rem; margin-top: .35rem; font-size: .9rem;
+}
+.exo-rang { font-weight: 800; color: var(--ink-soft); width: 1.2rem; }
+.exo-cl-nom { flex: 0 0 5.5rem; font-weight: 600; }
+.exo-classement-ligne .exo-comp-jauge { flex: 1; }
+
+/* ---------- Défis ---------- */
+.exo-defis-bloc { margin-top: 1.2rem; }
+.exo-defi {
+  background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--border);
+  border-radius: 10px; padding: .5rem .8rem; margin-bottom: .4rem; font-size: .92rem;
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+}
+.exo-defi span { color: var(--ink-soft); font-size: .85rem; }
+.exo-defi.lance { border-left-color: #f59e0b; }
+.exo-defi.termine { border-left-color: #16a34a; }
+.exo-defi.annule { opacity: .5; }
+.exo-defi .exo-btn { margin-left: auto; }
+.exo-lancer {
+  background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px;
+  padding: .7rem .9rem; margin-top: .5rem;
+}
+.exo-lancer-ligne {
+  display: flex; gap: .4rem; flex-wrap: wrap; align-items: center; margin-top: .5rem;
+}

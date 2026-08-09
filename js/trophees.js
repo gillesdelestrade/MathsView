@@ -118,12 +118,18 @@
         return Object.keys(m).some(function (k) { return (m[k].meilleur || 0) >= 90; });
       } },
 
-    /* Deviendra « un boss de chapitre réussi sans aucune erreur » quand les boss
-       existeront (lot 7). En attendant, la même exigence sur une série longue. */
     { id: 'sans-erreur', nom: 'Parcours parfait', emoji: '💎',
-      desc: 'Une série de 8 questions ou plus sans aucune erreur', pieces: 50,
+      desc: 'Un boss de chapitre réussi sans aucune erreur', pieces: 50,
       test: function (j) {
-        return sessions(j).some(function (e) { return e.n >= 8 && e.justes === e.n; });
+        return sessions(j).some(function (e) {
+          return e.mode === 'boss' && e.n > 0 && e.justes === e.n;
+        });
+      } },
+
+    { id: 'duelliste', nom: 'Duelliste', emoji: '⚔️',
+      desc: 'Relever un défi lancé par une sœur, et le gagner', pieces: 20,
+      test: function (j, etat) {
+        return (etat.defisGagnes || 0) > 0;
       } },
 
     { id: 'le-prof', nom: 'Le prof', emoji: '👩‍🏫',

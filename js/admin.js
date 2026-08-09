@@ -734,6 +734,74 @@
     f.appendChild(act);
     corps.appendChild(f);
 
+    /* --- l'objectif commun de la semaine ------------------------------ */
+    if (global.MathsDefis) {
+      var o = MathsDefis.etatObjectif();
+      var oc = el('div', 'exo-carte');
+      oc.appendChild(el('div', 'props-label', 'Objectif commun de la semaine'));
+      oc.appendChild(el('p', 'adm-note',
+        'Il n\'est atteint que si <b>toutes</b> y arrivent. C\'est la mécanique ' +
+        'qui crée de l\'entraide plutôt que de la rivalité — et, d\'expérience, ' +
+        'la plus efficace des trois.'));
+      o.lignes.forEach(function (l) {
+        oc.appendChild(el('div', 'adm-bloc-ligne',
+          '<span class="adm-bloc-nom">' + esc(l.profil.prenom) + '</span>' +
+          '<span class="exo-comp-jauge"><i style="width:' +
+            Math.min(100, Math.round(100 * l.series / o.cible)) + '%;background:' +
+            (l.atteint ? '#16a34a' : '#f59e0b') + '"></i></span>' +
+          '<span class="exo-comp-score">' + l.series + ' / ' + o.cible + '</span>'));
+      });
+      if (o.atteint) {
+        oc.appendChild(el('div', 'exo-obj-gagne',
+          '🎉 Objectif atteint par tout le monde — récompense promise : ' +
+          esc(o.recompense)));
+      }
+      var fo = el('div', 'adm-form');
+      var nb = el('input', 'exo-champ court'); nb.type = 'number'; nb.min = 1;
+      nb.value = o.cible;
+      var rec = el('input', 'exo-champ'); rec.value = o.recompense;
+      [['Séries par semaine', nb], ['Récompense', rec]].forEach(function (x) {
+        var l = el('label', 'adm-champ', '<span>' + x[0] + '</span>');
+        l.appendChild(x[1]);
+        fo.appendChild(l);
+      });
+      oc.appendChild(fo);
+      var ao = el('div', 'exo-actions');
+      var bo = el('button', 'exo-btn primaire', 'Enregistrer');
+      bo.onclick = function () {
+        MathsDefis.setObjectif({ series: nb.value, recompense: rec.value });
+        rendre();
+      };
+      ao.appendChild(bo);
+      oc.appendChild(ao);
+      corps.appendChild(oc);
+
+      /* --- les défis en cours ---------------------------------------- */
+      var dfs = MathsDefis.defis().slice().reverse().slice(0, 10);
+      if (dfs.length) {
+        var dc = el('div', 'exo-carte');
+        dc.appendChild(el('div', 'props-label', 'Les défis'));
+        dfs.forEach(function (d) {
+          var a = MathsProfils.profil(d.de), b2 = MathsProfils.profil(d.vers);
+          var ligne = el('div', 'adm-bloc-ligne');
+          ligne.innerHTML = '<span class="adm-bloc-nom">' +
+            esc(a ? a.prenom : '?') + ' → ' + esc(b2 ? b2.prenom : '?') + '</span>' +
+            '<span>' + esc(MathsExos.competence(d.comp).libelle) +
+            ' · palier ' + d.palier + ' · mise ' + d.mise + '</span>' +
+            '<span class="exo-comp-score">' + (d.statut === 'termine'
+              ? 'gagné par ' + esc((MathsProfils.profil(d.gagnant) || {}).prenom || '?')
+              : d.statut) + '</span>';
+          if (d.statut !== 'termine') {
+            var ann = el('button', 'exo-btn danger', 'Annuler');
+            ann.onclick = function () { MathsDefis.annuler(d.id); rendre(); };
+            ligne.appendChild(ann);
+          }
+          dc.appendChild(ligne);
+        });
+        corps.appendChild(dc);
+      }
+    }
+
     /* --- ce que chacune a déjà --------------------------------------- */
     profs.forEach(function (p) {
       var eus = MathsTrophees.obtenus(p.id);

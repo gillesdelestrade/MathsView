@@ -45,6 +45,7 @@
   <script src="js/exos-base.js"></script>
   <script src="js/trophees.js"></script>
   <script src="js/boutique.js"></script>
+  <script src="js/defis.js"></script>
   <script src="exos/catalogue.js"></script>
 
   <!-- Les générateurs. `outils.js` d'abord : les fn-*.js s'en servent. -->
@@ -327,10 +328,17 @@
           var dedans = duNiveau.filter(function (x) {
             return (MathsExos.competence(x.competence).chapitre || 'autres') === c;
           });
+          var boss = MathsProgression.bossEtat(id, c);
           var ct = el('div', 'home-cat', esc(CHAPITRES[c] || c) +
             (dedans.length > 1
               ? ' <button class="exo-mixte" data-chap="' + esc(c) + '">' +
-                'Série mixte (10 questions)</button>' : ''));
+                'Série mixte (10 questions)</button>' : '') +
+            (boss.ouvert
+              ? ' <button class="exo-mixte boss" data-boss="' + esc(c) + '">🛡️ Boss' +
+                (boss.fait && boss.fait.reussi ? ' — chapitre validé ✓' : '') + '</button>'
+              : ' <span class="exo-boss-verrou" title="' +
+                esc('Il faut la ceinture verte partout : ' + boss.manque.join(', ')) +
+                '">🔒 boss</span>'));
           accueil.appendChild(ct);
 
           var grille = el('div', 'cards-grid');
@@ -357,12 +365,153 @@
       Array.prototype.forEach.call(accueil.querySelectorAll('.exo-mixte'), function (b) {
         b.onclick = function (e) {
           e.stopPropagation();
-          location.hash = 'chap/' + b.dataset.chap;
+          location.hash = (b.dataset.boss ? 'boss/' + b.dataset.boss
+                                          : 'chap/' + b.dataset.chap);
         };
       });
 
+      accueil.appendChild(blocFamille(id));
+      accueil.appendChild(blocDefis(id));
       accueil.appendChild(blocTrophees(id));
       accueil.appendChild(blocSauvegarde());
+    }
+
+    /* ================================================================= */
+    /* L'objectif commun et le classement (§10).                          */
+    /*                                                                    */
+    /* Deux principes tenus ici : le classement est en POINTS DE           */
+    /* PROGRESSION, chacune sur son propre programme — jamais en score     */
+    /* absolu, ce qui serait injuste entre une 6ème et une 2nde ; et       */
+    /* l'objectif commun n'est atteint que si TOUTES y arrivent.           */
+    /* ================================================================= */
+    function blocFamille(id) {
+      var bloc = el('div', 'exo-famille');
+      var o = MathsDefis.etatObjectif();
+      if (o.lignes.length < 2) return bloc;          // seule, ça n'a pas de sens
+
+      bloc.appendChild(el('div', 'home-cat', 'Toutes ensemble'));
+      var obj = el('div', 'exo-objectif' + (o.atteint ? ' atteint' : ''));
+      var lignes = o.lignes.map(function (l) {
+        return '<span class="exo-obj-ligne' + (l.atteint ? ' ok' : '') + '">' +
+          '<span class="exo-avatar" style="background:' + l.profil.couleur + '">' +
+          l.profil.emoji + '</span>' + esc(l.profil.prenom) + ' ' +
+          Math.min(l.series, o.cible) + '/' + o.cible + '</span>';
+      }).join('');
+      obj.innerHTML =
+        '<b>Objectif commun : ' + o.cible + ' séries chacune cette semaine</b>' +
+        '<div class="exo-obj-lignes">' + lignes + '</div>' +
+        (o.atteint
+          ? '<div class="exo-obj-gagne">🎉 Objectif atteint par tout le monde : ' +
+            esc(o.recompense) + ' !</div>'
+          : '<div class="adm-note">Il faut que <b>chacune</b> y arrive — ' +
+            'récompense : ' + esc(o.recompense) + '</div>');
+      bloc.appendChild(obj);
+
+      var cl = MathsDefis.classement();
+      var t = el('div', 'exo-classement');
+      t.innerHTML = '<div class="adm-note">Progression de la semaine, chacune sur ' +
+        'son propre programme :</div>';
+      var max = Math.max(1, cl[0] ? cl[0].pourcent : 1);
+      cl.forEach(function (x, i) {
+        t.innerHTML += '<div class="exo-classement-ligne">' +
+          '<span class="exo-rang">' + (i + 1) + '</span>' +
+          '<span class="exo-avatar" style="background:' + x.profil.couleur + '">' +
+            x.profil.emoji + '</span>' +
+          '<span class="exo-cl-nom">' + esc(x.profil.prenom) + '</span>' +
+          '<span class="exo-comp-jauge"><i style="width:' +
+            Math.round(100 * x.pourcent / max) + '%"></i></span>' +
+          '<span class="exo-comp-score">+' + x.pourcent + ' pts</span></div>';
+      });
+      bloc.appendChild(t);
+      return bloc;
+    }
+
+    /* ================================================================= */
+    /* Les défis : la série est tirée au palier de la DÉFIÉE.             */
+    /* ================================================================= */
+    function blocDefis(id) {
+      var bloc = el('div', 'exo-defis-bloc');
+      var autres = MathsProfils.profils().filter(function (p) {
+        return !p.archive && p.id !== id;
+      });
+      if (!autres.length) return bloc;
+
+      bloc.appendChild(el('div', 'home-cat', 'Défis'));
+      var mes = MathsDefis.defisDe(id);
+      if (!mes.length) {
+        bloc.appendChild(el('p', 'adm-note', 'Aucun défi pour l\'instant.'));
+      }
+      mes.slice(0, 6).forEach(function (d) {
+        var moiDefie = d.vers === id;
+        var autre = MathsProfils.profil(moiDefie ? d.de : d.vers);
+        var l = el('div', 'exo-defi ' + d.statut);
+        var quoi = MathsExos.competence(d.comp).libelle;
+        var etat;
+        if (d.statut === 'termine') {
+          etat = d.gagnant === id ? '⚔️ gagné' : 'perdu';
+        } else if (moiDefie) {
+          etat = 'à relever';
+        } else {
+          etat = d.scoreDe === null ? 'à jouer de ton côté' : 'en attente de ' +
+                 esc(autre ? autre.prenom : '');
+        }
+        l.innerHTML = '<b>' + esc(quoi) + '</b> — ' +
+          (moiDefie ? 'défi de ' : 'tu défies ') +
+          esc(autre ? autre.prenom : '?') + ' · mise ' + d.mise +
+          ' pièces <span>' + etat + '</span>';
+        var jouable = d.statut === 'lance' &&
+          ((moiDefie) || (d.de === id && d.scoreDe === null));
+        if (jouable) {
+          var b = el('button', 'exo-btn primaire', 'Jouer la série');
+          b.onclick = function () { location.hash = 'defi/' + d.id; };
+          l.appendChild(b);
+        }
+        bloc.appendChild(l);
+      });
+
+      /* --- lancer un défi --------------------------------------------- */
+      var f = el('div', 'exo-lancer');
+      var comps = MathsProgression.jardin(id).filter(function (c) {
+        return !c.jamais && c.score >= 35;            // une compétence qu'on tient
+      });
+      if (!comps.length) {
+        f.appendChild(el('p', 'adm-note',
+          'Travaille une compétence jusqu\'à la ceinture orange pour pouvoir ' +
+          'défier quelqu\'un.'));
+        bloc.appendChild(f);
+        return bloc;
+      }
+      var selC = el('select', 'exo-select');
+      comps.forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.code; o.textContent = c.libelle;
+        selC.appendChild(o);
+      });
+      var selQ = el('select', 'exo-select');
+      autres.forEach(function (p) {
+        var o = document.createElement('option');
+        o.value = p.id; o.textContent = p.prenom;
+        selQ.appendChild(o);
+      });
+      var mise = el('input', 'exo-champ court');
+      mise.type = 'number'; mise.min = 0; mise.value = 10;
+      var go = el('button', 'exo-btn', '⚔️ Lancer le défi');
+      var msg = el('div', 'adm-note');
+      go.onclick = function () {
+        var r = MathsDefis.lancer(id, selQ.value, selC.value, mise.value);
+        if (!r.ok) { msg.textContent = r.raison; return; }
+        rendreAccueil();
+      };
+      f.appendChild(el('div', 'adm-note',
+        'La série sera tirée <b>au palier de celle que tu défies</b>, pas au tien. ' +
+        'Si elle fait aussi bien que toi, elle empoche le double de ta mise.'));
+      var ligne = el('div', 'exo-lancer-ligne');
+      ligne.appendChild(selC); ligne.appendChild(selQ);
+      ligne.appendChild(mise); ligne.appendChild(go);
+      f.appendChild(ligne);
+      f.appendChild(msg);
+      bloc.appendChild(f);
+      return bloc;
     }
 
     /* ================================================================= */
@@ -512,6 +661,47 @@
       window.scrollTo(0, 0);
     }
 
+    // Le boss : 10 questions, chronométrées, sans indices, une seule tentative.
+    function lancerBoss(ids, titre, chapitre) {
+      accueil.hidden = true;
+      session.hidden = false;
+      session.innerHTML = '';
+      session.appendChild(el('div', 'exo-entete',
+        '<h2>🛡️ Boss — ' + esc(titre) + '</h2>' +
+        '<p class="adm-note">10 questions, chronométrées, <b>sans indice</b> et ' +
+        '<b>une seule tentative</b> par question. Il en faut 8 pour valider le ' +
+        'chapitre.</p>'));
+      var boite = el('div');
+      session.appendChild(boite);
+      MathsExos.monter(boite, {
+        generateurs: ids, nb: 10, mode: 'boss', chapitre: chapitre,
+        titre: titre, profil: MathsProfils.courant(),
+        surFin: function () { location.hash = 'accueil'; }
+      });
+      window.scrollTo(0, 0);
+    }
+
+    // Le défi : même graine, même palier — les deux joueuses ont exactement la
+    // même série.
+    function lancerDefi(d) {
+      var autre = MathsProfils.profil(d.de === MathsProfils.courant() ? d.vers : d.de);
+      accueil.hidden = true;
+      session.hidden = false;
+      session.innerHTML = '';
+      session.appendChild(el('div', 'exo-entete',
+        '<h2>⚔️ Défi — ' + esc(MathsExos.competence(d.comp).libelle) + '</h2>' +
+        '<p class="adm-note">Contre ' + esc(autre ? autre.prenom : '?') +
+        ', mise de ' + d.mise + ' pièces. Même série pour les deux, sans indice.</p>'));
+      var boite = el('div');
+      session.appendChild(boite);
+      MathsExos.monter(boite, {
+        generateurs: generateursDe([d.comp]), nb: d.nb, mode: 'defi', defi: d.id,
+        graine: d.graine, palierFixe: d.palier, profil: MathsProfils.courant(),
+        titre: 'Défi', surFin: function () { location.hash = 'accueil'; }
+      });
+      window.scrollTo(0, 0);
+    }
+
     function generateursDe(codes) {
       var out = [];
       codes.forEach(function (c) {
@@ -554,6 +744,24 @@
         }
       }
       if (h === 'boutique') { rendreBoutique(); return; }
+
+      m = /^boss\/(.+)$/.exec(h);
+      if (m) {
+        var etatB = MathsProgression.bossEtat(MathsProfils.courant(), m[1]);
+        var gensB = [];
+        etatB.comps.forEach(function (c) {
+          MathsExos.parCompetence(c.code).forEach(function (g) { gensB.push(g.id); });
+        });
+        if (etatB.ouvert && gensB.length) {
+          lancerBoss(gensB, CHAPITRES[m[1]] || m[1], m[1]);
+          return;
+        }
+      }
+      m = /^defi\/(.+)$/.exec(h);
+      if (m) {
+        var d = MathsDefis.trouve(m[1]);
+        if (d && d.statut === 'lance') { lancerDefi(d); return; }
+      }
       if (h === 'revision') {
         var codes = MathsProgression.aReviser(MathsProfils.courant(), 3);
         var gens = generateursDe(codes);

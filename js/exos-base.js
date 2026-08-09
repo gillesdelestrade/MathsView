@@ -98,6 +98,12 @@
       serie: {},                  // réussites d'affilée, par générateur
       profil: opts.profil !== undefined ? opts.profil
               : (global.MathsProfils ? MathsProfils.courant() : null),
+      // Boss et défi : le palier est IMPOSÉ (pour un défi, c'est celui de la
+      // défiée), le chrono tourne, et la série est tirée d'avance.
+      palierFixe: opts.palierFixe || null,
+      chapitre: opts.chapitre || '',
+      defi: opts.defi || null,
+      chrono: opts.chrono || 0,
       bilan: { xp: 0, pieces: 0, ceintures: [] },
       tour: 0
     };
@@ -117,6 +123,9 @@
   // Le palier de la PROCHAINE question : autour du palier courant — 70 % au
   // palier, 20 % un cran au-dessus, 10 % un cran en dessous (SPEC §2.6).
   function palierDe(S, g) {
+    // Un défi doit poser EXACTEMENT les mêmes questions aux deux joueuses :
+    // pas de palier tiré au sort, donc.
+    if (S.palierFixe) return Math.max(1, Math.min(g.paliers, S.palierFixe));
     var p = S.palier[g.id] || 1;
     var d = S.alea.brut();
     if (d > 0.9) p -= 1; else if (d > 0.7) p += 1;
@@ -146,6 +155,7 @@
   // Tire la question suivante. Renvoie null quand la série est finie.
   function prochaine(S) {
     var g, palier;
+    if (S.file && S.file.length) { S.i++; return S.file.shift(); }
     if (S.i < S.nb) {
       // Les générateurs de la série sont pris à tour de rôle.
       g = S.gens[S.i % S.gens.length];
@@ -184,8 +194,55 @@
     S.racine = racine;
     S.surFin = opts && opts.surFin;
     S.titre = opts && opts.titre;
+    if (S.mode !== 'entrainement' && S.mode !== 'revision') preTirage(S);
+    demarreChrono(S);
     suivante(S);
     return S;
+  }
+
+  /* Boss et défi : on tire toute la série d'avance. Deux raisons — le chrono
+     se calcule alors sur les durées indicatives des questions réellement
+     posées, et un défi rejoué depuis sa graine redonne exactement la même
+     série, quelle que soit l'évolution de la maîtrise entre-temps. */
+  function preTirage(S) {
+    S.file = [];
+    var secondes = 0;
+    for (var k = 0; k < S.nb; k++) {
+      var g = S.gens[k % S.gens.length];
+      var palier = palierDe(S, g);
+      var seed = S.alea.entier(1, 2147483646);
+      var q;
+      try { q = g.genere(MathsAlea(seed), palier); }
+      catch (e) { console.error('Générateur « ' + g.id + ' » : ' + e.message, e); continue; }
+      S.file.push({ gen: g, q: q, palier: palier, seed: seed });
+      secondes += q.duree || 60;
+    }
+    S.nb = S.file.length;
+    if (!S.chrono) S.chrono = Math.round(secondes * 1.1);   // 10 % de marge
+  }
+
+  function fmtChrono(s) {
+    var m = Math.floor(s / 60);
+    return m + ':' + ('0' + (s % 60)).slice(-2);
+  }
+  function arreteChrono(S) {
+    if (S.timer && global.clearInterval) global.clearInterval(S.timer);
+    S.timer = null;
+  }
+  function demarreChrono(S) {
+    if (!S.chrono || !global.setInterval) return;
+    S.finChrono = new Date().getTime() + S.chrono * 1000;
+    S.timer = global.setInterval(function () {
+      // Si la page a changé sous nos pieds, le minuteur s'arrête tout seul.
+      if (global.document && document.body && document.body.contains &&
+          !document.body.contains(S.racine)) { arreteChrono(S); return; }
+      var reste = Math.max(0, Math.round((S.finChrono - new Date().getTime()) / 1000));
+      if (S.spanChrono) {
+        S.spanChrono.innerHTML = '⏱ ' + fmtChrono(reste);
+        S.spanChrono.className = 'exo-chrono' + (reste <= 30 ? ' urgent' : '');
+      }
+      if (reste <= 0) { arreteChrono(S); S.tempsEcoule = true; rendreFin(S); }
+    }, 1000);
   }
 
   function suivante(S) {
@@ -215,6 +272,11 @@
     barre.appendChild(el('span', 'exo-pastilles', pts));
     barre.appendChild(el('span', 'exo-palier',
       'palier ' + t.palier + '/' + t.gen.paliers));
+    if (S.chrono) {
+      var reste = Math.max(0, Math.round((S.finChrono - new Date().getTime()) / 1000));
+      S.spanChrono = el('span', 'exo-chrono', '⏱ ' + fmtChrono(reste));
+      barre.appendChild(S.spanChrono);
+    }
     racine.appendChild(barre);
 
     /* -- la carte de la question --------------------------------------- */
@@ -327,7 +389,10 @@
     verif.onclick = function () { valider(S); };
     actions.appendChild(verif);
 
-    if (q.indices && q.indices.length && S.mode !== 'boss') {
+    // Un boss se passe d'indices, et un défi aussi : les deux joueuses doivent
+    // affronter exactement les mêmes conditions.
+    var avecIndices = S.mode === 'entrainement' || S.mode === 'revision';
+    if (avecIndices && q.indices && q.indices.length) {
       var ind = el('button', 'exo-btn', 'Un indice');
       ind.onclick = function () {
         if (S.indicesVus >= q.indices.length) return;
@@ -389,7 +454,8 @@
     // Le plafond porte sur le TOTAL des rappels, pas sur la file d'attente :
     // sinon une question ratée puis re-ratée se reprogrammerait indéfiniment,
     // et la série ne finirait jamais.
-    if (!v.ok && S.rappelsFaits < MAX_RAPPELS && S.mode !== 'boss') {
+    if (!v.ok && S.rappelsFaits < MAX_RAPPELS &&
+        (S.mode === 'entrainement' || S.mode === 'revision')) {
       S.rappels.push({ gen: t.gen, palier: t.palier });
       S.rappelsFaits++;
     }
@@ -451,9 +517,14 @@
   function rendreFin(S) {
     var racine = S.racine;
     S.finie = true;          // la série est close (une page peut vouloir le savoir)
+    arreteChrono(S);
     vide(racine);
     var justes = S.faites.filter(function (f) { return f.ok; }).length;
-    var total = S.faites.length;
+    // Hors entraînement, une question jamais atteinte (temps écoulé) compte
+    // comme ratée : sinon un boss abandonné après trois bonnes réponses
+    // afficherait 3/3 et serait validé.
+    var total = (S.mode === 'boss' || S.mode === 'defi')
+      ? Math.max(S.nb, S.faites.length) : S.faites.length;
     var pct = total ? Math.round(100 * justes / total) : 0;
 
     var carte = el('div', 'exo-carte exo-fin');
@@ -479,12 +550,48 @@
       // et plusieurs trophées se lisent précisément là-dedans.
       var reg = MathsProgression.finSession(S.profil, {
         n: total, justes: justes, graine: S.graine,
+        mode: S.mode, chapitre: S.chapitre,
         duree: S.faites.reduce(function (n, f) { return n + (f.duree || 0); }, 0)
       });
+      /* On tranche d'abord boss et défi : « Parcours parfait » et « Duelliste »
+         se lisent dans ce que ces deux-là viennent d'écrire. Évaluer les
+         trophées avant, c'était les décaler d'une série. */
+      var rec = el('div', 'exo-recompenses');
+
+      /* --- le verdict d'un boss ---------------------------------------- */
+      if (S.mode === 'boss' && S.chapitre) {
+        var b = MathsProgression.bossFini(S.profil, S.chapitre, justes, total);
+        rec.appendChild(el('div', b.reussi ? 'exo-boss-gagne' : 'exo-boss-perdu',
+          b.reussi
+            ? '🏆 <b>Chapitre validé !</b> ' + justes + ' / ' + total +
+              (b.pieces ? ' — gros lot : <b>+' + b.pieces + ' pièces</b>' : '')
+            : '🛡️ Le boss résiste : il faut <b>8 bonnes réponses sur 10</b> ' +
+              '(tu en as ' + justes + '). Reviens t\'entraîner, puis retente.'));
+        if (S.tempsEcoule) {
+          rec.appendChild(el('div', 'exo-mot', 'Le temps est écoulé — les questions ' +
+            'non atteintes comptent comme ratées.'));
+        }
+      }
+
+      /* --- le verdict d'un défi ---------------------------------------- */
+      if (S.mode === 'defi' && S.defi && global.MathsDefis) {
+        var d = MathsDefis.enregistre(S.defi, S.profil, justes, total);
+        if (d && d.statut === 'termine') {
+          var gagne = d.gagnant === S.profil;
+          rec.appendChild(el('div', gagne ? 'exo-boss-gagne' : 'exo-boss-perdu',
+            (gagne ? '⚔️ <b>Défi gagné !</b> ' : '⚔️ Défi perdu. ') +
+            'Score : ' + Math.round(d.scoreDe * 100) + ' % contre ' +
+            Math.round(d.scoreVers * 100) + ' %' +
+            (gagne && d.gain ? ' — <b>+' + d.gain + ' pièces</b>' : '')));
+        } else if (d) {
+          rec.appendChild(el('div', 'exo-mot',
+            'Ta série est enregistrée : le défi attend maintenant l\'autre joueuse.'));
+        }
+      }
+
       var trophees = global.MathsTrophees ? MathsTrophees.evalue(S.profil) : [];
       var piecesTr = trophees.reduce(function (n, t) { return n + t.pieces; }, 0);
 
-      var rec = el('div', 'exo-recompenses');
       var gains = el('div', 'exo-gains');
       gains.appendChild(el('span', 'exo-xp', '+' + S.bilan.xp + ' XP'));
       var pieces = S.bilan.pieces + reg.pieces + reg.coffre + piecesTr;

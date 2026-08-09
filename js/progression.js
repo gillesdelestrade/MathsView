@@ -195,11 +195,66 @@
     // La série elle-même laisse une trace : « lève-tôt », « marathon » et
     // « parcours parfait » se lisent là-dedans, pas dans les tentatives.
     MathsProfils.ajouteJournal(id, {
-      t: t, type: 'session', n: bilan.n || 0, justes: bilan.justes || 0,
+      t: t, type: 'session', mode: bilan.mode || 'entrainement',
+      chapitre: bilan.chapitre || '', n: bilan.n || 0, justes: bilan.justes || 0,
       duree: bilan.duree || 0, graine: bilan.graine || 0, pieces: pieces + coffre
     });
 
     return { pieces: pieces, coffre: coffre, sessionsSemaine: recentes };
+  }
+
+  /* ===================================================================== */
+  /* Les boss de chapitre (SPEC §2.6, §5.1)                                */
+  /*                                                                       */
+  /* Un boss ne s'ouvre que lorsque TOUTES les compétences du chapitre sont */
+  /* au moins ceinture verte : c'est une épreuve de fin de chapitre, pas un */
+  /* entraînement. On ne verrouille rien pour autant — le reste du site     */
+  /* reste accessible, un boss VALIDE un chapitre, il n'en interdit aucun.  */
+  /* ===================================================================== */
+  function chapitres(niveau) {
+    var out = [];
+    ((global.MathsExos && MathsExos.catalogue) || []).forEach(function (c) {
+      if (niveau && c.niveau !== niveau) return;
+      if (out.indexOf(c.chapitre) < 0) out.push(c.chapitre);
+    });
+    return out;
+  }
+  function compsDe(chapitre) {
+    return ((global.MathsExos && MathsExos.catalogue) || [])
+      .filter(function (c) { return c.chapitre === chapitre; });
+  }
+
+  var SEUIL_BOSS = 55;              // la ceinture verte
+
+  function bossEtat(id, chapitre) {
+    var comps = compsDe(chapitre);
+    var manque = [];
+    comps.forEach(function (c) {
+      var m = maitrise(id, c.code);
+      if ((m.meilleur || 0) < SEUIL_BOSS) manque.push(c.libelle);
+    });
+    var e = MathsProfils.etat(id);
+    var fait = (e.boss || {})[chapitre] || null;
+    return { chapitre: chapitre, ouvert: comps.length > 0 && !manque.length,
+             manque: manque, comps: comps, fait: fait };
+  }
+
+  // Bilan d'un boss : réussi à partir de 80 %. Gros lot, et le chapitre est
+  // marqué comme validé.
+  function bossFini(id, chapitre, justes, total) {
+    var e = MathsProfils.etat(id);
+    var reussi = total > 0 && justes / total >= 0.8;
+    var pieces = 0;
+    e.boss = e.boss || {};
+    var avant = e.boss[chapitre];
+    if (reussi) {
+      pieces = (avant && avant.reussi) ? 0 : 25;     // le gros lot ne tombe qu'une fois
+      e.boss[chapitre] = { reussi: true, le: maintenant(), justes: justes, total: total,
+                           parfait: justes === total || (avant && avant.parfait) };
+      e.pieces = (e.pieces || 0) + pieces;
+      MathsProfils.setEtat(id, e);
+    }
+    return { reussi: reussi, pieces: pieces, justes: justes, total: total };
   }
 
   /* ===================================================================== */
@@ -265,7 +320,9 @@
     neuve: neuve, maitrise: maitrise, scoreCourant: scoreCourant,
     ceinture: ceinture, ceintureAffichee: ceintureAffichee, ceintures: CEINTURES,
     apresQuestion: apresQuestion, finSession: finSession,
-    jardin: jardin, aReviser: aReviser, resume: resume
+    jardin: jardin, aReviser: aReviser, resume: resume,
+    chapitres: chapitres, compsDe: compsDe, bossEtat: bossEtat, bossFini: bossFini,
+    seuilBoss: SEUIL_BOSS
   };
 
 })(window);
