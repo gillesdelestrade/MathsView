@@ -31,10 +31,14 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: ['intervalles'] },
 
   /* --- 6ème -------------------------------------------------------------- */
+  { code: 'tables',       libelle: 'Tables de multiplication', niveau: '6eme',
+    chapitre: 'calcul-mental', prerequis: [] },
+  { code: 'additions-20', libelle: 'Additions jusqu\'à 20',    niveau: '6eme',
+    chapitre: 'calcul-mental', prerequis: [] },
   { code: 'divisibilite', libelle: 'Critères de divisibilité', niveau: '6eme',
     chapitre: 'nombres-6e', prerequis: [] },
   { code: 'fractions',    libelle: 'Fractions',                niveau: '6eme',
-    chapitre: 'nombres-6e', prerequis: ['divisibilite'] },
+    chapitre: 'nombres-6e', prerequis: ['divisibilite', 'tables'] },
   { code: 'mult-div-10',  libelle: 'Multiplier et diviser par 10', niveau: '6eme',
     chapitre: 'nombres-6e', prerequis: [] },
   { code: 'aires',        libelle: 'Périmètres et aires',      niveau: '6eme',
