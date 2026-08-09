@@ -1063,6 +1063,54 @@ body {
   .rel-dir { font-size: .82rem; }
 }
 
+/* ---------- Encadrement décimal (leçon encadrement-decimal) ---------- */
+/* Le tableau des encadrements : une ligne par rang n, cliquable. */
+.enc-tablewrap { overflow-x: auto; margin: .2rem 0 .1rem; }
+.enc-table {
+  border-collapse: collapse; width: 100%;
+  font-variant-numeric: tabular-nums; font-size: .9rem;
+}
+.enc-table th {
+  padding: .3rem .5rem; font-size: .78rem; font-weight: 800; text-align: center;
+  background: #f1f5f9; border: 1px solid var(--border); color: var(--ink-soft);
+  white-space: nowrap;
+}
+.enc-table td {
+  padding: .3rem .5rem; text-align: center; border: 1px solid var(--border);
+  cursor: pointer; white-space: nowrap;
+}
+.enc-table td.enc-n { font-weight: 800; color: var(--ink-soft); width: 2rem; }
+.enc-table td.enc-amp { color: var(--ink-soft); }
+/* Les rangs pas encore atteints restent en retrait. */
+.enc-table tr.off td { opacity: .38; }
+.enc-table tr.on td { background: #fff; font-weight: 600; }
+.enc-table tr.now td { background: #f5f3ff; }
+.enc-table tr.now td.enc-n { color: #7c3aed; }
+.enc-table tr:hover td { background: #f8fafc; }
+
+/* a / 10^n écrit comme une vraie fraction, en ligne. */
+.enc-frac {
+  display: inline-flex; flex-direction: column; align-items: center;
+  vertical-align: -.55em; margin: 0 .15em; line-height: 1.15;
+}
+.enc-frac b { font-weight: 800; color: #7c3aed; }
+.enc-frac i { font-style: normal; border-top: 1.5px solid var(--ink); padding-top: .05em; }
+
+/* ---------- Chaîne d'équivalences (leçon valeur-absolue-inequation) ---------- */
+/* Une ligne = une équivalence, avec sa justification à droite. Les lignes pas
+   encore démontrées restent en retrait. */
+.abs-chain { margin: .2rem 0 .5rem; }
+.abs-chain > div {
+  display: flex; align-items: baseline; gap: .6rem; flex-wrap: wrap;
+  padding: .2rem 0; transition: opacity .25s;
+}
+.abs-chain b {
+  font-size: 1.05rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.abs-chain i { font-style: normal; font-size: .82rem; color: var(--ink-soft); }
+.abs-chain > div.off { opacity: .32; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 760px) {
   .layout { flex-direction: column; }
