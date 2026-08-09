@@ -288,3 +288,79 @@
   margin-top: .7rem; padding: .7rem .9rem; background: #fffbeb;
   border: 1px solid #fbbf24; border-radius: 10px; font-size: .9rem;
 }
+
+/* ===================================================================== */
+/* Lot 5 — trophées, coffre, boutique                                    */
+/* ===================================================================== */
+
+.exo-pieces-mini { font-weight: 700; opacity: .85; font-size: .8rem; }
+
+/* ---------- Le coffre et les trophées, à l'écran de fin ---------- */
+.exo-coffre {
+  text-align: center; margin: .5rem 0; padding: .6rem;
+  background: linear-gradient(#fef3c7, #fde68a); border-radius: 10px;
+  font-weight: 700; color: #92400e; animation: exo-pop .45s ease-out;
+}
+.exo-coffre-icone { font-size: 1.5rem; display: inline-block; animation: exo-secoue .6s ease-in-out 2; }
+@keyframes exo-pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes exo-secoue {
+  0%, 100% { transform: rotate(0); } 25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+.exo-trophee-neuf {
+  display: flex; align-items: center; gap: .5rem; margin: .35rem 0; padding: .5rem .7rem;
+  background: #fff; border: 1px solid #fbbf24; border-radius: 10px; font-size: .9rem;
+  animation: exo-pop .45s ease-out;
+}
+.exo-trophee-emoji { font-size: 1.3rem; }
+.exo-trophee-pieces {
+  margin-left: auto; font-weight: 800; color: #b45309; white-space: nowrap;
+}
+
+/* ---------- L'étagère à trophées ---------- */
+.exo-trophees-bloc { margin-top: 1.4rem; }
+.exo-compte-trophees {
+  background: var(--accent); color: #fff; border-radius: 999px;
+  padding: 0 .5rem; font-size: .75rem; margin-left: .3rem;
+}
+.exo-trophees {
+  display: grid; gap: .6rem; margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+.exo-trophee {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .6rem .7rem; box-shadow: var(--shadow); text-align: center;
+}
+.exo-trophee b { display: block; margin-top: .2rem; font-size: .9rem; }
+.exo-trophee span:not(.exo-trophee-emoji) {
+  display: block; font-size: .78rem; color: var(--ink-soft); margin-top: .15rem;
+}
+/* Un trophée non obtenu se lit comme un objectif : on le montre, en retrait. */
+.exo-trophee.verrouille {
+  background: #f8fafc; box-shadow: none; opacity: .55; filter: grayscale(1);
+}
+
+/* ---------- La boutique ---------- */
+.exo-boutique {
+  display: grid; gap: .7rem; margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.exo-article {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .8rem; box-shadow: var(--shadow); display: flex; flex-direction: column;
+  gap: .4rem;
+}
+.exo-article.indispo { background: #f8fafc; box-shadow: none; }
+.exo-article-nom { font-weight: 700; font-size: .95rem; flex: 1; }
+.exo-article-cout { color: var(--accent); font-weight: 800; font-size: .9rem; }
+.exo-article-raison { font-size: .78rem; color: var(--ink-soft); }
+
+.exo-demandes { display: flex; flex-direction: column; gap: .4rem; margin-bottom: 1rem; }
+.exo-demande {
+  background: #fff; border: 1px solid var(--border); border-left-width: 4px;
+  border-radius: 10px; padding: .5rem .7rem; font-size: .92rem;
+}
+.exo-demande span { float: right; font-size: .8rem; }
+.exo-demande.en-attente { border-left-color: #f59e0b; }
+.exo-demande.valide { border-left-color: #16a34a; }
+.exo-demande.refuse { border-left-color: #dc2626; }

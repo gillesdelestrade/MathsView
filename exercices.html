@@ -43,6 +43,8 @@
   <script src="js/profils.js"></script>
   <script src="js/progression.js"></script>
   <script src="js/exos-base.js"></script>
+  <script src="js/trophees.js"></script>
+  <script src="js/boutique.js"></script>
   <script src="exos/catalogue.js"></script>
 
   <!-- Les générateurs. `outils.js` d'abord : les fn-*.js s'en servent. -->
@@ -55,6 +57,7 @@
   <script src="exos/2nde/intervalles.js"></script>
   <script src="exos/2nde/encadrement-decimal.js"></script>
   <script src="exos/2nde/valeur-absolue.js"></script>
+
 
   <script>
   /* ---------------------------------------------------------------------
@@ -106,6 +109,7 @@
           '<span class="exo-avatar" style="background:' + p.couleur + '">' +
             p.emoji + '</span>' + esc(p.prenom) +
           '<span class="exo-xp-mini">' + r.xp + ' XP</span>' +
+          '<span class="exo-pieces-mini">' + r.pieces + ' 🪙</span>' +
         '</button>';
       document.getElementById('btn-changer').onclick = function () {
         location.hash = 'profils';
@@ -246,10 +250,16 @@
              : ' Tout est bien arrosé.')) + '</p>'));
 
       // Le bouton principal de la page (SPEC §5.3).
+      var haut = el('div', 'exo-actions');
       var arroser = el('button', 'exo-btn primaire exo-arroser',
         '💧 Arroser mon jardin');
       arroser.onclick = function () { location.hash = 'revision'; };
-      accueil.appendChild(arroser);
+      haut.appendChild(arroser);
+      var bBoutique = el('button', 'exo-btn exo-arroser',
+        '🪙 Boutique (' + r.pieces + ' pièces)');
+      bBoutique.onclick = function () { location.hash = 'boutique'; };
+      haut.appendChild(bBoutique);
+      accueil.appendChild(haut);
 
       /* --- le jardin ------------------------------------------------- */
       accueil.appendChild(el('div', 'home-cat', 'Mon jardin'));
@@ -332,7 +342,108 @@
         };
       });
 
+      accueil.appendChild(blocTrophees(id));
       accueil.appendChild(blocSauvegarde());
+    }
+
+    /* ================================================================= */
+    /* L'étagère à trophées : les obtenus en couleur, les autres en       */
+    /* filigrane — ils se lisent alors comme des objectifs, ce qui est    */
+    /* tout l'intérêt d'un trophée narratif.                              */
+    /* ================================================================= */
+    function blocTrophees(id) {
+      var bloc = el('div', 'exo-trophees-bloc');
+      var eus = MathsTrophees.obtenus(id);
+      var ids = eus.map(function (t) { return t.id; });
+      bloc.appendChild(el('div', 'home-cat',
+        'Mes trophées <span class="exo-compte-trophees">' + eus.length + '</span>'));
+      var g = el('div', 'exo-trophees');
+      eus.forEach(function (t) {
+        g.appendChild(el('div', 'exo-trophee',
+          '<span class="exo-trophee-emoji">' + t.emoji + '</span>' +
+          '<b>' + esc(t.nom) + '</b><span>' + esc(t.desc) + '</span>'));
+      });
+      MathsTrophees.liste().forEach(function (t) {
+        if (ids.indexOf(t.id) >= 0) return;
+        g.appendChild(el('div', 'exo-trophee verrouille',
+          '<span class="exo-trophee-emoji">' + t.emoji + '</span>' +
+          '<b>' + esc(t.nom) + '</b><span>' + esc(t.desc) + '</span>'));
+      });
+      bloc.appendChild(g);
+      return bloc;
+    }
+
+    /* ================================================================= */
+    /* La boutique (§8) : on ne dépense pas, on DEMANDE.                  */
+    /* ================================================================= */
+    function rendreBoutique() {
+      var id = MathsProfils.courant();
+      session.hidden = true;
+      accueil.hidden = false;
+      accueil.innerHTML = '';
+      majBandeau();
+
+      var etat = MathsProfils.etat(id);
+      var reg = MathsBoutique.reglages();
+      accueil.appendChild(el('div', 'exo-intro',
+        '<h2>Boutique</h2>' +
+        '<p>Tu as <b>' + (etat.pieces || 0) + ' pièces</b>. Échanger, c\'est ' +
+        '<b>demander</b> : tes pièces sont mises de côté, et un parent valide ' +
+        '(ou refuse, et tu les récupères).<br>' +
+        'Budget du mois restant : <b>' + MathsBoutique.budgetRestant()
+          .toFixed(2).replace('.', ',') + ' €</b> — les privilèges, eux, ne ' +
+        'coûtent rien et restent toujours disponibles.</p>'));
+
+      var retour = el('button', 'exo-btn', '← Retour');
+      retour.onclick = function () { location.hash = 'accueil'; };
+      accueil.appendChild(retour);
+
+      var TYPES = [['privilege', 'Privilèges'], ['argent', 'Argent de poche'],
+                   ['bon', 'Bons cadeaux']];
+      TYPES.forEach(function (t) {
+        var arts = MathsBoutique.articles().filter(function (a) { return a.type === t[0]; });
+        if (!arts.length) return;
+        accueil.appendChild(el('div', 'home-cat', t[1]));
+        var g = el('div', 'exo-boutique');
+        arts.forEach(function (a) {
+          var v = MathsBoutique.peutDemander(id, a.id);
+          var c = el('div', 'exo-article' + (v.ok ? '' : ' indispo'));
+          c.innerHTML = '<div class="exo-article-nom">' + esc(a.nom) + '</div>' +
+            '<div class="exo-article-cout">' + a.cout + ' pièces' +
+            (MathsBoutique.eurosDe(a) ? ' · ' + MathsBoutique.eurosDe(a) + ' €' : '') +
+            '</div>';
+          var b = el('button', 'exo-btn' + (v.ok ? ' primaire' : ''), 'Échanger');
+          b.disabled = !v.ok;
+          b.onclick = function () {
+            var res = MathsBoutique.demander(id, a.id);
+            if (res.ok) rendreBoutique();
+          };
+          c.appendChild(b);
+          if (!v.ok) c.appendChild(el('div', 'exo-article-raison', esc(v.raison)));
+          g.appendChild(c);
+        });
+        accueil.appendChild(g);
+      });
+
+      /* --- mes demandes ------------------------------------------------ */
+      var mes = MathsBoutique.achats(id).slice().reverse();
+      accueil.appendChild(el('div', 'home-cat', 'Mes demandes'));
+      if (!mes.length) {
+        accueil.appendChild(el('p', 'adm-note', 'Aucune demande pour l\'instant.'));
+      } else {
+        var l = el('div', 'exo-demandes');
+        mes.forEach(function (d) {
+          var etatTxt = d.statut === 'en-attente' ? '⏳ en attente'
+                      : d.statut === 'valide' ? '✅ validée' : '❌ refusée';
+          l.appendChild(el('div', 'exo-demande ' + d.statut,
+            '<b>' + esc(d.nom) + '</b> <span>' + etatTxt + '</span>' +
+            '<div class="adm-note">' + d.cout + ' pièces · ' +
+            new Date(d.date).toLocaleDateString('fr-FR') +
+            (d.mot ? ' · « ' + esc(d.mot) + ' »' : '') + '</div>'));
+        });
+        accueil.appendChild(l);
+      }
+      window.scrollTo(0, 0);
     }
 
     /* ================================================================= */
@@ -423,6 +534,7 @@
           return;
         }
       }
+      if (h === 'boutique') { rendreBoutique(); return; }
       if (h === 'revision') {
         var codes = MathsProgression.aReviser(MathsProfils.courant(), 3);
         var gens = generateursDe(codes);

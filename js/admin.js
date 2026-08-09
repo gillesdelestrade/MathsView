@@ -7,9 +7,8 @@
  * suffisant pour éviter qu'une élève aille se mettre une ceinture noire ou
  * relire ses erreurs par la bande, et rien de plus.
  *
- * Trois onglets pour ce lot : le tableau de bord (§9.2), les profils (§9.1) et
- * les données (§9.5). La boutique et les trophées manuels (§9.3, §9.4) arrivent
- * avec le lot 5 — leurs onglets ne sont pas affichés tant qu'ils n'existent pas.
+ * Cinq onglets : tableau de bord (§9.2), profils (§9.1), boutique et budget
+ * (§9.3), trophées manuels (§9.4) et données (§9.5).
  *
  * Ce qui a le plus de valeur ici, et qu'aucune autre page ne montre : les
  * compétences où ça bloque, et les 20 dernières erreurs REJOUÉES depuis leur
@@ -183,8 +182,13 @@
       profilVu = profs.length ? profs[0].id : null;
     }
 
+    var enAttente = global.MathsBoutique
+      ? MathsBoutique.demandes('en-attente').length : 0;
     var barre = el('div', 'adm-onglets');
-    [['bord', 'Tableau de bord'], ['profils', 'Profils'], ['donnees', 'Données']]
+    [['bord', 'Tableau de bord'], ['profils', 'Profils'],
+     ['boutique', 'Boutique' + (enAttente
+        ? ' <span class="adm-badge">' + enAttente + '</span>' : '')],
+     ['trophees', 'Trophées'], ['donnees', 'Données']]
       .forEach(function (o) {
         var b = el('button', 'adm-onglet' + (onglet === o[0] ? ' on' : ''), o[1]);
         b.onclick = function () { onglet = o[0]; rendre(); };
@@ -204,6 +208,8 @@
 
     if (onglet === 'bord') ongletBord(corps);
     else if (onglet === 'profils') ongletProfils(corps);
+    else if (onglet === 'boutique') ongletBoutique(corps);
+    else if (onglet === 'trophees') ongletTrophees(corps);
     else ongletDonnees(corps);
   }
 
@@ -214,7 +220,10 @@
     var j = MathsProfils.journal(id);
     var arch = MathsProfils.archive(id);
     var t = 0, r = 0, temps = 0;
-    j.forEach(function (e) { t++; if (e.ok) r++; temps += e.duree || 0; });
+    j.forEach(function (e) {
+      if (e.type !== 'tentative') return;
+      t++; if (e.ok) r++; temps += e.duree || 0;
+    });
     Object.keys(arch).forEach(function (m) {
       t += arch[m].tentatives; r += arch[m].reussites; temps += arch[m].duree;
     });
@@ -222,7 +231,9 @@
     return {
       tentatives: t, reussites: r, temps: temps,
       taux: t ? Math.round(100 * r / t) : null,
-      semaine: j.filter(function (e) { return maintenant - e.t < SEMAINE; }).length
+      semaine: j.filter(function (e) {
+        return e.type === 'tentative' && maintenant - e.t < SEMAINE;
+      }).length
     };
   }
 
@@ -305,6 +316,7 @@
       var fin = maintenant - i * SEMAINE, debut = fin - SEMAINE;
       var s = 0, n = 0;
       j.forEach(function (e) {
+        if (e.type !== 'tentative') return;      // sinon la durée compte double
         if (e.t > debut && e.t <= fin) { s += e.duree || 0; n++; }
       });
       sem.push({ minutes: Math.round(s / 60), n: n, fin: fin });
@@ -491,6 +503,254 @@
     act.appendChild(non); act.appendChild(exp); act.appendChild(oui);
     b.appendChild(act);
     carte.appendChild(b);
+  }
+
+  /* ===================================================================== */
+  /* §9.3 — Boutique et budget                                             */
+  /* ===================================================================== */
+  function ongletBoutique(corps) {
+    if (!global.MathsBoutique) {
+      corps.appendChild(el('div', 'exo-carte',
+        '<p>Le module boutique n\'est pas chargé (js/boutique.js).</p>'));
+      return;
+    }
+    var reg = MathsBoutique.reglages();
+
+    /* --- les demandes en attente : c'est ce qu'on vient voir ----------- */
+    var att = MathsBoutique.demandes('en-attente');
+    var d1 = el('div', 'exo-carte');
+    d1.appendChild(el('div', 'props-label',
+      'Demandes en attente' + (att.length ? ' (' + att.length + ')' : '')));
+    if (!att.length) {
+      d1.appendChild(el('p', 'adm-note', 'Aucune demande en attente.'));
+    }
+    att.forEach(function (x) {
+      var d = x.demande;
+      var ligne = el('div', 'adm-demande');
+      ligne.innerHTML =
+        '<div><span class="exo-avatar" style="background:' + x.profil.couleur + '">' +
+          x.profil.emoji + '</span> <b>' + esc(x.profil.prenom) + '</b> — ' +
+          esc(d.nom) + '</div>' +
+        '<div class="adm-note">' + d.cout + ' pièces' +
+          (d.euros ? ' · <b>' + d.euros + ' €</b>' : ' · privilège (0 €)') +
+          ' · demandé le ' + new Date(d.date).toLocaleDateString('fr-FR') + '</div>';
+      var act = el('div', 'exo-actions');
+      var oui = el('button', 'exo-btn primaire', 'Valider');
+      oui.onclick = function () { MathsBoutique.valider(x.profil.id, d.id); rendre(); };
+      var mot = el('input', 'exo-champ');
+      mot.placeholder = 'un mot d\'explication (facultatif)';
+      var non = el('button', 'exo-btn danger', 'Refuser');
+      non.onclick = function () {
+        MathsBoutique.refuser(x.profil.id, d.id, mot.value);
+        rendre();
+      };
+      act.appendChild(oui); act.appendChild(non);
+      ligne.appendChild(mot);
+      ligne.appendChild(act);
+      d1.appendChild(ligne);
+    });
+    corps.appendChild(d1);
+
+    /* --- budget du mois ------------------------------------------------ */
+    var b = el('div', 'exo-carte');
+    b.appendChild(el('div', 'props-label', 'Budget du mois'));
+    var total = MathsBoutique.totalDuMois();
+    var pct = reg.budgetMensuel ? Math.min(100, Math.round(100 * total / reg.budgetMensuel)) : 0;
+    b.innerHTML += '<p class="adm-note"><b>' + total.toFixed(2).replace('.', ',') +
+      ' €</b> dépensés sur ' + reg.budgetMensuel + ' € — il reste <b>' +
+      MathsBoutique.budgetRestant().toFixed(2).replace('.', ',') + ' €</b>.</p>' +
+      '<div class="exo-comp-jauge"><i style="width:' + pct + '%;background:' +
+      (pct > 90 ? '#dc2626' : pct > 70 ? '#f59e0b' : '#16a34a') + '"></i></div>' +
+      '<p class="adm-note">Le plafond ne bloque que l\'argent et les bons. Les ' +
+      'privilèges restent toujours accessibles — c\'est voulu : ce sont eux qui ' +
+      'ont le meilleur rapport valeur / coût.</p>';
+
+    var form = el('div', 'adm-form');
+    var bm = el('input', 'exo-champ'); bm.type = 'number'; bm.min = 0; bm.step = 1;
+    bm.value = reg.budgetMensuel;
+    var tp = el('input', 'exo-champ'); tp.type = 'number'; tp.min = 1; tp.step = 10;
+    tp.value = reg.tauxPieces;
+    [['Plafond mensuel (€)', bm], ['Pièces pour 1 €', tp]].forEach(function (x) {
+      var l = el('label', 'adm-champ', '<span>' + x[0] + '</span>');
+      l.appendChild(x[1]);
+      form.appendChild(l);
+    });
+    b.appendChild(form);
+    var act2 = el('div', 'exo-actions');
+    var maj = el('button', 'exo-btn primaire', 'Enregistrer');
+    maj.onclick = function () {
+      MathsBoutique.setReglages({ budgetMensuel: bm.value, tauxPieces: tp.value });
+      rendre();
+    };
+    act2.appendChild(maj);
+    b.appendChild(act2);
+
+    var hist = MathsBoutique.depensesDuMois();
+    if (hist.length) {
+      var t = el('table', 'adm-table');
+      t.innerHTML = '<thead><tr><th>Date</th><th>Profil</th><th>Article</th>' +
+        '<th>Montant</th></tr></thead>';
+      var tb = el('tbody');
+      hist.slice().reverse().forEach(function (d) {
+        var p = MathsProfils.profil(d.profil);
+        tb.innerHTML += '<tr><td>' + jour(d.t) + '</td><td>' +
+          esc(p ? p.prenom : d.profil) + '</td><td>' + esc(d.article) + '</td><td>' +
+          d.euros + ' €</td></tr>';
+      });
+      t.appendChild(tb);
+      b.appendChild(t);
+    }
+    corps.appendChild(b);
+
+    /* --- le catalogue --------------------------------------------------- */
+    var c = el('div', 'exo-carte');
+    c.appendChild(el('div', 'props-label', 'Les articles'));
+    var arts = MathsBoutique.articles();
+    arts.forEach(function (a, i) {
+      var l = el('div', 'adm-article');
+      var nom = el('input', 'exo-champ'); nom.value = a.nom;
+      var cout = el('input', 'exo-champ court'); cout.type = 'number'; cout.min = 1;
+      cout.value = a.cout;
+      var eur = el('input', 'exo-champ court'); eur.type = 'number'; eur.min = 0;
+      eur.step = '0.5'; eur.value = a.euros === undefined ? '' : a.euros;
+      eur.placeholder = '€';
+      eur.disabled = a.type === 'privilege';
+      var sup = el('button', 'exo-btn danger', '✕');
+      sup.title = 'Retirer cet article';
+      sup.onclick = function () {
+        arts.splice(i, 1); MathsBoutique.setArticles(arts); rendre();
+      };
+      nom.onchange = cout.onchange = eur.onchange = function () {
+        a.nom = nom.value; a.cout = Math.max(1, parseInt(cout.value, 10) || a.cout);
+        if (!eur.disabled) a.euros = eur.value === '' ? undefined : Number(eur.value);
+        MathsBoutique.setArticles(arts);
+      };
+      l.appendChild(el('span', 'adm-type', a.type));
+      l.appendChild(nom); l.appendChild(cout); l.appendChild(eur); l.appendChild(sup);
+      c.appendChild(l);
+    });
+
+    var nouveau = el('div', 'adm-article');
+    var nn = el('input', 'exo-champ'); nn.placeholder = 'Nouvel article';
+    var nc = el('input', 'exo-champ court'); nc.type = 'number'; nc.value = 50;
+    var ne = el('input', 'exo-champ court'); ne.type = 'number'; ne.placeholder = '€';
+    var nt = el('select', 'exo-select');
+    [['privilege', 'privilège'], ['argent', 'argent'], ['bon', 'bon cadeau']]
+      .forEach(function (x) {
+        var o = document.createElement('option');
+        o.value = x[0]; o.textContent = x[1];
+        nt.appendChild(o);
+      });
+    var add = el('button', 'exo-btn primaire', 'Ajouter');
+    add.onclick = function () {
+      if (!nn.value.trim()) { nn.focus(); return; }
+      arts.push({ id: 'a' + Date.now(), nom: nn.value.trim(),
+                  cout: Math.max(1, parseInt(nc.value, 10) || 50), type: nt.value,
+                  euros: nt.value === 'privilege' ? 0 : Number(ne.value || 0),
+                  cooldownJours: 7 });
+      MathsBoutique.setArticles(arts);
+      rendre();
+    };
+    nouveau.appendChild(nt); nouveau.appendChild(nn); nouveau.appendChild(nc);
+    nouveau.appendChild(ne); nouveau.appendChild(add);
+    c.appendChild(nouveau);
+
+    var act3 = el('div', 'exo-actions');
+    var reset = el('button', 'exo-btn', 'Rétablir le catalogue par défaut');
+    reset.onclick = function () {
+      MathsBoutique.setArticles(MathsBoutique.defaut());
+      rendre();
+    };
+    act3.appendChild(reset);
+    c.appendChild(act3);
+    corps.appendChild(c);
+  }
+
+  /* ===================================================================== */
+  /* §9.4 — Trophées manuels                                               */
+  /* ===================================================================== */
+  function ongletTrophees(corps) {
+    if (!global.MathsTrophees) {
+      corps.appendChild(el('div', 'exo-carte',
+        '<p>Le module trophées n\'est pas chargé (js/trophees.js).</p>'));
+      return;
+    }
+    var profs = MathsProfils.profils();
+
+    var c = el('div', 'exo-carte');
+    c.appendChild(el('div', 'props-label', 'À attribuer à la main'));
+    c.appendChild(el('p', 'adm-note',
+      'Ceux-là, aucun algorithme ne peut les voir : il faut être là. ' +
+      'Les autres trophées se débloquent tout seuls en fin de série.'));
+    MathsTrophees.liste().filter(function (t) { return t.manuel; }).forEach(function (t) {
+      var l = el('div', 'adm-demande');
+      l.innerHTML = '<div><span class="exo-trophee-emoji">' + t.emoji + '</span> ' +
+        '<b>' + esc(t.nom) + '</b> — ' + esc(t.desc) +
+        ' <span class="exo-trophee-pieces">+' + t.pieces + '</span></div>';
+      var act = el('div', 'exo-actions');
+      profs.forEach(function (p) {
+        var deja = MathsTrophees.obtenus(p.id).some(function (o) { return o.id === t.id; });
+        var b = el('button', 'exo-btn' + (deja ? '' : ' primaire'),
+          (deja ? '✓ ' : 'Attribuer à ') + esc(p.prenom));
+        b.disabled = deja;
+        b.onclick = function () { MathsTrophees.attribue(p.id, t.id); rendre(); };
+        act.appendChild(b);
+      });
+      l.appendChild(act);
+      c.appendChild(l);
+    });
+    corps.appendChild(c);
+
+    /* --- un trophée inventé sur le moment ------------------------------ */
+    var f = el('div', 'exo-carte');
+    f.appendChild(el('div', 'props-label', 'Inventer un trophée'));
+    var form = el('div', 'adm-form');
+    var nom = el('input', 'exo-champ'); nom.placeholder = 'Nom';
+    var desc = el('input', 'exo-champ'); desc.placeholder = 'Pourquoi ?';
+    var pieces = el('input', 'exo-champ court'); pieces.type = 'number';
+    pieces.value = 20; pieces.min = 0;
+    var qui = el('select', 'exo-select');
+    profs.forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p.id; o.textContent = p.prenom;
+      qui.appendChild(o);
+    });
+    [['Nom', nom], ['Description', desc], ['Pièces', pieces], ['Pour', qui]]
+      .forEach(function (x) {
+        var l = el('label', 'adm-champ', '<span>' + x[0] + '</span>');
+        l.appendChild(x[1]);
+        form.appendChild(l);
+      });
+    f.appendChild(form);
+    var act = el('div', 'exo-actions');
+    var ok = el('button', 'exo-btn primaire', 'Attribuer');
+    ok.onclick = function () {
+      if (!nom.value.trim() || !qui.value) { nom.focus(); return; }
+      MathsTrophees.libre(qui.value, { nom: nom.value.trim(), desc: desc.value.trim(),
+                                       pieces: pieces.value });
+      rendre();
+    };
+    act.appendChild(ok);
+    f.appendChild(act);
+    corps.appendChild(f);
+
+    /* --- ce que chacune a déjà --------------------------------------- */
+    profs.forEach(function (p) {
+      var eus = MathsTrophees.obtenus(p.id);
+      var d = el('div', 'exo-carte');
+      d.appendChild(el('div', 'props-label',
+        esc(p.prenom) + ' — ' + eus.length + ' trophée' + (eus.length > 1 ? 's' : '')));
+      if (!eus.length) {
+        d.appendChild(el('p', 'adm-note', 'Aucun pour l\'instant.'));
+      }
+      eus.slice().reverse().forEach(function (t) {
+        d.appendChild(el('div', 'adm-note',
+          '<span class="exo-trophee-emoji">' + t.emoji + '</span> <b>' +
+          esc(t.nom) + '</b> — ' + esc(t.desc) + ' · ' + jour(t.obtenuLe) +
+          (t.manuel ? ' · <i>attribué à la main</i>' : '')));
+      });
+      corps.appendChild(d);
+    });
   }
 
   /* ===================================================================== */

@@ -123,3 +123,24 @@
   .adm-table th:nth-child(5), .adm-table td:nth-child(5) { display: none; }
   .adm-bloc-nom { flex-basis: 50%; }
 }
+
+/* ---------- Lot 5 : boutique et trophées côté parent ---------- */
+.adm-badge {
+  background: #dc2626; color: #fff; border-radius: 999px; padding: 0 .4rem;
+  font-size: .7rem; margin-left: .3rem; vertical-align: middle;
+}
+.adm-demande {
+  border-top: 1px solid var(--border); padding: .6rem 0;
+  display: flex; flex-direction: column; gap: .35rem;
+}
+.adm-demande .exo-actions { margin-top: 0; }
+.adm-article {
+  display: flex; align-items: center; gap: .4rem; padding: .3rem 0;
+  border-bottom: 1px solid var(--border); flex-wrap: wrap;
+}
+.adm-article .exo-champ { min-height: 38px; font-size: .9rem; }
+.adm-type {
+  font-size: .68rem; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--ink-soft); background: #f1f5f9; padding: .15rem .4rem;
+  border-radius: 999px; font-weight: 700; min-width: 68px; text-align: center;
+}

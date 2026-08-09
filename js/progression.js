@@ -163,7 +163,11 @@
   /* ===================================================================== */
   /* Fin de série : la régularité, seule source de pièces avec les ceintures*/
   /* ===================================================================== */
-  function finSession(id) {
+  /* `bilan` : { n, justes, duree, graine } — ce que la série vient de produire.
+     Il sert à trois choses : la régularité, le coffre surprise, et la trace
+     laissée dans le journal (dont plusieurs trophées se nourrissent). */
+  function finSession(id, bilan) {
+    bilan = bilan || {};
     var e = MathsProfils.etat(id);
     var t = maintenant();
     e.sessions = (e.sessions || []).filter(function (x) { return t - x < 90 * 86400000; });
@@ -174,10 +178,28 @@
     if (recentes >= 3 && (!e.derniereRegularite || t - e.derniereRegularite >= SEMAINE)) {
       pieces = 15;                       // trois séries dans la semaine
       e.derniereRegularite = t;
-      e.pieces = (e.pieces || 0) + pieces;
     }
+
+    /* Le coffre surprise (SPEC §8.5) : une série sur six environ, tiré de la
+       GRAINE de la série et non de Math.random(). Sans ça, recharger la page
+       de fin ferait réapparaître un nouveau coffre à volonté. */
+    var coffre = 0;
+    if (bilan.graine && global.MathsAlea) {
+      var rnd = MathsAlea((bilan.graine ^ 0x5eed) >>> 0);
+      if (rnd.entier(1, 6) === 1) coffre = rnd.entier(5, 25);
+    }
+
+    e.pieces = (e.pieces || 0) + pieces + coffre;
     MathsProfils.setEtat(id, e);
-    return { pieces: pieces, sessionsSemaine: recentes };
+
+    // La série elle-même laisse une trace : « lève-tôt », « marathon » et
+    // « parcours parfait » se lisent là-dedans, pas dans les tentatives.
+    MathsProfils.ajouteJournal(id, {
+      t: t, type: 'session', n: bilan.n || 0, justes: bilan.justes || 0,
+      duree: bilan.duree || 0, graine: bilan.graine || 0, pieces: pieces + coffre
+    });
+
+    return { pieces: pieces, coffre: coffre, sessionsSemaine: recentes };
   }
 
   /* ===================================================================== */

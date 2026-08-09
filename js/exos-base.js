@@ -475,17 +475,38 @@
     /* Le bilan de progression : c'est LE moment de récompense de la séance
        (SPEC §11.3), donc il passe avant la liste des erreurs. */
     if (S.profil && global.MathsProgression) {
-      var reg = MathsProgression.finSession(S.profil);
+      // L'ordre compte : finSession écrit la trace de la série dans le journal,
+      // et plusieurs trophées se lisent précisément là-dedans.
+      var reg = MathsProgression.finSession(S.profil, {
+        n: total, justes: justes, graine: S.graine,
+        duree: S.faites.reduce(function (n, f) { return n + (f.duree || 0); }, 0)
+      });
+      var trophees = global.MathsTrophees ? MathsTrophees.evalue(S.profil) : [];
+      var piecesTr = trophees.reduce(function (n, t) { return n + t.pieces; }, 0);
+
       var rec = el('div', 'exo-recompenses');
       var gains = el('div', 'exo-gains');
       gains.appendChild(el('span', 'exo-xp', '+' + S.bilan.xp + ' XP'));
-      var pieces = S.bilan.pieces + reg.pieces;
+      var pieces = S.bilan.pieces + reg.pieces + reg.coffre + piecesTr;
       if (pieces) gains.appendChild(el('span', 'exo-pieces', '+' + pieces + ' pièces'));
       rec.appendChild(gains);
       if (reg.pieces) {
         rec.appendChild(el('div', 'exo-mot',
           'Trois séries cette semaine — la régularité, c\'est ce qui compte le plus.'));
       }
+      // Le coffre : imprévisible par construction, et tiré de la graine de la
+      // série pour qu'on ne puisse pas le rejouer en rechargeant la page.
+      if (reg.coffre) {
+        rec.appendChild(el('div', 'exo-coffre',
+          '<span class="exo-coffre-icone">🎁</span> Coffre surprise : <b>+' +
+          reg.coffre + ' pièces</b> !'));
+      }
+      trophees.forEach(function (t) {
+        rec.appendChild(el('div', 'exo-trophee-neuf',
+          '<span class="exo-trophee-emoji">' + t.emoji + '</span>' +
+          '<b>' + echappe(t.nom) + '</b> — ' + echappe(t.desc) +
+          ' <span class="exo-trophee-pieces">+' + t.pieces + '</span>'));
+      });
       S.bilan.ceintures.forEach(function (c) {
         rec.appendChild(el('div', 'exo-ceinture-neuve',
           '🥋 Nouvelle ceinture <b>' + c.ceinture.nom + '</b> en ' +
