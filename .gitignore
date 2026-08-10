@@ -11,3 +11,6 @@
 
 # Réglages locaux Claude Code (spécifiques à la machine)
 .claude/
+
+# Base de test locale du stockage (le vrai serveur a la sienne)
+serveur/*.sqlite3*

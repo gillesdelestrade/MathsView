@@ -38,6 +38,7 @@
   <script src="js/alea.js"></script>
   <script src="js/reponse.js"></script>
   <script src="js/profils.js"></script>
+  <script src="js/sync-ui.js"></script>
   <script src="js/progression.js"></script>
   <script src="js/exos-base.js"></script>
   <script src="js/trophees.js"></script>
@@ -76,6 +77,10 @@
   <script src="exos/3eme/trigonometrie.js"></script>
 
   <script src="js/admin.js"></script>
-  <script>MathsAdmin.demarre(document.getElementById('admin'));</script>
+  <script>
+    MathsSyncUI.demarre(function () {
+      MathsAdmin.demarre(document.getElementById('admin'));
+    });
+  </script>
 </body>
 </html>

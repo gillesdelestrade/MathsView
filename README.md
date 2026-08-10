@@ -27,7 +27,12 @@ dont **25 leçons mènent directement à un entraînement**.
 ./serve.sh
 ```
 
-puis <http://localhost:8000> (serveur intégré de Python 3, déjà présent sur macOS).
+puis <http://localhost:8000>. Le script lance `serveur/dev.py` : les fichiers du site
+**et** le stockage de la progression, dans un seul processus Python 3 (déjà présent sur
+macOS, aucune dépendance). La base de test est `serveur/mathsview.sqlite3` — l'effacer
+remet la progression locale à zéro.
+
+Pour l'installation sur un serveur de la maison, voir [Le serveur](#le-serveur).
 
 ## Les trois pages
 
@@ -291,15 +296,70 @@ programme** — jamais en score absolu, ce qui n'aurait aucun sens entre une 6è
 
 ## Les données
 
-Tout vit dans le `localStorage` du navigateur, et **rien ne le touche en dehors de
-`js/profils.js`** — ce qui permettra de basculer vers un serveur sans réécrire le reste.
+La progression vit **sur le serveur**, et **rien ne touche au stockage en dehors de
+`js/profils.js`** — c'est cette règle, tenue depuis le début, qui a permis d'y passer
+sans réécrire une ligne ailleurs. Un élève retrouve donc son jardin en changeant
+d'appareil.
 
-Conséquence directe : **une purge du navigateur efface tout.** L'export JSON de l'espace
-parent n'est donc pas un bonus mais la seule vraie sauvegarde ; l'admin rappelle
-d'ailleurs quand le dernier export date de plus de 30 jours.
+`localStorage` n'a pas disparu : il est devenu un **miroir**. Le site démarre dessus
+quand le serveur est éteint, continue de fonctionner, et rattrape la synchronisation
+tout seul au retour. Le format des clés (`mv.*`) n'a pas bougé, si bien que la
+progression déjà présente dans un navigateur est reprise telle quelle à la première
+connexion — et que l'export JSON de l'espace parent marche toujours.
+
+Le point délicat, c'est **deux appareils sur le même profil**. Fusionner deux
+progressions divergentes serait de la devinette, et de la devinette sur les pièces d'un
+enfant, ça se remarque. On l'évite plutôt : un profil est « tenu » par un appareil à la
+fois (un bail de 90 secondes, renouvelé tant que la page est ouverte), et l'autre
+appareil propose franchement « reprendre ici ». En dernier recours, chaque clé porte un
+numéro de version et le serveur refuse une écriture partie d'une version périmée.
 
 Le **code parent** (4 chiffres, haché avec un sel) n'est pas de la sécurité : c'est une
-porte fermée. La console l'ouvre en dix secondes, et c'est écrit dans le fichier.
+porte fermée. La console l'ouvre en dix secondes, et c'est écrit dans le fichier. Le
+service de stockage, lui, n'a **aucune authentification** : il est fait pour le réseau
+de la maison, pas pour Internet.
+
+---
+
+## Le serveur
+
+Un Raspberry Pi suffit largement — le site fait 8 Mo de fichiers statiques et le
+stockage est un SQLite de quelques centaines de Ko.
+
+```bash
+sudo apt install -y nginx git python3
+sudo git clone https://github.com/gillesdelestrade/MathsView.git /var/www/mathsview
+sudo useradd --system --no-create-home --shell /usr/sbin/nologin mathsview
+
+cd /var/www/mathsview
+sudo cp deploy/mathsview-api.service /etc/systemd/system/
+sudo systemctl daemon-reload && sudo systemctl enable --now mathsview-api
+
+sudo cp deploy/nginx.conf /etc/nginx/sites-available/mathsview
+sudo ln -sf /etc/nginx/sites-available/mathsview /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Le site est alors sur `http://mathsview.local` depuis n'importe quelle machine de la
+maison (donne ce nom d'hôte au Pi avec `raspi-config`).
+
+**Mise à jour à chaque push.** `deploy/pull.sh` aligne le Pi sur `origin/main` et
+redémarre le service si le code serveur a changé. Rien à exposer sur Internet, aucun
+port à ouvrir : c'est le Pi qui va chercher. Dans `sudo crontab -e` :
+
+```cron
+*  *    * * *  /var/www/mathsview/deploy/pull.sh      >> /var/log/mathsview-deploy.log 2>&1
+17 3    * * *  /var/www/mathsview/deploy/sauvegarde.sh >> /var/log/mathsview-deploy.log 2>&1
+```
+
+Le dépôt est un **miroir** : toute modification faite sur le Pi est écrasée. La
+progression, elle, vit hors du dépôt (`/var/lib/mathsview/`) — un `git reset --hard` ne
+peut pas l'atteindre.
+
+**La carte SD est désormais le seul point de panne du projet.** `deploy/sauvegarde.sh`
+en fait une copie quotidienne dans `/var/backups/mathsview/`, ce qui protège d'une base
+corrompue mais pas d'une carte morte : copie ce dossier ailleurs de temps en temps. Le
+bouton « Sauvegarder » d'`admin.html` reste, lui aussi, une vraie sauvegarde.
 
 ---
 
@@ -317,12 +377,17 @@ MathsView/
 │   ├── alea.js             aléatoire semé — le seul Math.random() du module
 │   ├── reponse.js          normalisation et comparaison des réponses
 │   ├── exos-base.js        moteur d'exercices (session, paliers, correction)
-│   ├── profils.js          profils et stockage — SEUL à toucher localStorage
+│   ├── profils.js          profils, stockage et synchronisation — SEUL à y toucher
+│   ├── sync-ui.js          le bandeau « hors ligne » / « déjà ouvert ailleurs »
 │   ├── progression.js      maîtrise, ceintures, jardin, boss
 │   ├── trophees.js         les dix trophées et leur évaluation
 │   ├── boutique.js         articles, budget plafonné, circuit de demande
 │   ├── defis.js            défis, objectif commun, classement
 │   └── admin.js            la page parent
+├── serveur/
+│   ├── mathsview_api.py    le stockage : ~250 lignes, stdlib seule, SQLite
+│   └── dev.py              le site + le stockage en local, un seul processus
+├── deploy/                 nginx, systemd, mise à jour par git, sauvegarde
 ├── vendor/                 JSXGraph + MathJax, en local
 ├── lessons/<niveau>/       une leçon = un fichier
 └── exos/

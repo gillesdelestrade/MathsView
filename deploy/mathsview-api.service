@@ -1,0 +1,41 @@
+# Le service de stockage de la progression.
+#   sudo useradd --system --no-create-home --shell /usr/sbin/nologin mathsview
+#   sudo cp deploy/mathsview-api.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now mathsview-api
+#   systemctl status mathsview-api      (et journalctl -u mathsview-api -f)
+
+[Unit]
+Description=MathsView — stockage de la progression
+After=network.target
+
+[Service]
+Type=simple
+User=mathsview
+Group=mathsview
+ExecStart=/usr/bin/python3 /var/www/mathsview/serveur/mathsview_api.py
+Restart=always
+RestartSec=3
+
+Environment=MV_HOTE=127.0.0.1
+Environment=MV_PORT=8001
+Environment=MV_BASE=/var/lib/mathsview/mathsview.sqlite3
+
+# La base vit hors du dépôt : un « git reset --hard » du déploiement
+# automatique ne doit jamais pouvoir toucher la progression des enfants.
+StateDirectory=mathsview
+StateDirectoryMode=0700
+
+# Ce service n'a besoin de rien d'autre que de sa base.
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictAddressFamilies=AF_INET AF_INET6
+ReadWritePaths=/var/lib/mathsview
+
+[Install]
+WantedBy=multi-user.target

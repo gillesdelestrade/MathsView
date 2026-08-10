@@ -41,6 +41,7 @@
   <script src="js/alea.js"></script>
   <script src="js/reponse.js"></script>
   <script src="js/profils.js"></script>
+  <script src="js/sync-ui.js"></script>
   <script src="js/progression.js"></script>
   <script src="js/exos-base.js"></script>
   <script src="js/trophees.js"></script>
@@ -778,7 +779,11 @@
     }
 
     window.addEventListener('hashchange', router);
-    router();
+
+    // On attend la progression du serveur avant de dessiner quoi que ce soit :
+    // afficher un jardin vide puis le remplir une seconde plus tard serait pire
+    // que d'attendre. Si le serveur ne répond pas, on part sur la copie locale.
+    MathsSyncUI.demarre(router);
   })();
   </script>
 </body>
