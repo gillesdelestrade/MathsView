@@ -1075,6 +1075,44 @@ body {
   .rel-dir { font-size: .82rem; }
 }
 
+/* ---------- Perspective cavalière (5ème) ---------- */
+.per-ui { max-width: 700px; margin-top: .6rem; }
+.per-cap { font-size: .98rem; color: var(--ink); min-height: 3.2em; }
+.per-regles { display: grid; gap: .3rem; margin: .4rem 0; }
+.per-regle {
+  display: flex; align-items: baseline; gap: .55rem;
+  padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 10px;
+  background: #f8fafc; font-size: .88rem; color: var(--ink-soft);
+  transition: background .25s, border-color .25s, color .25s;
+}
+.per-regle.on { background: #fff; border-color: var(--ink); color: var(--ink); }
+.per-no {
+  flex: none; width: 1.35rem; height: 1.35rem; border-radius: 999px;
+  background: var(--border); color: var(--ink); font-size: .78rem; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.per-regle.on .per-no { background: var(--ink); color: #fff; }
+.per-dit { font-size: .88rem; color: var(--ink-soft); }
+.per-compte {
+  margin-top: .35rem; padding: .45rem .7rem; border-radius: 10px;
+  background: #f1f5f9; font-size: .9rem; color: var(--ink);
+}
+.per-ar { font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* Le calcul du volume, qui s'écrit ligne à ligne sous la figure. */
+.per-formule {
+  font-size: 1.05rem; font-weight: 800; color: var(--ink); padding: .1rem 0 .25rem;
+}
+.per-etape { font-size: .9rem; color: var(--ink); padding: .12rem 0; }
+.per-piege {
+  display: inline-block; margin-left: .4rem; padding: .05rem .5rem;
+  border-radius: 999px; background: #fef3c7; color: #92400e;
+  font-size: .76rem; font-weight: 700;
+}
+.per-resultat {
+  margin-top: .3rem; font-size: 1.2rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ---------- Comparer et ranger des décimaux relatifs (5ème) ---------- */
 .cmp-ui { max-width: 700px; margin-top: .6rem; }
 .cmp-cap { font-size: .98rem; color: var(--ink); min-height: 1.7em; }

@@ -73,6 +73,8 @@ MathsExos.catalogue = [
     chapitre: 'calcul-5e', prerequis: [] },
   { code: 'distributivite', libelle: 'Distributivité',         niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: ['priorites'] },
+  { code: 'volumes',        libelle: 'Volumes des solides usuels', niveau: '5eme',
+    chapitre: 'espace-5e', prerequis: ['aires'] },
 
   /* --- 4ème -------------------------------------------------------------- */
   { code: 'eq1',       libelle: 'Équations du 1er degré', niveau: '4eme',
