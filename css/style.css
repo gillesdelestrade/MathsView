@@ -1063,6 +1063,89 @@ body {
   .rel-dir { font-size: .82rem; }
 }
 
+/* ---------- Comparer et ranger des décimaux relatifs (5ème) ---------- */
+.cmp-ui { max-width: 700px; margin-top: .6rem; }
+.cmp-cap { font-size: .98rem; color: var(--ink); min-height: 1.7em; }
+.cmp-verdict {
+  font-size: 1.4rem; font-weight: 800; min-height: 1.9em; padding: .1rem 0;
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem;
+  font-variant-numeric: tabular-nums;
+}
+.cmp-signe { color: var(--ink); margin: 0 .15em; }
+.cmp-inv {
+  font-size: .78rem; font-weight: 700; color: var(--ink-soft);
+  background: #f1f5f9; border-radius: 999px; padding: .1rem .55rem; margin-left: .3rem;
+}
+.cmp-why { font-size: .88rem; color: var(--ink-soft); min-height: 2.6em; }
+
+/* Le tableau des chiffres : une colonne par rang, et chaque case est un bouton. */
+.cmp-grid { border-collapse: separate; border-spacing: 3px; margin: .5rem 0 .3rem; }
+.cmp-grid th {
+  font-size: .68rem; font-weight: 700; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: .04em; padding: .1rem .2rem;
+}
+.cmp-grid th.cmp-nom {
+  font-size: 1.05rem; font-weight: 800; text-transform: none; letter-spacing: 0;
+  text-align: right; padding-right: .5rem; font-variant-numeric: tabular-nums;
+}
+.cmp-grid th.cmp-h.look, .cmp-grid th.cmp-h.on { color: var(--ink); }
+.cmp-grid td.cmp-cell {
+  width: 2.2rem; height: 2.2rem; text-align: center; font-size: 1.15rem;
+  font-weight: 800; color: var(--ink); background: #f8fafc;
+  border: 1px solid var(--border); border-radius: 9px; cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition: background .15s, border-color .15s, transform .15s, box-shadow .15s;
+}
+.cmp-grid td.cmp-cell:hover { background: #fff; border-color: #cbd5e1; }
+/* Les zéros que l'on ajoute pour aligner les rangs : présents, mais discrets. */
+.cmp-grid td.cmp-cell.pad {
+  color: #cbd5e1; border-style: dashed; background: #fbfcfd;
+}
+.cmp-grid td.cmp-cell.look { background: var(--accent-soft); border-color: var(--accent); }
+.cmp-grid td.cmp-cell.on {
+  background: #fff; border-color: var(--ink); color: var(--ink);
+  border-style: solid; transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, .12);
+}
+.cmp-grid td.cmp-vir {
+  width: .7rem; border: none; background: none; cursor: default;
+  font-size: 1.15rem; font-weight: 800; text-align: center; vertical-align: bottom;
+}
+.cmp-note { font-size: .82rem; color: var(--ink-soft); min-height: 1.4em; }
+
+/* Les trois règles du signe : celle qui s'applique s'allume, et on peut cliquer. */
+.cmp-regles { display: grid; gap: .3rem; margin-top: .55rem; }
+.cmp-regle {
+  padding: .38rem .7rem; border: 1px solid var(--border); border-radius: 10px;
+  background: #f8fafc; font-size: .88rem; color: var(--ink-soft); cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+.cmp-regle:hover { background: #fff; border-color: #cbd5e1; }
+.cmp-regle.on { background: #fff; border-color: var(--ink); color: var(--ink); }
+
+/* Mode « ranger » : les nombres, puis les deux chaînes. */
+.cmp-label {
+  font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft); font-weight: 700; margin: .6rem 0 .25rem;
+}
+.cmp-chips { display: flex; gap: .35rem; flex-wrap: wrap; }
+.cmp-chip {
+  padding: .2rem .6rem; border: 1px solid var(--border); border-radius: 999px;
+  background: #f8fafc; font-weight: 800; font-variant-numeric: tabular-nums;
+  opacity: .35; transition: opacity .2s, background .2s;
+}
+.cmp-chip.on { opacity: 1; background: #fff; }
+.cmp-chaine {
+  font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+@media (max-width: 620px) {
+  .cmp-grid th { font-size: .6rem; }
+  .cmp-grid td.cmp-cell { width: 1.9rem; height: 1.9rem; font-size: 1rem; }
+  .cmp-verdict { font-size: 1.15rem; }
+}
+
 /* ---------- Encadrement décimal (leçon encadrement-decimal) ---------- */
 /* Le tableau des encadrements : une ligne par rang n, cliquable. */
 .enc-tablewrap { overflow-x: auto; margin: .2rem 0 .1rem; }

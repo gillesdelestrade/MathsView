@@ -67,6 +67,8 @@ MathsExos.catalogue = [
   /* --- 5ème -------------------------------------------------------------- */
   { code: 'relatifs',       libelle: 'Nombres relatifs',       niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: [] },
+  { code: 'comparer',       libelle: 'Comparer et ranger des relatifs', niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: ['relatifs'] },
   { code: 'priorites',      libelle: 'Priorités opératoires',  niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: [] },
   { code: 'distributivite', libelle: 'Distributivité',         niveau: '5eme',
