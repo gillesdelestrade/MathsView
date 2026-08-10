@@ -32,6 +32,10 @@ class Local(api.Service, SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith('/api'):
             return api.Service.do_GET(self)
+        # On refuse de répondre « 304 Non modifié » : pendant qu'on développe,
+        # un navigateur qui garde une leçon d'il y a dix minutes fait perdre un
+        # temps fou à chercher un bug déjà corrigé.
+        del self.headers['If-Modified-Since']
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_HEAD(self):
