@@ -29,6 +29,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-coord'],
   theme: 'Vecteurs — coordonnées dans un repère et addition des coordonnées',
   description:
     'Pour aller de <strong>A</strong> à <strong>B</strong>, on se déplace ' +

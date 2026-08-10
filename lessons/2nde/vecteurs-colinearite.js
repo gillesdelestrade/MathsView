@@ -27,6 +27,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-colin'],
   theme: 'Vecteurs — produit par un réel et colinéarité',
   description:
     'Multiplier un vecteur \\(\\vec{u}\\) par un nombre réel \\(k\\) donne un vecteur ' +

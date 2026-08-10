@@ -35,6 +35,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-egalite'],
   theme: 'Vecteurs — définition et égalité de deux vecteurs',
   description:
     'Un <strong>vecteur</strong> est déterminé par trois choses : sa ' +

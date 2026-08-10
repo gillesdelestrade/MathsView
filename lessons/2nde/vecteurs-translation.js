@@ -27,6 +27,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-translation'],
   theme: 'Vecteurs — translation d\'une figure par un vecteur',
   description:
     'L\'image d\'un point \\(M\\) par la <strong>translation de vecteur</strong> ' +

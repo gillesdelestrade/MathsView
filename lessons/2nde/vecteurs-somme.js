@@ -24,6 +24,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-somme'],
   theme: 'Vecteurs — addition, relation de Chasles, parallélogramme',
   description:
     'Pour additionner deux vecteurs, on les met <strong>bout à bout</strong> : ' +

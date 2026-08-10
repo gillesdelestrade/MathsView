@@ -30,6 +30,7 @@ MathsView.register({
   level: '2nde',
   category: 'geometrie',
   subcategory: 'Vecteurs',
+  exercices: ['vec-det'],
   theme: 'Vecteurs — déterminant, aire du parallélogramme et test de colinéarité',
   description:
     'Le <strong>déterminant</strong> de deux vecteurs \\(\\vec{u}\\,(x\\,;\\,y)\\) et ' +

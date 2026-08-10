@@ -30,6 +30,20 @@ MathsExos.catalogue = [
   { code: 'val-abs',      libelle: 'Valeur absolue et distance', niveau: '2nde',
     chapitre: 'nombres', prerequis: ['intervalles'] },
 
+  /* --- Vecteurs (2nde), une compétence par leçon du chapitre ------------- */
+  { code: 'vec-egalite',  libelle: 'Direction, sens, longueur', niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: [] },
+  { code: 'vec-coord',    libelle: 'Coordonnées d\'un vecteur', niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: ['vec-egalite'] },
+  { code: 'vec-somme',    libelle: 'Somme de deux vecteurs',    niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: ['vec-coord'] },
+  { code: 'vec-colin',    libelle: 'Produit par un réel et colinéarité', niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: ['vec-coord'] },
+  { code: 'vec-det',      libelle: 'Déterminant de deux vecteurs', niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: ['vec-colin'] },
+  { code: 'vec-translation', libelle: 'La translation',         niveau: '2nde',
+    chapitre: 'vecteurs', prerequis: ['vec-coord'] },
+
   /* --- 6ème -------------------------------------------------------------- */
   { code: 'tables',       libelle: 'Tables de multiplication', niveau: '6eme',
     chapitre: 'calcul-mental', prerequis: [] },
