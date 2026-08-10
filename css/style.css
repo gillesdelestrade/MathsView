@@ -889,6 +889,18 @@ body {
 }
 .dis-num { font-size: 1.05rem; }
 .dis-egal { color: var(--ink-soft); margin: 0 .45em; }
+
+/* Les deux flèches de la distribution, posées sur la ligne littérale. Le
+   dégagement au-dessus est réservé en permanence pendant un développement :
+   sans lui, la ligne sauterait à l'arrivée de la première flèche. */
+.dis-lit { position: relative; }
+.dis-lit.dis-fl { padding-top: 3rem; }
+.dis-svg { position: absolute; left: 0; top: 0; pointer-events: none; }
+.dis-svg path, .dis-svg polygon { transition: opacity .18s; }
+.dis-tk, .dis-ta, .dis-tb, .dis-tsg {
+  border-radius: 7px; padding: 0 .12em; transition: background .25s;
+}
+.dis-tk.on, .dis-ta.on, .dis-tb.on, .dis-tsg.on { background: #fff; }
 .dis-check {
   margin-top: .45rem; padding-top: .45rem; border-top: 1px dashed var(--border);
   font-size: .95rem; font-weight: 700; display: flex; align-items: center;

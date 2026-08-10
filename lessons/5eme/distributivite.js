@@ -24,6 +24,22 @@
  * « Développer » part donc toujours de la forme factorisée, « factoriser » de
  * la forme développée : l'animation se lit dans le sens du calcul demandé.
  *
+ * LES DEUX FLÈCHES. En développant, la figure est doublée d'un geste d'écriture :
+ * deux arcs partent du k et vont se poser sur chacun des termes de la parenthèse.
+ *
+ *                       ╭─────────────╮
+ *                   ╭───┼──╮          │
+ *                   k × ( a  +  b )  =  k × a  +  k × b
+ *
+ * Ils arrivent l'un après l'autre : la première flèche écrit k × a, on RÉCUPÈRE
+ * ensuite le signe de la parenthèse (+ ou −), puis la seconde flèche écrit
+ * k × b. C'est ce dernier temps qui compte le plus : le k multiplie AUSSI le
+ * terme qu'on retire, et le signe, lui, ne change pas.
+ *
+ * Ces arcs sont du SVG posé par-dessus l'égalité, aux positions RÉELLES des
+ * lettres (mesurées dans la page) : quelle que soit la police ou la taille de
+ * l'écran, la flèche tombe sur la bonne lettre.
+ *
  * Toutes les coordonnées sont des FONCTIONS de k, a, b (et du glissement) :
  * bouger un curseur recalcule la figure en direct. L'égalité s'écrit en
  * dessous, terme par terme, aux couleurs des morceaux — un terme apparaît
@@ -91,6 +107,8 @@ MathsView.register({
     var kVal = 2, aVal = 3, bVal = 2;
     var sl = 0;             // glissement du morceau de droite : 0 = collé, 1 = écarté
     var niveau = 0;         // avancement de l'égalité écrite sous la figure
+    var fl = 0;             // avancement des flèches : 0 → 1 (k vers a), 2 (le
+                            // signe), 3 (k vers b)
 
     var anim = mv.createAnimator();
 
@@ -194,16 +212,43 @@ MathsView.register({
     function cA() { return mode === 'plus' ? C_L : C_TOT; }      // couleur de k × a
     function cB() { return Cdroite(); }                          // couleur de k × b
 
-    function factLit() { return span('k × (a ' + sgn() + ' b)', cFact()); }
-    function devLit() {
-      return span('k × a', cA()) + ' ' + sgn() + ' ' + span('k × b', cB());
+    /* Les trois temps de la distribution. Un terme ne s'écrit qu'au moment où
+     * la flèche ARRIVE dessus — d'où ce niveau, dérivé de l'avancement des
+     * flèches (0 : rien, 1 : k × a, 2 : le signe, 3 : k × b). */
+    function flNiv() {
+      return fl >= 2.95 ? 3 : fl >= 1.95 ? 2 : fl >= 0.95 ? 1 : 0;
+    }
+
+    // Le membre factorisé porte les trois ancres des flèches : le k, le a et le
+    // b. Chacun s'allume quand la flèche correspondante se pose dessus.
+    function factLit() {
+      var n = (sens === 'dev') ? flNiv() : 0;
+      function ancre(cls, t, on, c) {
+        return '<span class="' + cls + (on ? ' on' : '') + '"' +
+               (on ? ' style="box-shadow:0 0 0 2px ' + c + ' inset"' : '') +
+               '>' + t + '</span>';
+      }
+      return span(
+        ancre('dis-tk', 'k', n >= 1, cA()) + ' × (' +
+        ancre('dis-ta', 'a', n >= 1, cA()) + ' ' +
+        ancre('dis-tsg', sgn(), n >= 2, cB()) + ' ' +
+        ancre('dis-tb', 'b', n >= 3, cB()) + ')', cFact());
+    }
+    // Le membre développé, écrit en trois temps (n = 3 : au complet).
+    function devLit(n) {
+      if (n === undefined) n = 3;
+      return (n >= 1 ? span('k × a', cA()) : '') +
+             (n >= 2 ? ' ' + sgn() : '') +
+             (n >= 3 ? ' ' + span('k × b', cB()) : '');
     }
     function factNum() {
       return span(f(K()) + ' × (' + f(A()) + ' ' + sgn() + ' ' + f(B()) + ')', cFact());
     }
-    function devNum() {
-      return span(f(K()) + ' × ' + f(A()), cA()) + ' ' + sgn() + ' ' +
-             span(f(K()) + ' × ' + f(B()), cB());
+    function devNum(n) {
+      if (n === undefined) n = 3;
+      return (n >= 1 ? span(f(K()) + ' × ' + f(A()), cA()) : '') +
+             (n >= 2 ? ' ' + sgn() : '') +
+             (n >= 3 ? ' ' + span(f(K()) + ' × ' + f(B()), cB()) : '');
     }
 
     /* ==================================================================== */
@@ -235,9 +280,16 @@ MathsView.register({
 
     // niveau 0 : rien — 1 : le premier membre — 2 : l'égalité entière —
     // 3 : la vérification chiffrée.
-    function setNiveau(n) {
-      if (n === niveau) return;
-      niveau = n;
+    function setNiveau(n) { niveau = n; majPanneau(); }
+    // L'avancement des flèches, lui, est continu : on ne réécrit le panneau que
+    // lorsqu'un des trois temps est franchi.
+    function setFl(v) { fl = v; majPanneau(); majFleches(); }
+
+    var dernierEtat = null;
+    function majPanneau() {
+      var cle = [mode, sens, niveau, flNiv(), kVal, aVal, bVal].join('|');
+      if (cle === dernierEtat) return;
+      dernierEtat = cle;
       dessinePanneau();
     }
     function dessinePanneau() {
@@ -253,14 +305,19 @@ MathsView.register({
       // « Développer » part de la forme factorisée, « factoriser » de la forme
       // développée : le premier membre écrit est celui d'où l'on part.
       var un = sens === 'dev' ? factLit() : devLit();
-      var deux = sens === 'dev' ? devLit() : factLit();
+      var deux = sens === 'dev' ? devLit(flNiv()) : factLit();
       var unN = sens === 'dev' ? factNum() : devNum();
-      var deuxN = sens === 'dev' ? devNum() : factNum();
+      var deuxN = sens === 'dev' ? devNum(flNiv()) : factNum();
 
-      litEl.innerHTML = niveau < 1 ? '' :
-        (niveau < 2 ? un : un + ' <b class="dis-egal">=</b> ' + deux);
+      // En développant, la ligne littérale reçoit les flèches : il lui faut de
+      // la place au-dessus, et un calque SVG.
+      litEl.className = 'dis-eq dis-lit' + (sens === 'dev' ? ' dis-fl' : '');
+      litEl.innerHTML = (sens === 'dev' ? '<svg class="dis-svg"></svg>' : '') +
+        (niveau < 1 ? '' :
+          (niveau < 2 ? un : un + ' <b class="dis-egal">=</b> ' + deux));
       numEl.innerHTML = niveau < 1 ? '' :
         (niveau < 2 ? unN : unN + ' <b class="dis-egal">=</b> ' + deuxN);
+      dessineFleches();
 
       if (niveau < 3) { chkEl.innerHTML = ''; chkEl.style.display = 'none'; return; }
       // Les deux membres, calculés chacun de son côté, tombent sur le même
@@ -278,6 +335,88 @@ MathsView.register({
     }
 
     /* ==================================================================== */
+    /* Les deux flèches de la distribution                                   */
+    /*                                                                       */
+    /* Elles sont tracées en SVG PAR-DESSUS la ligne de l'égalité, aux       */
+    /* positions réelles des lettres : on mesure le k, le a et le b dans la  */
+    /* page, et les arcs se posent dessus quelle que soit la police.         */
+    /* ==================================================================== */
+    var arcs = null;          // les deux chemins et leurs pointes, une fois tracés
+
+    function dessineFleches() {
+      arcs = null;
+      var svg = litEl.querySelector('.dis-svg');
+      if (!svg) return;                               // mode « factoriser »
+      var sk = litEl.querySelector('.dis-tk'),
+          sa = litEl.querySelector('.dis-ta'),
+          sb = litEl.querySelector('.dis-tb');
+      var box = litEl.getBoundingClientRect();
+      // Rien n'est encore écrit (niveau 0), ou la page n'est pas mise en page :
+      // on retracera au prochain passage.
+      if (!sk || !sa || !sb || !box.width) return;
+
+      function ancre(el) {
+        var r = el.getBoundingClientRect();
+        return { x: r.left - box.left + litEl.scrollLeft + r.width / 2,
+                 y: r.top - box.top };
+      }
+      var k = ancre(sk), a = ancre(sa), b = ancre(sb);
+      var y0 = Math.min(k.y, a.y, b.y) - 3;           // juste au-dessus des lettres
+
+      svg.setAttribute('width', box.width);
+      svg.setAttribute('height', box.height);
+      // L'arc du b passe plus haut que celui du a : les deux restent lisibles.
+      svg.innerHTML = arcSvg(k.x, a.x, y0, 21, cA(), 'a') +
+                      arcSvg(k.x, b.x, y0, 41, cB(), 'b');
+      arcs = {
+        pa: svg.querySelector('.dis-arc-a'), ta: svg.querySelector('.dis-tete-a'),
+        pb: svg.querySelector('.dis-arc-b'), tb: svg.querySelector('.dis-tete-b')
+      };
+      arcs.la = longueur(arcs.pa);
+      arcs.lb = longueur(arcs.pb);
+      majFleches();
+    }
+
+    // Un arc de x0 à x1, bombé de h, et sa pointe orientée dans le sens
+    // d'arrivée — sans quoi la flèche semble tomber à côté.
+    function arcSvg(x0, x1, y0, h, couleur, id) {
+      var cx = (x0 + x1) / 2, cy = y0 - h;
+      var ang = Math.atan2(y0 - cy, x1 - cx);
+      function P(dx, dy) {
+        return (x1 + dx * Math.cos(ang) - dy * Math.sin(ang)).toFixed(1) + ',' +
+               (y0 + dx * Math.sin(ang) + dy * Math.cos(ang)).toFixed(1);
+      }
+      return '<path class="dis-arc-' + id + '" d="M ' + x0.toFixed(1) + ' ' +
+               y0.toFixed(1) + ' Q ' + cx.toFixed(1) + ' ' + cy.toFixed(1) + ' ' +
+               x1.toFixed(1) + ' ' + y0.toFixed(1) + '" fill="none" stroke="' +
+               couleur + '" stroke-width="2.5" stroke-linecap="round"/>' +
+             '<polygon class="dis-tete-' + id + '" points="' +
+               P(0, 0) + ' ' + P(-9, -4.5) + ' ' + P(-9, 4.5) +
+               '" fill="' + couleur + '"/>';
+    }
+    function longueur(p) {
+      return (p && p.getTotalLength) ? p.getTotalLength() : 240;
+    }
+    // L'avancement, à chaque image : l'arc se dessine, puis sa pointe se pose.
+    function majFleches() {
+      if (!arcs) return;
+      trace(arcs.pa, arcs.ta, arcs.la, fl);
+      trace(arcs.pb, arcs.tb, arcs.lb, fl - 2);
+    }
+    function trace(chemin, tete, len, p) {
+      if (!chemin) return;
+      p = Math.max(0, Math.min(1, p));
+      chemin.style.strokeDasharray = len;
+      chemin.style.strokeDashoffset = len * (1 - p);
+      chemin.style.opacity = p > 0 ? 1 : 0;
+      if (tete) tete.style.opacity = p >= 0.97 ? 1 : 0;
+    }
+    // Les flèches sont posées en pixels : un changement de largeur les décale.
+    function surRedim() { dessineFleches(); }
+    window.addEventListener('resize', surRedim);
+    mv.onCleanup(function () { window.removeEventListener('resize', surRedim); });
+
+    /* ==================================================================== */
     /* Les quatre scénarios                                                  */
     /* ==================================================================== */
     // Remise à zéro : la figure est vierge, le panneau vide.
@@ -287,7 +426,9 @@ MathsView.register({
       show(cut, false);
       TOUT.forEach(function (t) { show(t, false); });
       cap('');
-      niveau = 0; dessinePanneau();
+      niveau = 0; fl = 0;
+      dernierEtat = null;                 // on force le redessin : tout est à zéro
+      majPanneau();
       board.update();
     }
 
@@ -340,16 +481,28 @@ MathsView.register({
           show(lTotAir, false); show(lTotVal, false);
           show(lLbot, p >= 0.5); show(lRbot, p >= 0.5);
         }),
-        S(900, 'On <b>écarte</b> les deux morceaux : ils ont tous les deux la largeur <b>k</b>.', 2, function (p) {
-          sl = p;
+        S(900, 'On <b>écarte</b> les deux morceaux : ils ont tous les deux la largeur <b>k</b>.', 1, function (p) {
+          sl = p; setFl(0);
           reveal(tot, 0, 0);
           show(cut, p < 0.15);
           show(lTotBot, false);
           show(lLair, p >= 0.5); show(lLval, p >= 0.5);
           show(lRair, p >= 0.5); show(lRval, p >= 0.5);
         }),
+        // Les trois temps de l'écriture, au rythme des flèches.
+        S(750, 'À l\'écrit, une <b>flèche</b> part du <b>k</b> et se pose sur le <b>a</b> : ' +
+          'cela donne le premier morceau, <b>k × a</b>.', 2, function (p) {
+          sl = 1; setFl(p);
+        }),
+        S(560, 'On <b>garde le signe</b> de la parenthèse : ici un <b>+</b>.', 2, function (p) {
+          sl = 1; setFl(1 + p);
+        }),
+        S(750, 'Une <b>seconde flèche</b> part du même <b>k</b> et se pose sur le <b>b</b> : ' +
+          '<b>k × b</b>. Le k multiplie <b>chacun</b> des deux termes.', 2, function (p) {
+          sl = 1; setFl(2 + p);
+        }),
         S(620, 'Les deux aires <b>bout à bout</b> font l\'aire de départ : on a <b>développé</b>.', 3, function (p) {
-          sl = 1;
+          sl = 1; setFl(3);
         })
       ];
     }
@@ -415,16 +568,31 @@ MathsView.register({
           show(lTotAir, p >= 0.5); show(lTotVal, p >= 0.5);
           show(lRair, false); show(lRval, false);
         }),
-        S(900, 'On <b>enlève</b> le morceau en trop, d\'aire <b>k × b</b> : il reste <b>k × (a − b)</b>.', 2, function (p) {
+        S(900, 'On <b>enlève</b> le morceau en trop, d\'aire <b>k × b</b> : il reste <b>k × (a − b)</b>.', 1, function (p) {
           sl = p;                                   // le morceau s'en va pour de bon
+          setFl(0);
           reveal(pR, FILL + 0.25, 1);
           show(lRair, true); show(lRval, true);
           show(lTotBot, p < 0.3);
           show(lTotAir, p < 0.3); show(lTotVal, p < 0.3);
           show(lLair, p >= 0.5); show(lLval, p >= 0.5);
         }),
+        // Les trois temps de l'écriture, au rythme des flèches.
+        S(750, 'À l\'écrit, une <b>flèche</b> part du <b>k</b> et se pose sur le <b>a</b> : ' +
+          'cela donne <b>k × a</b>, le grand rectangle.', 2, function (p) {
+          sl = 1; setFl(p);
+        }),
+        S(620, 'On <b>garde le signe</b> de la parenthèse : ici un <b>−</b>, celui du ' +
+          'morceau qu\'on retire.', 2, function (p) {
+          sl = 1; setFl(1 + p);
+        }),
+        S(800, 'La <b>seconde flèche</b> va du <b>k</b> au <b>b</b> : on retire ' +
+          '<b>k × b</b>, et non pas <b>b</b> tout seul — c\'est là qu\'on se trompe.', 2,
+          function (p) {
+            sl = 1; setFl(2 + p);
+          }),
         S(620, 'Le <b>k</b> multiplie <b>les deux</b> termes de la parenthèse : on a <b>développé</b>.', 3, function (p) {
-          sl = 1;
+          sl = 1; setFl(3);
         })
       ];
     }
@@ -485,7 +653,7 @@ MathsView.register({
     // fonctions), il ne reste qu'à réécrire les nombres.
     function majValeurs() {
       textesFixes();
-      dessinePanneau();
+      majPanneau();
       board.update();
     }
 
