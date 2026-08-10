@@ -1,11 +1,17 @@
 /*
- * Nombres relatifs (5ème) — l'opposé, l'addition et la soustraction, lues sur
- * une droite graduée.
+ * Nombres relatifs (5ème) — l'opposé, la valeur absolue, l'addition et la
+ * soustraction, lues sur une droite graduée.
  *
- * Deux temps, deux boutons :
+ * Trois temps, trois boutons :
  *
  *   L'OPPOSÉ      −3 et 3 sont de part et d'autre de 0, à la MÊME distance.
  *                 Deux arcs de même longueur le montrent, et leur somme fait 0.
+ *
+ *   LA VALEUR     Cette distance à 0 a un nom et une notation : |−3| = 3.
+ *   ABSOLUE       Le même arc qu'au premier temps, mais c'est LUI qu'on regarde
+ *                 maintenant, et il porte l'écriture |−3| = 3. Comme les deux
+ *                 arcs ont la même longueur, deux nombres opposés ont la même
+ *                 valeur absolue — qui n'est donc jamais négative.
  *
  *   AJOUTER /     Calculer, c'est se DÉPLACER sur la droite. Le point de départ
  *   SOUSTRAIRE    est a, le déplacement est donné par l'opération et par le
@@ -40,12 +46,15 @@ MathsView.register({
   category: 'calcul',
   subcategory: 'Nombres relatifs',
   exercices: ['relatifs'],
-  theme: 'Nombres relatifs — opposé, addition et soustraction sur une droite graduée',
+  theme: 'Nombres relatifs — opposé, valeur absolue, addition et soustraction sur une droite graduée',
   description:
     'Un nombre relatif, c\'est un <strong>point</strong> sur une droite graduée ; ' +
     'calculer, c\'est <strong>se déplacer</strong> dessus.' +
     '<br>L\'<strong>opposé</strong> d\'un nombre est de l\'autre côté de <strong>0</strong>, ' +
     'à la <strong>même distance</strong> : l\'opposé de 3 est −3, et \\(3 + (-3) = 0\\).' +
+    '<br>Cette <strong>distance à 0</strong> s\'appelle la <strong>valeur absolue</strong> ' +
+    'et se note entre deux barres : \\(|-3| = 3\\). C\'est le nombre <strong>sans son ' +
+    'signe</strong> — deux nombres opposés ont donc la même valeur absolue.' +
     '<br>Pour additionner ou soustraire, tout tient dans le <strong>sens du ' +
     'déplacement</strong> — le tableau sous la figure le résume, et ' +
     '<strong>chaque case est cliquable</strong>.' +
@@ -55,6 +64,16 @@ MathsView.register({
     '<ul>' +
     '<li><strong>L\'opposé</strong> de \\(a\\) est le nombre situé de l\'autre côté de 0, ' +
     'à la même distance. On le note \\(-a\\). Et \\(a + (-a) = 0\\).</li>' +
+    '<li><strong>La valeur absolue</strong> de \\(a\\) est sa <strong>distance à 0</strong> ' +
+    'sur la droite graduée. On la note \\(|a|\\), entre deux barres : ' +
+    '\\(|-7| = 7\\) et \\(|7| = 7\\). En pratique, c\'est le nombre ' +
+    '<strong>débarrassé de son signe</strong>.</li>' +
+    '<li>Une valeur absolue n\'est <strong>jamais négative</strong> : c\'est une longueur. ' +
+    'Et deux nombres <strong>opposés</strong> ont la <strong>même valeur absolue</strong>, ' +
+    'puisqu\'ils sont à la même distance de 0. Seul \\(|0| = 0\\).</li>' +
+    '<li>Elle sert à <strong>comparer deux nombres négatifs</strong> : entre \\(-3\\) et ' +
+    '\\(-8\\), le plus grand est celui dont la valeur absolue est la plus ' +
+    '<strong>petite</strong>, donc \\(-3 > -8\\).</li>' +
     '<li><strong>Ajouter</strong> un nombre <strong>positif</strong> : on va vers la ' +
     '<strong>droite</strong>. Ajouter un nombre <strong>négatif</strong> : vers la ' +
     '<strong>gauche</strong>.</li>' +
@@ -88,7 +107,7 @@ MathsView.register({
     /* ==================================================================== */
     /* État                                                                  */
     /* ==================================================================== */
-    var mode = 'oppose';        // 'oppose' | 'calcul'
+    var mode = 'oppose';        // 'oppose' | 'abs' | 'calcul'
     var aVal = 2;               // le point de départ
     var op = '+';               // '+' ou '−'
     var sgn = 1;                // le signe du nombre ajouté / soustrait
@@ -113,9 +132,11 @@ MathsView.register({
     // « 2 − (−5) », jamais « 2 − −5 ».
     function paren(v) { return v < 0 ? '(' + num(v) + ')' : num(v); }
     function span(t, c) { return '<span style="color:' + c + '">' + t + '</span>'; }
+    // La valeur absolue s'écrit entre deux barres : |−3|.
+    function abso(v) { return '|' + num(v) + '|'; }
 
     /* ==================================================================== */
-    /* La droite graduée (commune aux deux modes)                            */
+    /* La droite graduée (commune aux trois modes)                           */
     /* ==================================================================== */
     board.create('segment', [[-XMAX - 0.6, 0], [XMAX + 0.6, 0]], {
       strokeColor: INK, strokeWidth: 2,
@@ -171,7 +192,8 @@ MathsView.register({
     function showPt(p, b) { show(p.pt, b); show(p.lab, b); }
 
     /* ==================================================================== */
-    /* Mode « opposé » : deux arcs de même longueur de part et d'autre de 0   */
+    /* Modes « opposé » et « valeur absolue » : deux arcs de même longueur    */
+    /* de part et d'autre de 0 — la même figure, deux lectures                */
     /* ==================================================================== */
     var oppA = pointSur(A, C_DEP, function () { return num(A()); });
     var oppB = pointSur(function () { return -A(); }, C_OPP, function () { return num(-A()); });
@@ -180,16 +202,22 @@ MathsView.register({
       function () { return 1; }, C_DEP);
     var arcO = arc(function () { return 0; }, function () { return -A(); },
       function () { return hauteur(A()); }, function () { return progO; }, C_OPP);
-    // La distance à 0, écrite au sommet de chaque arc.
+    // La distance à 0, écrite au sommet de chaque arc — en crans dans le mode
+    // « opposé », avec la notation elle-même dans le mode « valeur absolue » :
+    // c'est le même arc, on le lit simplement autrement.
+    function txtDist(v) {
+      if (mode === 'abs') return abso(v) + ' = ' + Math.abs(v);
+      return Math.abs(v) + ' cran' + (Math.abs(v) > 1 ? 's' : '');
+    }
     var distA = board.create('text', [function () { return A() / 2; },
       function () { return hauteur(A()) + 0.22; },
-      function () { return Math.abs(A()) + ' cran' + (Math.abs(A()) > 1 ? 's' : ''); }], {
+      function () { return txtDist(A()); }], {
       anchorX: 'middle', anchorY: 'middle', fontSize: 13, color: C_DEP,
       cssStyle: 'font-weight:700', fixed: true, visible: false, highlight: false, layer: 8
     });
     var distO = board.create('text', [function () { return -A() / 2; },
       function () { return hauteur(A()) + 0.22; },
-      function () { return Math.abs(A()) + ' cran' + (Math.abs(A()) > 1 ? 's' : ''); }], {
+      function () { return txtDist(-A()); }], {
       anchorX: 'middle', anchorY: 'middle', fontSize: 13, color: C_OPP,
       cssStyle: 'font-weight:700', fixed: true, visible: false, highlight: false, layer: 8
     });
@@ -315,6 +343,30 @@ MathsView.register({
         calcEl.innerHTML = h;
         return;
       }
+      if (mode === 'abs') {
+        if (niveau < 1) { calcEl.innerHTML = ''; return; }
+        var x = A();
+        // niveau 1 : la notation seule — 2 : sa valeur — 3 et 4 : celle de
+        // l'opposé, qui est la même.
+        var h1 = span(abso(x), C_DEP);
+        if (niveau >= 2) h1 += ' = <b>' + Math.abs(x) + '</b>';
+        // 0 est son propre opposé : la seconde écriture serait la même.
+        if (niveau >= 3 && x !== 0) {
+          h1 += ' <span class="rel-sep">·</span> ' + span(abso(-x), C_OPP) +
+                ' = <b>' + Math.abs(x) + '</b>';
+        }
+        if (niveau >= 4) {
+          h1 += x === 0
+            ? '<span class="rel-why">0 est son <b>propre opposé</b> : |0| = 0</span>'
+            : '<span class="rel-why">deux nombres <b>opposés</b> ont la <b>même</b> ' +
+              'valeur absolue</span>';
+        } else if (niveau >= 2) {
+          h1 += '<span class="rel-why">la <b>distance à 0</b>, donc le nombre ' +
+                '<b>sans son signe</b></span>';
+        }
+        calcEl.innerHTML = h1;
+        return;
+      }
       if (niveau < 1) { calcEl.innerHTML = ''; return; }
       var dep = span(num(A()), C_DEP), nb = paren(B());
       var h2 = '<b>' + dep + ' ' + op + ' ' + nb + '</b>';
@@ -365,6 +417,35 @@ MathsView.register({
           showPt(oppB, p >= 0.9);
         }),
         S(650, 'Les deux nombres sont <b>symétriques par rapport à 0</b> : leur somme fait 0.', 3, function (p) {
+          progO = 1;
+          showPt(oppB, true); show(distO, A() !== 0);
+        })
+      ];
+    }
+
+    /* ---- La valeur absolue ------------------------------------------------ */
+    // Même figure que l'opposé, lue autrement : ce qu'on regarde ici, c'est la
+    // LONGUEUR des arcs — et le fait qu'ils soient égaux.
+    function stepsAbs() {
+      return [
+        S(600, 'On place le nombre sur la droite graduée.', 1, function (p) {
+          progO = 0;
+          showPt(oppA, p >= 1); showPt(oppB, false);
+          show(arcA, false); show(arcO, false); show(distA, false); show(distO, false);
+          show(saut, false); show(lblSaut, false);
+        }),
+        S(850, 'Sa <b>valeur absolue</b>, c\'est sa <b>distance à 0</b> : on l\'écrit entre deux barres.', 2, function (p) {
+          progO = 0;
+          showPt(oppA, true);
+          show(arcA, A() !== 0); show(distA, A() !== 0 && p >= 0.4);
+          show(arcO, false); show(distO, false); showPt(oppB, false);
+        }),
+        S(900, 'Son <b>opposé</b> est de l\'autre côté de 0, à la <b>même distance</b>.', 3, function (p) {
+          progO = p;
+          show(arcO, A() !== 0); show(distO, A() !== 0 && p >= 0.8);
+          showPt(oppB, p >= 0.9);
+        }),
+        S(700, 'Les deux arcs ont la <b>même longueur</b> : une valeur absolue n\'est <b>jamais négative</b>.', 4, function () {
           progO = 1;
           showPt(oppB, true); show(distO, A() !== 0);
         })
@@ -430,12 +511,17 @@ MathsView.register({
         majCases(null);
         cap(mode === 'oppose'
           ? 'Deux nombres opposés : de part et d\'autre de 0, à la même distance.'
-          : 'Calculer, c\'est se déplacer sur la droite graduée.');
+          : mode === 'abs'
+            ? 'La valeur absolue d\'un nombre, c\'est sa distance à 0.'
+            : 'Calculer, c\'est se déplacer sur la droite graduée.');
         ecritCalcul(0);
         board.update();
       }
       reset();
-      anim.runSteps(mode === 'oppose' ? stepsOppose() : stepsCalcul(), reset);
+      anim.runSteps(
+        mode === 'oppose' ? stepsOppose() : mode === 'abs' ? stepsAbs() : stepsCalcul(),
+        reset
+      );
     }
 
     // Un curseur bouge : la figure suit toute seule (les coordonnées sont des
@@ -452,6 +538,7 @@ MathsView.register({
     function majBoutons() {
       if (!refs) return;
       refs.oppose.classList.toggle('active', mode === 'oppose');
+      refs.abs.classList.toggle('active', mode === 'abs');
       refs.calcul.classList.toggle('active', mode === 'calcul');
       // Le nombre ajouté ou soustrait n'a pas de sens dans le mode « opposé ».
       var vu = mode === 'calcul' ? '' : 'none';
@@ -460,6 +547,7 @@ MathsView.register({
 
     refs = mv.addControls([
       { type: 'button', id: 'oppose', label: 'L\'opposé', onClick: function () { mode = 'oppose'; arm(); } },
+      { type: 'button', id: 'abs', label: 'La valeur absolue', onClick: function () { mode = 'abs'; arm(); } },
       { type: 'button', id: 'calcul', label: 'Ajouter / soustraire', onClick: function () { mode = 'calcul'; arm(); } },
       { type: 'button', id: 'play', label: '▶ Animer', onClick: function () { arm(); } },
       { type: 'slider', id: 'a', label: 'le nombre de départ', min: -5, max: 5, step: 1, value: 2,
