@@ -65,7 +65,7 @@
               'Pythagore : \\(BC^2 = AB^2 + AC^2\\).',
             '\\(BC^2 = ' + a + '^2 + ' + b + '^2 = ' + (a * a) + ' + ' + (b * b) +
               ' = ' + (c * c) + '\\)',
-            '\\(BC = \\sqrt{' + (c * c) + '} = <b>' + c + '</b>\\) cm'
+            '\\(BC = \\sqrt{' + (c * c) + '} = \\mathbf{' + c + '}\\) cm'
           ],
           indices: ['Quel côté est l\'hypoténuse ?',
                     'L\'hypoténuse est le côté opposé à l\'angle droit : c\'est \\(BC\\).'],
@@ -84,7 +84,7 @@
             '\\(AC^2 = BC^2 - AB^2\\).',
           '\\(AC^2 = ' + c + '^2 - ' + a + '^2 = ' + (c * c) + ' - ' + (a * a) +
             ' = ' + (b * b) + '\\)',
-          '\\(AC = \\sqrt{' + (b * b) + '} = <b>' + b + '</b>\\) cm'
+          '\\(AC = \\sqrt{' + (b * b) + '} = \\mathbf{' + b + '}\\) cm'
         ],
         indices: ['Attention : ici on ne cherche pas l\'hypoténuse.',
                   'L\'hypoténuse \\(BC\\) est donnée : il faut soustraire, pas ajouter.'],

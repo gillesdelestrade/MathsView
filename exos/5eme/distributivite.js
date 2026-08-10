@@ -33,7 +33,7 @@
               'On distribue le ' + k + ' à <b>chacun</b> des deux termes.',
               '\\(' + k + ' \\times ' + a + ' + ' + k + ' \\times ' + b + ' = ' +
                 (k * a) + ' + ' + (k * b) + '\\)',
-              '\\(' + (k * a) + ' + ' + (k * b) + ' = <b>' + res + '</b>\\) ' +
+              '\\(' + (k * a) + ' + ' + (k * b) + ' = \\mathbf{' + res + '}\\) ' +
                 '(on retrouve bien ' + k + ' × ' + (a + b) + ')'
             ],
             indices: ['Le facteur du dehors multiplie les DEUX termes du dedans.'],

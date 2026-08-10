@@ -105,7 +105,7 @@
             '</b> : ' + addition + '.',
           'On peut aussi le voir comme un rectangle de ' + a + ' lignes de ' + b +
             ' points.',
-          '\\(' + a + ' \\times ' + b + ' = <b>' + p + '</b>\\)',
+          '\\(' + a + ' \\times ' + b + ' = \\mathbf{' + p + '}\\)',
           a === b ? 'C\'est un <b>carré</b> : ' + a + ' × ' + a + '.'
                   : 'Et l\'ordre ne change rien : \\(' + b + ' \\times ' + a + ' = ' + p +
                     '\\) aussi. Un résultat appris, deux cases retenues.'

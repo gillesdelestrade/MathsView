@@ -53,11 +53,11 @@
             '}{' + O.tex(BC) + '}\\)',
           cherche === 'BC'
             ? 'Produit en croix : \\(' + cherche + ' = \\dfrac{' + O.tex(AB) +
-              ' \\times ' + O.tex(DE) + '}{' + O.tex(AD) + '} = <b>' + O.tex(rep) +
-              '</b>\\) cm'
+              ' \\times ' + O.tex(DE) + '}{' + O.tex(AD) + '} = \\mathbf{' + O.tex(rep) +
+              '}\\) cm'
             : 'Produit en croix : \\(' + cherche + ' = \\dfrac{' + O.tex(AD) +
-              ' \\times ' + O.tex(BC) + '}{' + O.tex(DE) + '} = <b>' + O.tex(rep) +
-              '</b>\\) cm',
+              ' \\times ' + O.tex(BC) + '}{' + O.tex(DE) + '} = \\mathbf{' + O.tex(rep) +
+              '}\\) cm',
           'Le rapport d\'agrandissement vaut ' + O.fr(k) + ' : chaque longueur du ' +
             'grand triangle est ' + O.fr(k) + ' fois celle du petit.'
         ],

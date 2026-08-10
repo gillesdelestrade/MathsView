@@ -37,8 +37,8 @@
           'Autrement dit, la virgule se décale de ' + rangs + ' rang' +
             (rangs > 1 ? 's' : '') + ' vers la ' + (mult ? 'droite' : 'gauche') +
             ' (on complète par des zéros s\'il en manque).',
-          '\\(' + O.tex(val) + (mult ? ' \\times ' : ' \\div ') + p + ' = <b>' +
-            O.tex(res, 6) + '</b>\\)'
+          '\\(' + O.tex(val) + (mult ? ' \\times ' : ' \\div ') + p + ' = \\mathbf{' +
+            O.tex(res, 6) + '}\\)'
         ],
         indices: [
           mult ? 'Le résultat doit être PLUS GRAND que le nombre de départ.'

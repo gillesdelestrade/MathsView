@@ -25,19 +25,19 @@
         return finir(aire, 'un carré de côté \\(' + c + '\\) cm',
           aire ? c * c : 4 * c, aire ? 'cm²' : 'cm',
           aire ? ['L\'aire d\'un carré vaut <b>côté × côté</b>.',
-                  '\\(' + c + ' \\times ' + c + ' = <b>' + (c * c) + '</b>\\) cm²']
+                  '\\(' + c + ' \\times ' + c + ' = \\mathbf{' + (c * c) + '}\\) cm²']
                : ['Le périmètre d\'un carré vaut <b>4 × côté</b> : c\'est le tour de la figure.',
-                  '\\(4 \\times ' + c + ' = <b>' + (4 * c) + '</b>\\) cm']);
+                  '\\(4 \\times ' + c + ' = \\mathbf{' + (4 * c) + '}\\) cm']);
       }
       if (f === 'rectangle') {
         var L = rnd.entier(4, 20), l = rnd.entier(2, L - 1);
         return finir(aire, 'un rectangle de longueur \\(' + L + '\\) cm et de largeur \\(' +
           l + '\\) cm', aire ? L * l : 2 * (L + l), aire ? 'cm²' : 'cm',
           aire ? ['L\'aire d\'un rectangle vaut <b>longueur × largeur</b>.',
-                  '\\(' + L + ' \\times ' + l + ' = <b>' + (L * l) + '</b>\\) cm²']
+                  '\\(' + L + ' \\times ' + l + ' = \\mathbf{' + (L * l) + '}\\) cm²']
                : ['Le périmètre fait le tour : deux longueurs et deux largeurs.',
                   '\\(2 \\times (' + L + ' + ' + l + ') = 2 \\times ' + (L + l) +
-                  ' = <b>' + (2 * (L + l)) + '</b>\\) cm']);
+                  ' = \\mathbf{' + (2 * (L + l)) + '}\\) cm']);
       }
       if (f === 'triangle') {
         var b = rnd.entier(2, 12) * 2;             // base paire : l'aire tombe juste
@@ -50,7 +50,7 @@
             'L\'aire d\'un triangle vaut <b>(base × hauteur) ÷ 2</b> : c\'est la moitié ' +
               'du rectangle qui l\'entoure.',
             '\\(' + b + ' \\times ' + h + ' = ' + (b * h) + '\\)',
-            '\\(' + (b * h) + ' \\div 2 = <b>' + (b * h / 2) + '</b>\\) cm²'
+            '\\(' + (b * h) + ' \\div 2 = \\mathbf{' + (b * h / 2) + '}\\) cm²'
           ],
           indices: ['Un triangle, c\'est la moitié d\'un rectangle.',
                     'N\'oublie pas de diviser par 2.'],

@@ -52,7 +52,7 @@
           etapes: [
             'Les ' + (a2 + b2) + ' jetons tiennent dans une seule boîte : ' +
               'pas de dizaine à franchir.',
-            '\\(' + a2 + ' + ' + b2 + ' = <b>' + (a2 + b2) + '</b>\\)',
+            '\\(' + a2 + ' + ' + b2 + ' = \\mathbf{' + (a2 + b2) + '}\\)',
             a2 === b2 ? 'C\'est un <b>double</b> : ils s\'apprennent tels quels.'
                       : 'Souviens-toi que l\'ordre ne change rien : ' + b2 + ' + ' + a2 +
                         ' donne la même chose.'
@@ -110,7 +110,7 @@
           'Il manque <b>' + manque + '</b> à ' + a + ' pour remplir la boîte de dix.',
           'On coupe ' + b + ' en <b>' + manque + ' + ' + reste + '</b>.',
           '\\(' + a + ' + ' + manque + ' = 10\\) — la boîte est pleine.',
-          '\\(10 + ' + reste + ' = <b>' + (a + b) + '</b>\\)',
+          '\\(10 + ' + reste + ' = \\mathbf{' + (a + b) + '}\\)',
           a === b ? 'C\'était aussi un <b>double</b> : ' + a + ' + ' + a + ' = ' + (a + b) + '.'
                   : (Math.abs(a - b) === 1
                       ? 'C\'était un <b>presque-double</b> : ' + Math.min(a, b) + ' + ' +

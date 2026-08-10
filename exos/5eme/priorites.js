@@ -28,7 +28,7 @@
           etapes: [
             'La <b>multiplication</b> est prioritaire sur l\'addition et la soustraction.',
             'On calcule d\'abord \\(' + b + ' \\times ' + c + ' = ' + (b * c) + '\\).',
-            '\\(' + a + (plus ? ' + ' : ' - ') + (b * c) + ' = <b>' + res1 + '</b>\\)'
+            '\\(' + a + (plus ? ' + ' : ' - ') + (b * c) + ' = \\mathbf{' + res1 + '}\\)'
           ],
           indices: ['Quelle opération est prioritaire ici ?',
                     'On ne calcule pas de gauche à droite : la multiplication passe avant.'],
@@ -46,7 +46,7 @@
           etapes: [
             'Les <b>parenthèses</b> passent avant tout le reste.',
             '\\(' + a + ' + ' + b + ' = ' + (a + b) + '\\)',
-            '\\(' + (a + b) + ' \\times ' + c + ' = <b>' + res2 + '</b>\\)'
+            '\\(' + (a + b) + ' \\times ' + c + ' = \\mathbf{' + res2 + '}\\)'
           ],
           indices: ['Commence toujours par l\'intérieur des parenthèses.'],
           duree: 40
@@ -68,7 +68,7 @@
             'Il ne reste que des additions et des soustractions : on calcule alors ' +
               '<b>de gauche à droite</b>.',
             '\\(' + a + ' + ' + (b * c) + ' = ' + (a + b * c) + '\\), puis \\(' +
-              (a + b * c) + ' - ' + d + ' = <b>' + res3 + '</b>\\)'
+              (a + b * c) + ' - ' + d + ' = \\mathbf{' + res3 + '}\\)'
           ],
           indices: ['Multiplication d\'abord, puis de gauche à droite.'],
           duree: 55
@@ -84,7 +84,7 @@
           'Puis les deux multiplications : \\(' + (a + b) + ' \\times ' + c + ' = ' +
             ((a + b) * c) + '\\) et \\(' + d + ' \\times ' + e + ' = ' + (d * e) + '\\).',
           'La soustraction en dernier : \\(' + ((a + b) * c) + ' - ' + (d * e) +
-            ' = <b>' + res4 + '</b>\\)'
+            ' = \\mathbf{' + res4 + '}\\)'
         ],
         indices: ['Parenthèses, puis multiplications, puis additions et soustractions.',
                   'Écris chaque étape sur une ligne : c\'est ce qui évite les erreurs.'],

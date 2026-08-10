@@ -52,7 +52,7 @@
               dd + ', puis en garder ' + nn + '.',
             '\\(' + q + ' \\div ' + dd + ' = ' + (q / dd) + '\\) (un ' +
               dd + '<sup>e</sup> de ' + q + ')',
-            '\\(' + (q / dd) + ' \\times ' + nn + ' = <b>' + (nn * q / dd) + '</b>\\)'
+            '\\(' + (q / dd) + ' \\times ' + nn + ' = \\mathbf{' + (nn * q / dd) + '}\\)'
           ],
           indices: ['Divise d\'abord par le dénominateur.',
                     'Puis multiplie par le numérateur.'],

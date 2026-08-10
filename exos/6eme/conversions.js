@@ -50,8 +50,8 @@
             : 'On va vers une unité <b>plus petite</b> : il en faut davantage, ' +
               'on <b>multiplie</b> par ' + F.pas + (Math.abs(rangs) > 1 ?
               ' à chaque rang, soit par ' + Math.pow(F.pas, -rangs) : '') + '.',
-          '\\(' + O.tex(val) + '\\ \\text{' + F.unites[i] + '} = <b>' + O.tex(res, 6) +
-            '</b>\\ \\text{' + F.unites[j] + '}\\)'
+          '\\(' + O.tex(val) + '\\ \\text{' + F.unites[i] + '} = \\mathbf{' + O.tex(res, 6) +
+            '}\\ \\text{' + F.unites[j] + '}\\)'
         ],
         indices: [
           'Vers une unité plus petite, il en faut plus : on multiplie.',

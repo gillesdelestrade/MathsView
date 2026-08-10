@@ -34,7 +34,7 @@
             '\\(' + a + 'x = ' + c + (b > 0 ? ' - ' : ' + ') + Math.abs(b) + ' = ' +
               (a * x) + '\\)',
             'On divise les deux membres par ' + a + ' : \\(x = \\dfrac{' + (a * x) +
-              '}{' + a + '} = <b>' + O.tex(x) + '</b>\\)'
+              '}{' + a + '} = \\mathbf{' + O.tex(x) + '}\\)'
           ],
           indices: ['Ce qu\'on fait d\'un côté, on le fait de l\'autre.',
                     'Commence par faire disparaître le nombre seul.'],
@@ -60,7 +60,7 @@
               Math.abs(b) + '.',
             '\\(' + diff + 'x = ' + O.tex(d2 - b) + '\\)',
             'Enfin on divise par ' + diff + ' : \\(x = \\dfrac{' + O.tex(d2 - b) + '}{' +
-              diff + '} = <b>' + O.tex(x) + '</b>\\)' +
+              diff + '} = \\mathbf{' + O.tex(x) + '}\\)' +
               (diff < 0 ? ' (attention au signe : on divise par un négatif)' : '')
           ],
           indices: ['Regroupe les \\(x\\) d\'un côté, les nombres de l\'autre.',
