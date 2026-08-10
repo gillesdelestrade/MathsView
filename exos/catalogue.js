@@ -41,6 +41,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres-6e', prerequis: ['divisibilite', 'tables'] },
   { code: 'mult-div-10',  libelle: 'Multiplier et diviser par 10', niveau: '6eme',
     chapitre: 'nombres-6e', prerequis: [] },
+  { code: 'perimetres',   libelle: 'Périmètres',               niveau: '6eme',
+    chapitre: 'grandeurs', prerequis: [] },
   { code: 'aires',        libelle: 'Périmètres et aires',      niveau: '6eme',
     chapitre: 'grandeurs', prerequis: [] },
   { code: 'conversions',  libelle: 'Conversions d\'unités',    niveau: '6eme',

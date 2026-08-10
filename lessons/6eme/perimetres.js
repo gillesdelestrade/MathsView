@@ -39,7 +39,7 @@ MathsView.register({
   level: '6eme',
   category: 'geometrie',
   subcategory: 'Grandeurs et mesures',
-  exercices: ['aires'],
+  exercices: ['perimetres'],
   theme: 'Grandeurs — périmètre des figures usuelles',
   description:
     'Le <strong>périmètre</strong> d\'une figure, c\'est la <strong>longueur de son ' +
