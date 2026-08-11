@@ -55,6 +55,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — médianes d\'un triangle et centre de gravité',
+  exercices: ['medianes'],
   description:
     'Une <strong>médiane</strong> d\'un triangle est le segment qui joint un <strong>sommet</strong> ' +
     'au <strong>milieu du côté opposé</strong>. ' +

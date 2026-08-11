@@ -40,6 +40,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — démontrer avec les aires',
+  exercices: ['medianes'],
   description:
     'Pourquoi une <strong>médiane</strong> coupe-t-elle un triangle en deux morceaux de ' +
     '<strong>même aire</strong> ? Ce n\'est pas parce qu\'ils « se ressemblent » : ça se ' +

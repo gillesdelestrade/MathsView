@@ -77,6 +77,10 @@ MathsExos.catalogue = [
     chapitre: 'espace-5e', prerequis: ['aires'] },
   { code: 'angles-par',     libelle: 'Angles et droites parallèles', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
+  { code: 'hauteurs',       libelle: 'Les hauteurs d\'un triangle', niveau: '5eme',
+    chapitre: 'geometrie-5e', prerequis: [] },
+  { code: 'medianes',       libelle: 'Les médianes d\'un triangle', niveau: '5eme',
+    chapitre: 'geometrie-5e', prerequis: [] },
 
   /* --- 4ème -------------------------------------------------------------- */
   { code: 'eq1',       libelle: 'Équations du 1er degré', niveau: '4eme',

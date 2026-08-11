@@ -52,6 +52,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — hauteurs d\'un triangle et orthocentre',
+  exercices: ['hauteurs'],
   description:
     'Une <strong>hauteur</strong> d\'un triangle est la <strong>droite</strong> qui passe par ' +
     'un <strong>sommet</strong> et qui est <strong>perpendiculaire au côté opposé</strong>. ' +
