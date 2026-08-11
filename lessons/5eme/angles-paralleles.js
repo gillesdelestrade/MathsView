@@ -226,17 +226,17 @@ MathsView.register({
 
     // Codage du parallélisme : un chevron sur chaque droite (si elles le sont).
     function chevron(pFn, uFn) {
+      // Trois points : bras du haut, pointe, bras du bas. L'indice est ARRONDI
+      // plutôt que comparé à l'identique : le tracé reste juste même si
+      // JSXGraph échantillonne la courbe plus finement que demandé.
+      function pts() {
+        var p = pFn(), u = uFn(), c = Math.cos(u), s = Math.sin(u);
+        function q(d, e) { return [p[0] + d * c - e * s, p[1] + d * s + e * c]; }
+        return [q(-0.1, 0.22), q(0.26, 0), q(-0.1, -0.22)];
+      }
       return board.create('curve', [
-        function (t) {
-          var p = pFn(), u = uFn(), c = Math.cos(u), s = Math.sin(u);
-          var d = (t === 1 ? 0.26 : -0.1), e = (t === 0 ? 0.22 : (t === 2 ? -0.22 : 0));
-          return p[0] + d * c - e * s;
-        },
-        function (t) {
-          var p = pFn(), u = uFn(), c = Math.cos(u), s = Math.sin(u);
-          var d = (t === 1 ? 0.26 : -0.1), e = (t === 0 ? 0.22 : (t === 2 ? -0.22 : 0));
-          return p[1] + d * s + e * c;
-        },
+        function (t) { return pts()[Math.round(t)][0]; },
+        function (t) { return pts()[Math.round(t)][1]; },
         0, 2
       ], { strokeColor: PAR, strokeWidth: 2, highlight: false, numberPointsHigh: 3, numberPointsLow: 3 });
     }
