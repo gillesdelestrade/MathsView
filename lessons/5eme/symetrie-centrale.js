@@ -41,6 +41,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Transformations',
   theme: 'Géométrie — symétrie par rapport à un point',
+  exercices: ['symetrie-centrale'],
   description:
     'Le <strong>symétrique</strong> d\'une figure par rapport à un <strong>centre</strong> \\( O \\) : ' +
     'chaque sommet \\( M \\) a une image \\( M\' \\) telle que \\( O \\) soit le ' +
