@@ -1161,6 +1161,42 @@ body {
 .som-recap { font-size: .95rem; color: var(--ink-soft); margin: .3rem 0; }
 .som-recap b { color: var(--ink); }
 
+/* ---------- Les parenthèses indispensables (5ème) ---------- */
+.ptn-ui { max-width: 760px; }
+.ptn-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.ptn-cas button {
+  padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px;
+  background: #fff; font-size: .88rem; font-weight: 600; cursor: pointer;
+}
+.ptn-cas button:hover { background: #f8fafc; }
+.ptn-cas button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.ptn-expr {
+  font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  margin: .5rem 0; letter-spacing: .01em; line-height: 1.7;
+}
+.ptn-expr .ptn-par { color: var(--ink-soft); }
+.ptn-expr .vise .ptn-par, .ptn-expr .vise {
+  background: #fef3c7; border-radius: 5px; padding: .05em .12em;
+}
+.ptn-expr .vise .ptn-par { color: #b45309; }
+.ptn-expr .ptn-neg { color: #dc2626; }
+.ptn-expr .ptn-op { color: var(--ink-soft); }
+.ptn-essai { color: var(--ink-soft); }
+.ptn-essai .ptn-faute { color: #dc2626; background: #fee2e2; border-radius: 5px; padding: .05em .15em; }
+
+.ptn-verdict {
+  display: inline-block; margin-top: .35rem; padding: .35rem .75rem; border-radius: 8px;
+  font-weight: 700; font-size: 1rem;
+}
+.ptn-verdict.oui { background: #fee2e2; color: #991b1b; }
+.ptn-verdict.non { background: #dcfce7; color: #166534; }
+.ptn-etapes { display: grid; gap: .25rem; margin: .5rem 0; min-height: 2.6em; }
+.ptn-etape { font-size: .95rem; }
+.ptn-etape b { color: var(--accent); }
+.ptn-bilan { margin-top: .7rem; font-size: .95rem; }
+.ptn-bilan ul { margin: .3rem 0 0; padding-left: 1.1rem; }
+
 /* ---------- Comparer et ranger des décimaux relatifs (5ème) ---------- */
 .cmp-ui { max-width: 700px; margin-top: .6rem; }
 .cmp-cap { font-size: .98rem; color: var(--ink); min-height: 1.7em; }
