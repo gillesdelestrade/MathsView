@@ -1113,6 +1113,54 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+/* ---------- Additionner et soustraire des relatifs (5ème) ---------- */
+.som-ui { max-width: 760px; }
+.som-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.som-cas button {
+  padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px;
+  background: #fff; font-size: .88rem; font-weight: 600; cursor: pointer;
+}
+.som-cas button:hover { background: #f8fafc; }
+.som-cas button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.som-calcul {
+  font-size: 1.5rem; font-weight: 800; letter-spacing: .01em;
+  font-variant-numeric: tabular-nums; margin: .2rem 0 .5rem;
+}
+.som-calcul .neg { color: #dc2626; }
+.som-calcul .pos { color: #2563eb; }
+
+.som-etapes { display: grid; gap: .25rem; margin: .5rem 0 .7rem; min-height: 3.2em; }
+.som-etape { font-size: .95rem; color: var(--ink); }
+.som-etape b { color: var(--accent); }
+
+/* Le calcul posé : une case par chiffre, et la colonne de la virgule surlignée. */
+.som-posewrap { overflow-x: auto; margin: .4rem 0 .2rem; }
+.som-pose {
+  border-collapse: collapse; margin: 0 0 0 .2rem;
+  font-variant-numeric: tabular-nums; font-size: 1.55rem; font-weight: 700;
+}
+.som-pose td {
+  width: 1.35em; height: 1.35em; text-align: center; padding: 0;
+  border: 1px solid transparent; color: var(--ink);
+}
+.som-pose td.som-vir { background: #fef3c7; border-color: #fcd34d; }
+.som-pose tr.som-ret td { height: .95em; font-size: .82rem; color: #ea580c; font-weight: 800; }
+.som-pose tr.som-bar td { border-top: 2.5px solid var(--ink); }
+.som-pose td.som-op { color: var(--ink-soft); font-weight: 800; }
+.som-pose td.som-zero { color: #ea580c; }
+.som-pose td.som-on { background: var(--accent-soft); border-color: var(--accent); }
+.som-pose tr.som-res td { color: #7c3aed; }
+.som-pose td.som-vide { color: transparent; }
+
+.som-final {
+  margin-top: .5rem; font-size: 1.3rem; font-weight: 800;
+  display: inline-block; padding: .35rem .8rem; border-radius: 8px;
+  background: var(--accent-soft); font-variant-numeric: tabular-nums;
+}
+.som-recap { font-size: .95rem; color: var(--ink-soft); margin: .3rem 0; }
+.som-recap b { color: var(--ink); }
+
 /* ---------- Comparer et ranger des décimaux relatifs (5ème) ---------- */
 .cmp-ui { max-width: 700px; margin-top: .6rem; }
 .cmp-cap { font-size: .98rem; color: var(--ink); min-height: 1.7em; }
