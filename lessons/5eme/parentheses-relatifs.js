@@ -42,7 +42,7 @@ MathsView.register({
   id: 'parentheses-relatifs',
   title: 'Les parenthèses sont-elles indispensables ?',
   level: '5eme',
-  category: 'nombres',
+  category: 'calcul',
   subcategory: 'Nombres relatifs',
   theme: 'Nombres — le rôle des parenthèses dans une écriture',
   exercices: ['parentheses'],

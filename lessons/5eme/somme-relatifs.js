@@ -54,7 +54,7 @@ MathsView.register({
   id: 'somme-relatifs',
   title: 'Additionner et soustraire des relatifs',
   level: '5eme',
-  category: 'nombres',
+  category: 'calcul',
   subcategory: 'Nombres relatifs',
   theme: 'Nombres — somme et différence de décimaux relatifs',
   exercices: ['somme-relatifs'],
