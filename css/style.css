@@ -1161,6 +1161,40 @@ body {
 .som-recap { font-size: .95rem; color: var(--ink-soft); margin: .3rem 0; }
 .som-recap b { color: var(--ink); }
 
+/* ---------- Comparer des fractions (5ème) ---------- */
+.cmf-ui { max-width: 760px; }
+.cmf-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.cmf-cas button {
+  padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px;
+  background: #fff; font-size: .88rem; font-weight: 600; cursor: pointer;
+}
+.cmf-cas button:hover { background: #f8fafc; }
+.cmf-cas button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Une fraction écrite empilée, en grand. */
+.cmf-ligne { display: flex; align-items: center; gap: 1.1rem; margin: .5rem 0; min-height: 4.2rem; }
+.cmf-frac {
+  display: inline-flex; flex-direction: column; align-items: center;
+  font-size: 1.5rem; font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums;
+}
+.cmf-frac .num { padding: 0 .35em; }
+.cmf-frac .den { padding: 0 .35em; border-top: 3px solid currentColor; }
+.cmf-un { color: #2563eb; }
+.cmf-deux { color: #7c3aed; }
+.cmf-signe { font-size: 1.7rem; font-weight: 800; color: var(--ink); min-width: 1.4em; text-align: center; }
+.cmf-signe.mystere { color: var(--ink-soft); }
+.cmf-vise { background: #fef3c7; border-radius: 6px; box-shadow: 0 0 0 2px #fcd34d; }
+.cmf-fois { font-size: .82rem; font-weight: 700; color: #ea580c; min-width: 3.2em; }
+
+.cmf-etapes { display: grid; gap: .25rem; margin: .6rem 0; min-height: 3em; }
+.cmf-etape { font-size: .95rem; }
+.cmf-etape b { color: var(--accent); }
+.cmf-etape .piege { color: #b91c1c; font-weight: 700; }
+.cmf-concl {
+  display: inline-block; margin-top: .5rem; padding: .4rem .9rem; border-radius: 8px;
+  background: var(--accent-soft); font-size: 1.15rem; font-weight: 800;
+}
+
 /* ---------- Les parenthèses indispensables (5ème) ---------- */
 .ptn-ui { max-width: 760px; }
 .ptn-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
