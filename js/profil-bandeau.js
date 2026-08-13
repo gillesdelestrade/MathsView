@@ -43,9 +43,14 @@
 
   // Aller quelque part dans la page d'entraînement. Depuis cette page même,
   // seul le fragment change : pas de rechargement.
+  //
+  // Le nom de fichier est le SEUL critère. Une adresse qui se termine par « / »
+  // — http://localhost:8000/ — sert index.html, c'est-à-dire les leçons : s'y
+  // contenter de poser le fragment n'y afficherait rien, puisque c'est le
+  // routeur des leçons qui le lirait.
   function va(fragment) {
     var ici = location.pathname.replace(/^.*\//, '');
-    if (ici === ENTRAINEMENT || ici === '') {
+    if (ici === ENTRAINEMENT) {
       if (location.hash === '#' + fragment) {
         // Même fragment : le routeur ne serait pas rappelé, on le force.
         location.hash = '';
