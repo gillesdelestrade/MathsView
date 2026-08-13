@@ -43,6 +43,7 @@
   <script src="js/profils.js"></script>
   <script src="js/sync-ui.js"></script>
   <script src="js/progression.js"></script>
+  <script src="js/profil-bandeau.js"></script>
   <script src="js/exos-base.js"></script>
   <script src="js/trophees.js"></script>
   <script src="js/boutique.js"></script>
@@ -146,23 +147,11 @@
 
     /* ================================================================= */
     /* Le bandeau du haut : qui travaille                                */
+    /* Il est commun aux trois pages (js/profil-bandeau.js) ; ici on se   */
+    /* contente de le monter et de le rafraîchir.                        */
     /* ================================================================= */
-    function majBandeau() {
-      var id = MathsProfils.courant();
-      var p = id && MathsProfils.profil(id);
-      if (!p) { bandeauProfil.innerHTML = ''; return; }
-      var r = MathsProgression.resume(id);
-      bandeauProfil.innerHTML =
-        '<button class="exo-profil-actif" id="btn-changer">' +
-          '<span class="exo-avatar" style="background:' + p.couleur + '">' +
-            p.emoji + '</span>' + esc(p.prenom) +
-          '<span class="exo-xp-mini">' + r.xp + ' XP</span>' +
-          '<span class="exo-pieces-mini">' + r.pieces + ' 🪙</span>' +
-        '</button>';
-      document.getElementById('btn-changer').onclick = function () {
-        location.hash = 'profils';
-      };
-    }
+    MathsBandeau.monte(bandeauProfil);
+    function majBandeau() { MathsBandeau.maj(); }
 
     /* ================================================================= */
     /* Écran « profils »                                                 */

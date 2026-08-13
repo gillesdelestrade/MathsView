@@ -191,6 +191,29 @@
 }
 .exo-avatar.grand { width: 56px; height: 56px; font-size: 1.8rem; background: var(--border); }
 
+/* Le menu de la pastille de profil : jardin, boutique, changement de profil.
+   Présent sur les trois pages, d'où sa place ici plutôt que dans une page. */
+.exo-profil-hote { position: relative; display: inline-block; }
+.exo-profil-actif.vide { font-weight: 600; opacity: .9; }
+.exo-profil-fleche { font-size: .7rem; opacity: .8; margin-left: .1rem; }
+.exo-profil-menu {
+  position: absolute; top: calc(100% + .4rem); right: 0; z-index: 40;
+  min-width: 262px; padding: .3rem; background: #fff;
+  border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow);
+  display: grid; gap: .1rem;
+}
+.exo-profil-item {
+  display: flex; align-items: center; gap: .6rem; width: 100%;
+  padding: .5rem .6rem; border: 0; border-radius: 8px; background: none;
+  cursor: pointer; text-align: left; font-size: .92rem; font-weight: 700;
+  color: var(--ink); font-family: inherit;
+}
+.exo-profil-item:hover { background: var(--accent-soft); color: var(--accent); }
+.exo-profil-ico { font-size: 1.1rem; }
+.exo-profil-lib { display: flex; flex-direction: column; line-height: 1.2; }
+.exo-profil-lib small { font-size: .74rem; font-weight: 600; color: var(--ink-soft); }
+.exo-profil-item:hover .exo-profil-lib small { color: var(--accent); opacity: .8; }
+
 /* ---------- Choix du profil ---------- */
 .exo-profils { display: flex; gap: .8rem; flex-wrap: wrap; margin: .6rem 0 1rem; }
 .exo-profil-carte {

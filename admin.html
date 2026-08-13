@@ -20,6 +20,7 @@
     <div class="filters">
       <a class="exo-lien-lecons" href="exercices.html">← Entraînement</a>
       <a class="exo-lien-lecons" href="index.html">Leçons</a>
+      <span id="profil-actif"></span>
     </div>
   </header>
 
@@ -40,6 +41,7 @@
   <script src="js/profils.js"></script>
   <script src="js/sync-ui.js"></script>
   <script src="js/progression.js"></script>
+  <script src="js/profil-bandeau.js"></script>
   <script src="js/exos-base.js"></script>
   <script src="js/trophees.js"></script>
   <script src="js/boutique.js"></script>
@@ -81,6 +83,7 @@
     MathsSyncUI.demarre(function () {
       MathsAdmin.demarre(document.getElementById('admin'));
     });
+    MathsBandeau.monte();
   </script>
 </body>
 </html>

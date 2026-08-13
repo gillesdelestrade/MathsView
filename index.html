@@ -18,6 +18,7 @@
       </div>
     </div>
     <div class="filters" id="filters"></div>
+    <span id="profil-actif"></span>
   </header>
 
   <div class="layout">
@@ -66,6 +67,11 @@
        exercices.html. -->
   <script src="js/exos-base.js"></script>
   <script src="exos/catalogue.js"></script>
+  <!-- La pastille du profil connecté, commune aux trois pages : elle a besoin
+       des profils et de la progression pour afficher l'XP et les pièces. -->
+  <script src="js/profils.js"></script>
+  <script src="js/progression.js"></script>
+  <script src="js/profil-bandeau.js"></script>
 
   <!-- Catalogue : ajoute ici chaque nouvelle illustration.
        L'ordre ci-dessous est celui des cartes de l'accueil : on le garde par
@@ -119,6 +125,9 @@
   <script src="lessons/1ere/derivee-tangente.js"></script>
   <script src="lessons/1ere/cercle-trigonometrique.js"></script>
 
-  <script>MathsView.start();</script>
+  <script>
+    MathsView.start();
+    MathsBandeau.monte();
+  </script>
 </body>
 </html>
