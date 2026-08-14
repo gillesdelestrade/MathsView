@@ -1559,3 +1559,42 @@ body {
   margin: 0; padding: .55rem .8rem; border-radius: var(--radius);
   background: #fef2f2; color: #991b1b; font-size: .95rem; line-height: 1.5;
 }
+
+/* ---------- Construire un triangle (5ème) ---------- */
+.ctr-choix { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .9rem; }
+.ctr-choix button {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: .45rem .85rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--texte);
+}
+.ctr-choix button:hover { border-color: #2563eb; }
+.ctr-choix button.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+.ctr-curseurs {
+  display: flex; flex-wrap: wrap; gap: .7rem 1.4rem; margin-top: .7rem;
+}
+.ctr-curseurs label { display: flex; align-items: center; gap: .5rem; }
+.ctr-nom { font-weight: 700; font-size: .92rem; min-width: 5.2rem; }
+.ctr-val { font-weight: 700; font-size: .92rem; color: #2563eb; min-width: 3.6rem; }
+.ctr-panneau {
+  margin-top: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+.ctr-titre { font-weight: 800; margin-bottom: .5rem; }
+.ctr-etapes { margin: 0; padding-left: 1.4rem; }
+.ctr-etape { margin: .3rem 0; line-height: 1.5; color: var(--doux); }
+.ctr-etape.faite { color: var(--texte); }
+.ctr-etape.encours {
+  color: var(--texte); font-weight: 600;
+  background: #eff6ff; border-radius: var(--radius); padding: .1rem .4rem;
+  margin-left: -.4rem;
+}
+.ctr-alerte {
+  margin: .8rem 0 0; padding: .6rem .8rem; border-left: 3px solid #dc2626;
+  background: #fef2f2; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .95rem; line-height: 1.55;
+}
+.ctr-bilan {
+  margin: .8rem 0 0; padding: .6rem .8rem; border-left: 3px solid #0284c7;
+  background: #f0f9ff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .95rem; line-height: 1.55;
+}

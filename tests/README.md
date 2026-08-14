@@ -53,6 +53,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | | |
 |---|---|
 | `lecon-somme-angles` | Les trois copies d'angles pavent le demi-tour sans trou ni chevauchement, et la démonstration par la parallèle tient. |
+| `lecon-construire-triangles` | Le troisième sommet est calculé de trois façons ; on relit sa position et on vérifie que les trois données de départ s'y retrouvent, que les demi-droites tracées passent bien par lui, et que les cas impossibles sont expliqués. |
 | `lecon-hauteurs`, `lecon-medianes` | Les droites tracées sont bien des hauteurs, des médianes, et les points de concours ne sont pas confondus avec leurs voisins. |
 | `lecon-mediane-aires` | Les deux moitiés du triangle ont bien la même aire. |
 | `lecon-somme-relatifs`, `lecon-comparer-fractions`, `lecon-parentheses`, `lecon-puissances`, `lecon-fraction-pourcentage` | L'animation est rejouée entièrement dans un DOM simulé : les calculs affichés sont justes, et le rejeu redonne le même écran. |
@@ -64,6 +65,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 |---|---|
 | `exos-somme-angles` | Chaque figure dit exactement ce que la réponse suppose : angles remesurés sur le polygone, codages confrontés aux longueurs réelles. |
 | `exos-compas` | La construction est **réellement faisable** : de vrais gestes de souris sont rejoués, et la droite obtenue passe bien par les points annoncés. |
+| `exos-construire-triangles` | Même exigence, avec le rapporteur en plus : la construction est rejouée à la souris, et le sommet cherché doit vraiment apparaître comme point d'accroche — dans le cadre, sans quoi l'exercice serait infaisable. |
 | `exos-symetrie-axiale`, `exos-symetrie-centrale` | Le symétrique annoncé est celui de l'axe (ou du centre) **dessiné**, et les figures proposées sont superposables à celle de départ. |
 | `exos-fonction-affine` | La droite est relue dans le SVG et confrontée à l'équation annoncée. |
 | `exos-variations` | Le script de chaque énoncé est exécuté, et la réponse recalculée sur sa sortie. |
