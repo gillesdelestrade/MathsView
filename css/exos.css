@@ -496,3 +496,11 @@
 .exo-outil-aide { font-size: .85rem; color: var(--doux); flex: 1 1 14rem; }
 .exo-board { touch-action: none; }
 
+/* ---------- Un bout de programme dans un énoncé ou une correction ---------- */
+.exo-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88rem; line-height: 1.45; margin: .4rem 0; padding: .55rem .7rem;
+  background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius);
+  overflow-x: auto; white-space: pre; color: #0f172a;
+}
+.exo-choix .exo-code { margin: 0; background: transparent; border: 0; padding: 0; }

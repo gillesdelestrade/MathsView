@@ -359,6 +359,13 @@
     var q = S.courante.q;
 
     if (q.figure) construireFigure(S, zone, q);
+    /* Un outil quelconque posé au-dessus de la réponse — pour l'instant une
+       console Python. Comme la figure, il sert à CHERCHER : la réponse reste
+       un QCM ou un champ. */
+    if (q.outil) {
+      S.ctx.zone = zone;
+      try { q.outil(zone, S.ctx); } catch (e) { console.error('outil() :', e); }
+    }
     if (q.type === 'jsx') return;
 
     if (q.type === 'qcm' || q.type === 'vraifaux' || q.type === 'qcm-multi') {

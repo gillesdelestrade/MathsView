@@ -247,6 +247,19 @@
   /*                                                                       */
   /* L'ordre ci-dessous est celui des boutons dans les leçons : on va du    */
   /* plus simple au plus difficile.                                        */
+  /* L'écriture Python de ax + b. Deux différences avec l'écriture au tableau :
+     le point décimal, et le fait qu'on n'omet jamais le signe × (2x ne veut
+     rien dire en Python, il faut 2*x). */
+  function pyNb(v) {
+    return String(v);                 // JavaScript écrit déjà 2, 2.5, -1.5…
+  }
+  function linPy(a, b) {
+    var t = a === 0 ? '' : a === 1 ? 'x' : a === -1 ? '-x' : pyNb(a) + '*x';
+    if (b === 0) return t || '0';
+    if (!t) return pyNb(b);
+    return t + (b > 0 ? ' + ' + pyNb(b) : ' - ' + pyNb(-b));
+  }
+
   /* ===================================================================== */
   var POOL = [
     {
@@ -256,6 +269,7 @@
       couleur: '#0d9488',
       expr: function () { return 'x'; },
       tex:  function () { return 'x'; },
+      py:   function () { return 'x'; },
       f:    function (x) { return x; },
       ensemble: 'ℝ',
       courbe: 'une droite passant par l\'origine',
@@ -277,6 +291,7 @@
       couleur: '#e11d48',
       expr: function () { return '−x'; },
       tex:  function () { return '-x'; },
+      py:   function () { return '-x'; },
       f:    function (x) { return -x; },
       ensemble: 'ℝ',
       courbe: 'une droite qui descend, passant par l\'origine',
@@ -323,6 +338,7 @@
       ],
       expr: function (p) { return linHtml(p.a, p.b); },
       tex:  function (p) { return linTex(p.a, p.b); },
+      py:   function (p) { return linPy(p.a, p.b); },
       f:    function (x, p) { return p.a * x + p.b; },
       ensemble: 'ℝ',
       courbe: 'une droite',
@@ -384,6 +400,7 @@
       couleur: '#ea580c',
       expr: function () { return '|x|'; },
       tex:  function () { return '\\left|x\\right|'; },
+      py:   function () { return 'abs(x)'; },
       f:    function (x) { return Math.abs(x); },
       ensemble: 'ℝ',
       courbe: 'deux demi-droites qui forment un « V »',
@@ -431,6 +448,7 @@
       couleur: '#7c3aed',
       expr: function () { return 'x²'; },
       tex:  function () { return 'x^{2}'; },
+      py:   function () { return 'x**2'; },
       f:    function (x) { return x * x; },
       ensemble: 'ℝ',
       courbe: 'une parabole',
@@ -488,6 +506,7 @@
       couleur: '#0891b2',
       expr: function () { return 'x³'; },
       tex:  function () { return 'x^{3}'; },
+      py:   function () { return 'x**3'; },
       f:    function (x) { return x * x * x; },
       ensemble: 'ℝ',
       courbe: 'une courbe en S, symétrique par rapport à l\'origine',
@@ -523,6 +542,9 @@
       defini: function (x) { return x >= 0; },
       expr: function () { return '√x'; },
       tex:  function () { return '\\sqrt{x}'; },
+      py:   function () { return 'sqrt(x)'; },
+      pyImports: ['from math import sqrt'],
+      pyGarde: 'x >= 0',
       f:    function (x) { return Math.sqrt(x); },
       ensemble: '[0 ; +∞[',
       courbe: 'une demi-parabole couchée',
@@ -567,6 +589,8 @@
       defini: function (x) { return Math.abs(x) > 1e-9; },
       expr: function () { return '1/x'; },
       tex:  function () { return '\\dfrac{1}{x}'; },
+      py:   function () { return '1 / x'; },
+      pyGarde: 'x != 0',
       f:    function (x) { return 1 / x; },
       ensemble: 'ℝ privé de 0',
       courbe: 'une hyperbole, en deux branches séparées',
@@ -618,6 +642,7 @@
       couleur: '#b45309',
       expr: function () { return 'x³ − 3x'; },
       tex:  function () { return 'x^{3} - 3x'; },
+      py:   function () { return 'x**3 - 3*x'; },
       f:    function (x) { return x * x * x - 3 * x; },
       ensemble: 'ℝ',
       courbe: 'une cubique, avec une bosse puis un creux',
@@ -673,6 +698,88 @@
     // points d'entrée à utiliser, pour que le domaine soit toujours respecté.
     valeur: function (fn, x, p) { return fn.f(x, p || {}); },
     defini: function (fn, x, p) { return fn.defini ? fn.defini(x, p || {}) : true; },
+
+    /* ------------------------------------------------------------------ */
+    /* Le tableau de valeurs, et le script Python qui l'affiche            */
+    /* ------------------------------------------------------------------ */
+    /* Les deux sont écrits ICI, ensemble, pour qu'ils ne puissent pas se
+       contredire : la leçon montre le script, les exercices interrogent le
+       tableau, et l'un est exactement ce que l'autre produit.
+
+       `o` : { x1, x2, den, dec }. `den` est le dénominateur du pas — 1 pour
+       aller de 1 en 1, 2 pour 0,5, 10 pour 0,1. C'est la façon dont on écrit
+       un pas décimal en Python : on boucle sur des ENTIERS et on divise, parce
+       que range n'accepte pas de pas décimal. */
+    grille: function (fn, p, o) {
+      var den = o.den || 1, out = [];
+      for (var i = Math.round(o.x1 * den); i <= Math.round(o.x2 * den); i++) {
+        var x = den === 1 ? i : i / den;
+        if (!this.defini(fn, x, p)) continue;
+        out.push({ i: i, x: x, y: this.valeur(fn, x, p) });
+      }
+      return out;
+    },
+
+    /* L'arrondi de Python, qui n'est PAS celui de JavaScript : quand on tombe
+       pile au milieu, Python vise le chiffre PAIR le plus proche. round(0.625, 2)
+       donne 0.62 et non 0.63, round(−42.875, 2) donne −42.88 et non −42.87.
+       Le tableau annoncé ici doit être celui que le script affiche vraiment —
+       sinon l'exercice interroge un tableau que l'élève ne verra jamais. */
+    arrondiPython: function (x, n) {
+      var f = Math.pow(10, n), y = x * f;
+      var bas = Math.floor(y), r = y - bas;
+      var e = Math.abs(r - 0.5) < 1e-9 ? (bas % 2 === 0 ? bas : bas + 1) : Math.round(y);
+      return e / f;
+    },
+
+    /* Le tableau tel que le script l'AFFICHE. `dec` null veut dire « pas
+       d'arrondi » : toutes les valeurs sont déjà entières. */
+    tableauPython: function (fn, p, o) {
+      var self = this, dec = this.decimalesPython(fn, p, o);
+      return this.grille(fn, p, o).map(function (v) {
+        return { x: v.x, y: dec === null ? v.y : self.arrondiPython(v.y, dec) };
+      });
+    },
+
+    /* Faut-il arrondir dans le script ? Seulement si des valeurs tombent à
+       côté d'un entier — sinon on n'alourdit pas le programme pour rien. */
+    decimalesPython: function (fn, p, o) {
+      var brut = this.grille(fn, p, o);
+      var entier = brut.every(function (v) { return Number.isInteger(v.y); });
+      return entier ? null : (o.dec === undefined ? 2 : o.dec);
+    },
+
+    scriptPython: function (fn, p, o) {
+      var den = o.den || 1, dec = this.decimalesPython(fn, p, o);
+      var L = [];
+      (fn.pyImports || []).forEach(function (im) { L.push(im); });
+      if (L.length) L.push('');
+      L.push('def f(x):');
+      L.push('    return ' + fn.py(p || {}));
+      L.push('');
+      var appel = dec === null ? 'f(x)' : 'round(f(x), ' + dec + ')';
+      if (den === 1) {
+        L.push('for x in range(' + o.x1 + ', ' + (o.x2 + 1) + '):');
+        if (fn.pyGarde) {
+          L.push('    if ' + fn.pyGarde + ':');
+          L.push('        print(x, ' + appel + ')');
+        } else {
+          L.push('    print(x, ' + appel + ')');
+        }
+      } else {
+        // range ne connaît que les entiers : on boucle sur i, puis on divise.
+        L.push('for i in range(' + Math.round(o.x1 * den) + ', ' +
+               (Math.round(o.x2 * den) + 1) + '):');
+        L.push('    x = i / ' + den);
+        if (fn.pyGarde) {
+          L.push('    if ' + fn.pyGarde + ':');
+          L.push('        print(x, ' + appel + ')');
+        } else {
+          L.push('    print(x, ' + appel + ')');
+        }
+      }
+      return L.join('\n');
+    },
 
     // Bornes du domaine intersecté avec [x1 ; x2] (utile pour tracer la courbe).
     domaine: function (fn, x1, x2) {

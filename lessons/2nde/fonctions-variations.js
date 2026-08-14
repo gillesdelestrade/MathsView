@@ -28,6 +28,7 @@ MathsView.register({
   category: 'analyse',
   subcategory: 'Fonctions',
   theme: 'Fonctions — croissance, décroissance, monotonie et tableau de variations',
+  exercices: ['variations'],
   description:
     'Parcourir la courbe de \\(f\\) <strong>de la gauche vers la droite</strong>, c\'est ' +
     'faire grandir \\(x\\). Pendant ce temps, \\(f(x)\\) monte ou descend : sur un ' +
@@ -72,6 +73,16 @@ MathsView.register({
     '<li><strong>Le tableau dépend de l\'intervalle d\'étude.</strong> Ici, tout est lu sur ' +
     '\\([-5\\,;5]\\) : les valeurs \\(-5\\) et \\(5\\) des colonnes extrêmes ne sont pas des ' +
     'propriétés de la fonction, mais le bord de la fenêtre choisie.</li>' +
+    '<li><strong>Le tableau de valeurs, à la machine.</strong> Un script Python qui ' +
+    'affiche \\(f(x)\\) pour des \\(x\\) rangés dans l\'ordre croissant donne les ' +
+    'variations à lire dans la colonne de droite. Attention à \\(\\texttt{range}\\), qui ' +
+    'ne compte que d\'entier en entier : pour avancer de 0,5 en 0,5, on boucle sur des ' +
+    'entiers et on divise (\\(\\texttt{x = i / 2}\\)).</li>' +
+    '<li><strong>Un tableau ne démontre rien.</strong> Il ne donne que des valeurs ' +
+    '<em>choisies</em> : entre deux d\'entre elles, la fonction peut faire tout autre ' +
+    'chose. Le tableau <strong>suggère</strong> le sens de variation — c\'est une ' +
+    '<em>conjecture</em>, qu\'il faut ensuite démontrer. Resserrer le pas rend la ' +
+    'conjecture plus sûre, jamais certaine.</li>' +
     '<li><strong>Croissante n\'est pas positive.</strong> Deux idées différentes : ' +
     '\\(f(x)=2x-1\\) est croissante partout, et pourtant négative pour \\(x&lt;0{,}5\\). Le ' +
     'sens de variation parle de la <em>façon dont f varie</em>, pas du signe de ses ' +
@@ -619,6 +630,84 @@ MathsView.register({
     }
 
     /* ==================================================================== */
+    /* Le même tableau, en Python                                           */
+    /*                                                                      */
+    /* Le tableau de variations se lit sur la courbe ; il se lit tout aussi */
+    /* bien sur une COLONNE DE NOMBRES. C'est même ainsi qu'on procède quand */
+    /* on n'a pas la courbe : on fait calculer f(x) pour beaucoup de x, et  */
+    /* on regarde où la colonne se retourne. Le script est modifiable et    */
+    /* s'exécute ici ; tapé tel quel sur une calculatrice, il donne la même */
+    /* chose.                                                               */
+    /* ==================================================================== */
+    var pySection = document.createElement('div');
+    pySection.className = 'py-section';
+    pySection.innerHTML =
+      '<div class="py-titre">Le même tableau, écrit en Python</div>' +
+      '<p class="py-intro">Une machine ne « voit » pas la courbe : elle calcule ' +
+      '\\(f(x)\\) pour beaucoup de valeurs de \\(x\\), rangées dans l\'ordre croissant, ' +
+      'et les affiche. Il ne reste qu\'à lire la colonne de droite — <b>tant qu\'elle ' +
+      'augmente, f croît ; quand elle se met à diminuer, f décroît</b>. Le retournement ' +
+      'de la colonne, c\'est le sommet de la courbe.</p>';
+
+    var pyLecture = document.createElement('p');
+    pyLecture.className = 'py-lecture';
+
+    function scriptPourFonction() {
+      return POOL.scriptPython(fn(), par, { x1: X1, x2: X2, den: Math.round(1 / PAS) });
+    }
+
+    /* La phrase qui relie la colonne de nombres au tableau de variations. Elle
+       n'est écrite que si le script affiché est bien celui de la fonction
+       choisie : commenter un script qu'on n'a pas écrit, c'est risquer de
+       raconter n'importe quoi. */
+    function lectureTxt() {
+      var C = cols(), A = arcs();
+      if (!A.length) return '';
+      var somm = C.filter(function (c) { return c.sommet; });
+      if (somm.length === 1) {
+        var creux = mini(somm[0]);
+        return 'Lis la colonne de droite : elle ' + (creux ? 'diminue' : 'augmente') +
+          ' jusqu\'à <b>x = ' + somm[0].txt + '</b>, puis elle ' +
+          (creux ? 'augmente' : 'diminue') + '. Ce retournement, c\'est le ' +
+          (creux ? 'minimum' : 'maximum') + ' — et c\'est exactement là que la flèche ' +
+          'du tableau de variations change de sens.';
+      }
+      if (somm.length > 1) {
+        return 'La colonne de droite se retourne en ' + somm.map(function (c) {
+          return '<b>x = ' + c.txt + '</b>';
+        }).join(' puis en ') + ' : autant de changements de sens que de flèches dans ' +
+          'le tableau.';
+      }
+      if (C.some(function (c) { return c.bar; })) {
+        return 'La colonne ne se retourne jamais, mais le script <b>saute</b> une valeur : ' +
+          'celle qui n\'a pas d\'image. C\'est la double barre du tableau de variations.';
+      }
+      return 'La colonne de droite ne se retourne jamais : f garde le même sens sur tout ' +
+        'l\'intervalle, elle y est <b>monotone</b>. Une seule flèche suffit.';
+    }
+
+    var pyConsole = MathsConsole.monte(pySection, {
+      script: scriptPourFonction(),
+      aide: 'Le même script, tapé sur une calculatrice qui a Python (Numworks, TI, ' +
+            'Casio), affiche exactement les mêmes lignes. <b>range</b> ne sait compter ' +
+            'que d\'entier en entier : pour avancer de 0,5 en 0,5, on boucle sur des ' +
+            'entiers et on divise.',
+      surSortie: function (lignes, erreur, intact) {
+        pyLecture.innerHTML = (!erreur && lignes.length && intact) ? lectureTxt() : '';
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([pyLecture]);
+      }
+    });
+    pySection.appendChild(pyLecture);
+
+    /* On ne réécrit le script que s'il n'a pas été retouché : sinon, bouger un
+       curseur effacerait ce que l'élève vient d'écrire. */
+    function majScript(force) {
+      if (!force && !pyConsole.intact()) return;
+      pyConsole.remettre(scriptPourFonction());
+    }
+
+
+    /* ==================================================================== */
     /* Choix de la fonction et de ses paramètres                            */
     /* ==================================================================== */
     var pick = document.createElement('div');
@@ -654,7 +743,7 @@ MathsView.register({
         input.oninput = function () {
           par[sp.name] = parseFloat(input.value);
           val.textContent = nb(par[sp.name]);
-          fitView(); tout();
+          fitView(); tout(); majScript(false);
         };
         lab.appendChild(name); lab.appendChild(input); lab.appendChild(val);
         paramsBox.appendChild(lab);
@@ -670,7 +759,7 @@ MathsView.register({
       par = POOL.defauts(fn());
       fitView();
       poseAB();
-      majBoutons(); renderParams();
+      majBoutons(); renderParams(); majScript(true);
       play();                          // nouvelle fonction : on réécrit le tableau
     }
 
@@ -710,11 +799,13 @@ MathsView.register({
     mv.extras.appendChild(paramsBox);
     mv.extras.appendChild(wrap);
     mv.extras.appendChild(panel);
+    mv.extras.appendChild(pySection);
 
     board.on('update', refresh);
 
     majBoutons();
     renderParams();
+    majScript(true);
     fitView();
     poseAB();
     play();            // charge les étapes : en pas à pas, la figure attend l'appui

@@ -19,6 +19,8 @@ MathsExos.catalogue = [
     chapitre: 'fonctions', prerequis: ['fn-images', 'intervalles'] },
   { code: 'fn-parite',    libelle: 'Parité d\'une fonction',    niveau: '2nde',
     chapitre: 'fonctions', prerequis: ['fn-images'] },
+  { code: 'variations',   libelle: 'Variations et tableau de valeurs', niveau: '2nde',
+    chapitre: 'fonctions', prerequis: ['fn-images'] },
 
   /* --- Nombres et ensembles (2nde) --------------------------------------- */
   { code: 'ensembles',    libelle: 'Ensembles de nombres',      niveau: '2nde',

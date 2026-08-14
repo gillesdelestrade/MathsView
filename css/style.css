@@ -1489,3 +1489,45 @@ body {
                   transform: translateY(150%); }
   .sync-bandeau.visible { transform: translateY(0); }
 }
+
+/* ---------- L'ardoise Python ---------- */
+/* .py-section : le cadre, dans une leçon. .py-bloc : la console elle-même,
+   posée telle quelle dans un exercice. */
+.py-section {
+  margin-top: 1.1rem; padding: 1rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+.py-bloc { margin: .6rem 0 0; }
+.py-titre { font-weight: 800; font-size: 1.02rem; margin-bottom: .35rem; }
+.py-intro { margin: 0 0 .8rem; color: var(--doux); font-size: .95rem; line-height: 1.5; }
+.py-cols { display: flex; flex-wrap: wrap; gap: .9rem; }
+.py-col { flex: 1 1 20rem; min-width: 0; display: flex; flex-direction: column; }
+.py-etiq { font-size: .85rem; font-weight: 700; color: #475569; margin-bottom: .3rem; }
+.py-note { font-weight: 400; color: var(--doux); }
+.py-code, .py-sortie {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .88rem; line-height: 1.45; tab-size: 4;
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .6rem .7rem; background: #f8fafc; color: #0f172a;
+}
+.py-code { width: 100%; resize: vertical; min-height: 9.5rem; }
+.py-code:focus { outline: 2px solid #7c3aed; outline-offset: -1px; }
+.py-sortie {
+  flex: 1; margin: 0; min-height: 9.5rem; max-height: 22rem; overflow: auto;
+  white-space: pre; background: #0f172a; color: #e2e8f0; border-color: #0f172a;
+}
+.py-sortie.py-ko { color: #fecaca; }
+.py-actions { display: flex; gap: .5rem; margin-top: .5rem; }
+.py-actions button {
+  font: inherit; font-size: .92rem; font-weight: 600; cursor: pointer;
+  padding: .4rem .8rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff;
+}
+.py-actions .py-run { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.py-actions button:hover { filter: brightness(.96); }
+.py-lecture:not(:empty) {
+  margin: .8rem 0 0; padding: .6rem .8rem; border-left: 3px solid #7c3aed;
+  background: #f5f3ff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .95rem; line-height: 1.5;
+}
+.py-aide { margin: .7rem 0 0; font-size: .88rem; color: var(--doux); line-height: 1.5; }

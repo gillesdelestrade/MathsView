@@ -64,10 +64,17 @@
     return rnd.booleen(0.5) ? v : -v;
   }
 
+  /* Poser du texte brut dans du HTML. Un script Python contient des « < »,
+     des « > » et parfois des « & » : sans cela, le navigateur y verrait des
+     balises et avalerait une partie du programme. */
+  function echappe(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
   global.ExosOutils = {
     fr: fr, tex: tex, par: par, signe: signe, signeTex: signeTex,
     pgcd: pgcd, reduit: reduit, fracTxt: fracTxt, fracTex: fracTex,
-    fracFormes: fracFormes, coef: coef
+    fracFormes: fracFormes, coef: coef, echappe: echappe
   };
 
 })(window);
