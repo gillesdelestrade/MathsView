@@ -479,3 +479,20 @@
 }
 .exo-choix.bonne .exo-case { border-color: #16a34a; background: #16a34a; }
 .exo-choix.mauvaise .exo-case { border-color: #dc2626; background: #dc2626; }
+
+/* ---------- Outils de construction (compas, règle) ---------- */
+.exo-outils {
+  display: flex; flex-wrap: wrap; gap: .5rem; align-items: center;
+  margin: .6rem 0 .2rem;
+}
+.exo-outil {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: .4rem .8rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--texte);
+}
+.exo-outil:hover { border-color: #7c3aed; }
+.exo-outil.actif { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.exo-outil.gomme { color: #64748b; }
+.exo-outil-aide { font-size: .85rem; color: var(--doux); flex: 1 1 14rem; }
+.exo-board { touch-action: none; }
+

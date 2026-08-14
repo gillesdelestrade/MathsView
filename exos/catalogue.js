@@ -65,6 +65,8 @@ MathsExos.catalogue = [
     chapitre: 'geometrie-6e', prerequis: [] },
   { code: 'sym-axiale',   libelle: 'Symétrie axiale',          niveau: '6eme',
     chapitre: 'geometrie-6e', prerequis: [] },
+  { code: 'compas',       libelle: 'Constructions au compas',   niveau: '6eme',
+    chapitre: 'geometrie-6e', prerequis: [] },
   { code: 'angles-6e',    libelle: 'Reconnaître et mesurer un angle', niveau: '6eme',
     chapitre: 'geometrie-6e', prerequis: [] },
   { code: 'perp-para',    libelle: 'Droites perpendiculaires et parallèles', niveau: '6eme',

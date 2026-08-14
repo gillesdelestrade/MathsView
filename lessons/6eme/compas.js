@@ -37,6 +37,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Constructions',
   theme: 'Géométrie — médiatrice et bissectrice à la règle et au compas',
+  exercices: ['compas'],
   description:
     'Deux constructions classiques, tracées pas à pas. La <strong>médiatrice</strong> ' +
     'd\'un segment : deux cercles de même rayon centrés sur les extrémités. La ' +

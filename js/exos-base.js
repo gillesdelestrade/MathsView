@@ -333,9 +333,33 @@
     typeset(carte);
   }
 
+  /* -- la figure, quand la question en porte une ----------------------- */
+  /* Elle n'est plus réservée au type 'jsx'. Une figure peut accompagner
+     N'IMPORTE QUELLE question : elle sert alors d'ardoise — on construit pour
+     CHERCHER, et la réponse reste un QCM ou un champ. Pour le type 'jsx', la
+     figure EST la réponse, et c'est `verifie` qui la relit. */
+  function construireFigure(S, zone, q) {
+    var boite = el('div', 'exo-board jxgbox');
+    boite.id = 'exo-board-' + (new Date().getTime());
+    zone.appendChild(boite);
+    var board = JXG.JSXGraph.initBoard(boite.id, Object.assign({
+      boundingbox: [-10, 4, 10, -4], keepaspectratio: false, axis: false,
+      grid: false, showCopyright: false, showNavigation: false,
+      pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
+    }, q.board || {}));
+    S.ctx.board = board;
+    S.ctx.zone = zone;          // pour qu'une figure puisse poser ses outils
+    S.board = board;
+    try { q.figure(board, S.ctx); } catch (e) { console.error('figure() :', e); }
+    if (q.consigneFig) zone.appendChild(el('p', 'exo-sous', q.consigneFig));
+  }
+
   /* -- la saisie, selon le type de question ---------------------------- */
   function construireSaisie(S, zone) {
     var q = S.courante.q;
+
+    if (q.figure) construireFigure(S, zone, q);
+    if (q.type === 'jsx') return;
 
     if (q.type === 'qcm' || q.type === 'vraifaux' || q.type === 'qcm-multi') {
       var multi = q.type === 'qcm-multi';
@@ -367,23 +391,6 @@
           'Coche <b>toutes</b> les bonnes réponses, puis vérifie.'));
       }
       typeset(zone);
-      return;
-    }
-
-    if (q.type === 'jsx') {
-      var boite = el('div', 'exo-board jxgbox');
-      boite.id = 'exo-board-' + (new Date().getTime());
-      zone.appendChild(boite);
-      var bb = q.board || {};
-      var board = JXG.JSXGraph.initBoard(boite.id, Object.assign({
-        boundingbox: [-10, 4, 10, -4], keepaspectratio: false, axis: false,
-        grid: false, showCopyright: false, showNavigation: false,
-        pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
-      }, bb));
-      S.ctx.board = board;
-      S.board = board;
-      try { q.figure(board, S.ctx); } catch (e) { console.error('figure() :', e); }
-      if (q.consigneFig) zone.appendChild(el('p', 'exo-sous', q.consigneFig));
       return;
     }
 
