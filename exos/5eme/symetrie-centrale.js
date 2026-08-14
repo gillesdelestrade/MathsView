@@ -23,7 +23,7 @@
  *               qui la distingue de la symétrie axiale ;
  *   figures     quelles figures usuelles possèdent un centre de symétrie ?
  *
- * Les figures sont dessinées par exos/5eme/repere-outils.js, qui cadre tout
+ * Les figures sont dessinées par exos/repere-outils.js, qui cadre tout
  * seul et garde les carreaux carrés — sans quoi un demi-tour aurait l'air
  * d'une déformation.
  */
@@ -191,7 +191,10 @@
       var f = [[x, y], [x + rnd.entier(2, 3), y + rnd.entier(0, 1)],
                [x + rnd.entier(1, 2), y + rnd.entier(2, 3)], [x, y + rnd.entier(1, 2)]];
       var bon = f.map(function (q) { return R.sym(q, C); });
-      var tr = f.map(function (q) { return R.trans(q, [-2 * x - rnd.entier(1, 2), 0]); });
+      // Le décalage est tiré UNE FOIS : à l'intérieur du map, chaque sommet se
+      // décalerait différemment et la figure serait déformée, pas déplacée.
+      var dec = rnd.entier(1, 2);
+      var tr = f.map(function (q) { return R.trans(q, [-2 * x - dec, 0]); });
       var ax = f.map(function (q) { return R.symH(q, C); });
       // Les trois propositions doivent être bien séparées, sinon le dessin est
       // illisible et la question injuste.

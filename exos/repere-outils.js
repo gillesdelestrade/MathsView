@@ -1,6 +1,6 @@
 /*
- * Un repère quadrillé en SVG, pour les générateurs de géométrie de 5ème
- * (à commencer par la symétrie centrale).
+ * Un repère quadrillé en SVG, pour les générateurs de géométrie — la symétrie
+ * centrale (5ème) et la symétrie axiale (6ème).
  *
  * Une symétrie centrale ne se raconte pas, elle se lit sur un quadrillage :
  * « O est le milieu de [MM'] » devient « je compte 3 carreaux à droite, donc
@@ -18,7 +18,8 @@
  * carrés quoi qu'il arrive : sans cela, un demi-tour aurait l'air d'une
  * déformation.
  *
- * À charger APRÈS exos/outils.js.
+ * À charger APRÈS exos/outils.js, et AVANT les générateurs de niveau : deux
+ * niveaux s'en servent, il n'a donc plus sa place dans le dossier de l'un d'eux.
  */
 (function (global) {
   'use strict';
@@ -35,6 +36,9 @@
    *   points    : [{ p, nom, couleur, place }]   place = 'haut'|'bas'|'gauche'|'droite'
    *   segments  : [{ de, a, couleur, dash, ep }]
    *   polygones : [{ pts, couleur, remplir, num, dash }]
+   *   axe       : { x: k } ou { y: k }  une droite tracée en travers de TOUT le
+   *               repère — l'axe d'une symétrie. Elle ne compte pas dans le
+   *               cadrage : c'est une droite, elle n'a pas d'extrémités.
    *   cadre     : [[x,y], …]  points pris en compte pour la FENÊTRE seulement,
    *               sans être dessinés — de quoi garantir que la réponse
    *               attendue, et même les réponses proposées, tiennent dans le
@@ -51,6 +55,8 @@
     segs.forEach(function (s) { tous.push(s.de, s.a); });
     polys.forEach(function (p) { p.pts.forEach(function (q) { tous.push(q); }); });
     (o.cadre || []).forEach(function (q) { tous.push(q); });
+    // L'axe n'a pas d'extrémités, mais il doit tomber DANS la fenêtre.
+    if (o.axe) tous.push(o.axe.x !== undefined ? [o.axe.x, 0] : [0, o.axe.y]);
     var m = o.marge === undefined ? 1 : o.marge;
     var x0 = Math.floor(Math.min.apply(null, tous.map(function (q) { return q[0]; })) - m);
     var x1 = Math.ceil(Math.max.apply(null, tous.map(function (q) { return q[0]; })) + m);
@@ -101,7 +107,24 @@
     }
     s.push(texte(X([0, 0]) - 11, Y([0, 0]) + 15, '0', AXE, 11));
 
-    // 4. les polygones
+    // 4. l'axe de symétrie, s'il y en a un : par-dessus la grille, sous les
+    //    figures, pour qu'on le voie sans qu'il masque quoi que ce soit
+    if (o.axe) {
+      var AX = '#059669';
+      if (o.axe.x !== undefined) {
+        s.push('<line x1="' + X([o.axe.x, 0]) + '" y1="' + Y([0, y1]) + '" x2="' +
+               X([o.axe.x, 0]) + '" y2="' + Y([0, y0]) + '" stroke="' + AX +
+               '" stroke-width="2.5" stroke-dasharray="8 5"/>');
+        s.push(texte(X([o.axe.x, 0]) + 16, Y([0, y1]) + 14, '(d)', AX, 14));
+      } else {
+        s.push('<line x1="' + X([x0, 0]) + '" y1="' + Y([0, o.axe.y]) + '" x2="' +
+               X([x1, 0]) + '" y2="' + Y([0, o.axe.y]) + '" stroke="' + AX +
+               '" stroke-width="2.5" stroke-dasharray="8 5"/>');
+        s.push(texte(X([x1, 0]) - 16, Y([0, o.axe.y]) - 12, '(d)', AX, 14));
+      }
+    }
+
+    // 5. les polygones
     polys.forEach(function (p) {
       var d = p.pts.map(XY).join(' ');
       s.push('<polygon points="' + d + '" fill="' + (p.remplir === false ? 'none' : p.couleur) +
@@ -115,14 +138,14 @@
       }
     });
 
-    // 5. les segments
+    // 6. les segments
     segs.forEach(function (t) {
       s.push('<line x1="' + X(t.de) + '" y1="' + Y(t.de) + '" x2="' + X(t.a) + '" y2="' +
              Y(t.a) + '" stroke="' + (t.couleur || ENCRE) + '" stroke-width="' + (t.ep || 2) +
              '"' + (t.dash ? ' stroke-dasharray="7 5"' : '') + ' stroke-linecap="round"/>');
     });
 
-    // 6. les points nommés
+    // 7. les points nommés
     pts.forEach(function (q) {
       var col = q.couleur || '#2563eb';
       s.push('<circle cx="' + X(q.p) + '" cy="' + Y(q.p) + '" r="4.5" fill="' + col + '"/>');

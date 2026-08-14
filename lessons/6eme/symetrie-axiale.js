@@ -31,6 +31,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Transformations',
   theme: 'Géométrie — symétrie par rapport à une droite',
+  exercices: ['symetrie-axiale'],
   description:
     'Le <strong>symétrique</strong> d\'une figure par rapport à un <strong>axe</strong> : ' +
     'chaque sommet a une image de l\'autre côté de l\'axe, à <strong>égale distance</strong>, ' +
