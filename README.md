@@ -19,6 +19,17 @@ Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 État actuel : **52 leçons**, **49 générateurs d'exercices** couvrant 49 compétences,
 dont **50 leçons mènent directement à un entraînement**.
 
+## Vérifier
+
+```sh
+./tests/lancer.sh
+```
+
+Une trentaine de contrôles, sans rien à installer : ils tournent sous `jsc`, le
+moteur JavaScript livré avec macOS. Ils refont le travail de chaque générateur à
+côté plutôt que de relire ce qu'il annonce, relisent les figures produites en
+SVG et rejouent les animations. Voir [tests/README.md](tests/README.md).
+
 ---
 
 ## Lancer le site
