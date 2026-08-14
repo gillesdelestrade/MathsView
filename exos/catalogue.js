@@ -81,6 +81,8 @@ MathsExos.catalogue = [
     chapitre: 'calcul-5e', prerequis: ['fractions'] },
   { code: 'fraction-pourcentage', libelle: 'Fraction et pourcentage d\'une quantité',
     niveau: '5eme', chapitre: 'calcul-5e', prerequis: ['fractions'] },
+  { code: 'puissances',     libelle: 'Découvrir les puissances', niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: ['tables'] },
   { code: 'priorites',      libelle: 'Priorités opératoires',  niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: [] },
   { code: 'distributivite', libelle: 'Distributivité',         niveau: '5eme',

@@ -1161,6 +1161,62 @@ body {
 .som-recap { font-size: .95rem; color: var(--ink-soft); margin: .3rem 0; }
 .som-recap b { color: var(--ink); }
 
+/* ---------- Découvrir les puissances (5ème) ---------- */
+.pui-ui { max-width: 780px; }
+.pui-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.pui-cas button {
+  padding: .4rem .7rem; border: 1px solid var(--border); border-radius: 8px;
+  background: #fff; font-size: .88rem; font-weight: 600; cursor: pointer;
+}
+.pui-cas button:hover { background: #f8fafc; }
+.pui-cas button.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Les deux colonnes du parallèle : addition répétée / multiplication répétée. */
+.pui-duo { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: .4rem 0 .2rem; }
+@media (max-width: 620px) { .pui-duo { grid-template-columns: 1fr; } }
+.pui-col { min-width: 0; }
+.pui-col-titre {
+  font-size: .78rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--ink-soft); margin-bottom: .3rem;
+}
+.pui-col.add .pui-col-titre { color: #2563eb; }
+.pui-col.mul .pui-col-titre { color: #7c3aed; }
+.pui-ligne {
+  font-size: 1.35rem; font-weight: 800; font-variant-numeric: tabular-nums;
+  line-height: 1.6; min-height: 1.6em;
+}
+.pui-ligne.pale { color: var(--ink-soft); }
+.pui-accolade {
+  border-top: 2px solid #ea580c; margin-top: .1rem; padding-top: .15rem;
+  font-size: .82rem; font-weight: 700; color: #ea580c; display: inline-block;
+}
+.pui-res { color: #7c3aed; }
+.pui-col.add .pui-res { color: #2563eb; }
+
+/* Une puissance écrite en grand, avec ses deux rôles nommés. */
+.pui-grand { font-size: 2.4rem; font-weight: 800; line-height: 1.1; margin: .3rem 0; }
+.pui-grand sup { font-size: .55em; vertical-align: super; }
+.pui-base { color: #2563eb; }
+.pui-exp { color: #ea580c; }
+.pui-legende { font-size: .9rem; color: var(--ink-soft); }
+.pui-legende b.b { color: #2563eb; }
+.pui-legende b.e { color: #ea580c; }
+
+.pui-etapes { display: grid; gap: .25rem; margin: .6rem 0; min-height: 3em; }
+.pui-etape { font-size: .95rem; }
+.pui-etape b { color: var(--accent); }
+.pui-etape .piege { color: #b91c1c; font-weight: 700; }
+.pui-concl {
+  display: inline-block; margin-top: .5rem; padding: .4rem .9rem; border-radius: 8px;
+  background: var(--accent-soft); font-size: 1.2rem; font-weight: 800;
+}
+.pui-table { border-collapse: collapse; margin: .3rem 0; font-variant-numeric: tabular-nums; }
+.pui-table td {
+  padding: .18rem .6rem; border: 1px solid var(--border); font-weight: 700; text-align: right;
+}
+.pui-table td.tete { background: #f8fafc; color: var(--ink-soft); text-align: left; }
+.pui-table td.vu { background: var(--accent-soft); color: var(--accent); }
+
 /* ---------- Fraction et pourcentage d'un nombre (5ème) ---------- */
 .qte-ui { max-width: 760px; }
 .qte-cas { display: flex; gap: .35rem; flex-wrap: wrap; margin-bottom: .8rem; }
