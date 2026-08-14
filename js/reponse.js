@@ -6,6 +6,9 @@
  * distingue trois issues :
  *
  *     ok: true                    la réponse est juste ;
+ *     tolerance                   quand la question demande une MESURE lue sur
+ *                                 une figure : l'écart accepté, en unités de la
+ *                                 réponse (2 pour « à deux degrés près »).
  *     forme: 'approchee'          juste au millième près, mais on attendait la
  *                                 valeur exacte (1/3, pas 0,33) ;
  *     forme: 'malformee'          la saisie n'a pas pu être lue — ce n'est PAS
@@ -258,10 +261,15 @@
         }
         var att2 = (q.reponse && typeof q.reponse === 'object')
           ? q.reponse.n / q.reponse.d : Number(q.reponse);
-        if (Math.abs(n.v - att2) < 1e-9) return juste();
+        /* Une valeur LUE SUR UNE FIGURE ne tombera jamais au millionième : quand
+           la question annonce une tolérance, c'est qu'elle demande une mesure,
+           pas un calcul. Sans elle, un élève qui a parfaitement construit et
+           correctement lu son rapporteur serait compté faux pour un demi-degré. */
+        var tol = Math.max(1e-9, Number(q.tolerance) || 0);
+        if (Math.abs(n.v - att2) <= tol) return juste();
         // Une valeur arrondie là où l'exact était attendu : message dédié,
         // plutôt qu'un « faux » sec qui laisserait l'élève perplexe.
-        if (!tombeJuste(att2) &&
+        if (!q.tolerance && !tombeJuste(att2) &&
             Math.abs(n.v - att2) <= Math.max(5e-3, Math.abs(att2) * 5e-3)) {
           return { ok: false, forme: 'approchee',
                    message: 'Donne la valeur exacte, pas une valeur approchée.' };

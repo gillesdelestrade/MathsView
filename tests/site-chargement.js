@@ -70,9 +70,11 @@ scripts.forEach(function (f) {
        'dans exercices.html');
     return;
   }
-  // un fichier de générateur doit enregistrer quelque chose ; un module d'outils, non
-  var estGenerateur = /^exos\/(?!.*outils|catalogue)/.test(f);
-  if (estGenerateur && enregistres.length === avant)
+  /* Un fichier qui APPELLE MathsExos.register doit avoir enregistré quelque
+     chose. On le lit plutôt que de deviner d'après son chemin : les modules
+     partagés (outils, instruments, repère) n'enregistrent rien, et la règle se
+     tient toute seule quand on en ajoute un. */
+  if (/MathsExos\.register/.test(readFile(f)) && enregistres.length === avant)
     ko('« ' + f + ' » se charge mais n\'enregistre aucun générateur');
 });
 

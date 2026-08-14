@@ -87,6 +87,7 @@ var document = { createElement: fauxEl };
 window.document = document;
 
 load('js/alea.js'); load('exos/outils.js');
+load('exos/instruments.js');
 var G = null;
 var MathsExos = { register: function (g) { G = g; } };
 window.MathsExos = MathsExos;
@@ -194,6 +195,15 @@ for (var palier = 1; palier <= 4; palier++) {
     function gomme() {
       barre.querySelectorAll('.gomme')[0].onclick();
     }
+    /* La règle ne crée plus seulement sa droite : elle marque aussi les
+       croisements de cette droite avec les arcs déjà tracés. Le dernier objet
+       créé n'est donc plus la droite — on va la chercher par son type. */
+    function derniereDroite() {
+      for (var i = B.objets.length - 1; i >= 0; i--) {
+        if (B.objets[i].type === 'line') return B.objets[i];
+      }
+      return null;
+    }
 
     var droite = null, faisable = false;
     if (fam === 'mediatrice') {
@@ -211,7 +221,7 @@ for (var palier = 1; palier <= 4; palier++) {
         outil('regle');
         // on vise GROSSIÈREMENT : c'est l'aimantation qui doit corriger
         geste(B, [X[0][0] + 0.25, X[0][1] - 0.2], [X[1][0] - 0.3, X[1][1] + 0.15]);
-        droite = B.objets[B.objets.length - 1];
+        droite = derniereDroite();
       });
       if (!faisable) ko('mediatrice : aucun écartement de compas ne donne deux croisements ' +
         'visibles — la construction est infaisable');
@@ -244,7 +254,7 @@ for (var palier = 1; palier <= 4; palier++) {
         faisable = true;
         outil('regle');
         geste(B, [Oo[0] + 0.2, Oo[1] + 0.15], [bon[0] - 0.2, bon[1] - 0.1]);
-        droite = B.objets[B.objets.length - 1];
+        droite = derniereDroite();
       });
       if (!faisable) ko('bissectrice : aucun écartement ne mène au bout de la construction');
     }
