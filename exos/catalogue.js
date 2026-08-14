@@ -79,6 +79,8 @@ MathsExos.catalogue = [
     chapitre: 'calcul-5e', prerequis: ['relatifs'] },
   { code: 'comparer-fractions', libelle: 'Comparer des fractions', niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: ['fractions'] },
+  { code: 'fraction-pourcentage', libelle: 'Fraction et pourcentage d\'une quantité',
+    niveau: '5eme', chapitre: 'calcul-5e', prerequis: ['fractions'] },
   { code: 'priorites',      libelle: 'Priorités opératoires',  niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: [] },
   { code: 'distributivite', libelle: 'Distributivité',         niveau: '5eme',
