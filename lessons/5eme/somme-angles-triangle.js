@@ -45,6 +45,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — la somme des angles d\'un triangle vaut 180°',
+  exercices: ['somme-angles'],
   description:
     'Dans <strong>n\'importe quel</strong> triangle, la somme des trois angles vaut ' +
     '<strong>180°</strong> — un <strong>angle plat</strong>.' +

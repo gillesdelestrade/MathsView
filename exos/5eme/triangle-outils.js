@@ -92,6 +92,10 @@
    *   points   : [{ p, nom, couleur, place }]  place = 'haut'|'bas'|'auto' ;
    *   equerres : [{ pied, vers, base }]  le petit carré de l'angle droit ;
    *   codes    : [{ a, b, n }]  n traits en travers, au milieu de [ab].
+   *   marques  : [{ i, txt, couleur }]  un arc au sommet i, et ce qui est écrit
+   *              dedans — une mesure, un point d'interrogation. C'est ce qui
+   *              permet à une figure de porter TOUTE la question, sans que
+   *              l'énoncé ait à répéter les données.
    * }
    */
   function figure(o) {
@@ -142,6 +146,33 @@
         var q1 = add(q, mul(nn, 0.055 * L)), q2 = add(q, mul(nn, -0.055 * L));
         s.push('<line x1="' + X(q1) + '" y1="' + Y(q1) + '" x2="' + X(q2) + '" y2="' +
                Y(q2) + '" stroke="' + (c.couleur || '#ea580c') + '" stroke-width="2.5"/>');
+      }
+    });
+
+    // 4 bis. les angles marqués : un arc au sommet, et la mesure dedans
+    (o.marques || []).forEach(function (m) {
+      var i = m.i, V = P[i], A = P[(i + 1) % 3], B = P[(i + 2) % 3];
+      var u = unit(sub(A, V)), w = unit(sub(B, V));
+      var a1 = Math.atan2(u[1], u[0]), a2 = Math.atan2(w[1], w[0]);
+      var d = a2 - a1;
+      while (d > Math.PI) d -= 2 * Math.PI;
+      while (d < -Math.PI) d += 2 * Math.PI;
+      var taille = Math.max(x1 - x0, y1 - y0);
+      var r = 0.11 * taille;
+      // l'arc, en ligne brisée : douze segments suffisent à faire un arc rond
+      var pts = [];
+      for (var k = 0; k <= 12; k++) {
+        var a = a1 + d * k / 12;
+        pts.push([V[0] + Math.cos(a) * r, V[1] + Math.sin(a) * r]);
+      }
+      var coul = m.couleur || '#dc2626';
+      s.push('<polyline points="' + pts.map(XY).join(' ') + '" fill="none" stroke="' +
+             coul + '" stroke-width="2.2" stroke-linejoin="round"/>');
+      if (m.txt) {
+        // juste au-delà de l'arc : plus loin, l'étiquette se met à flotter entre
+        // deux sommets et on ne sait plus de quel angle elle parle
+        var e = add(V, mul(unit(add(u, w)), 1.55 * r));
+        s.push(texte(X(e), Y(e) + 6, m.txt, coul, 16));
       }
     });
 
