@@ -260,10 +260,37 @@
   /* ===================================================================== */
   /* Le jardin : une plante par compétence                                 */
   /* ===================================================================== */
+  /* Les niveaux scolaires, du plus jeune au plus avancé. Le même ordre que
+     LEVELS dans js/app.js, qui ne l'exporte pas — et la progression a besoin
+     de le connaître pour ne montrer à chacune que SON programme. */
+  var NIVEAUX = ['6eme', '5eme', '4eme', '3eme', '2nde', '1ere', 'terminale'];
+
+  /*
+   * Une compétence est-elle au programme de ce profil ? Tout ce qui est de son
+   * niveau ou d'un niveau INFÉRIEUR : une élève de 5ème n'a pas à voir les
+   * compétences de terminale dans son jardin, ni à les compter dans son total.
+   *
+   * Deux garde-fous. Une compétence DÉJÀ TRAVAILLÉE reste toujours visible,
+   * quel que soit son niveau : ce qui a été gagné ne disparaît pas du jardin,
+   * même si le profil change de niveau. Et un niveau inconnu — profil sans
+   * niveau, compétence sans niveau — ne cache jamais rien : dans le doute, on
+   * montre.
+   */
+  function auProgramme(niveauProfil, c, m) {
+    if (m && m.tentatives) return true;
+    var i = NIVEAUX.indexOf(niveauProfil), j = NIVEAUX.indexOf(c.niveau);
+    if (i < 0 || j < 0) return true;
+    return j <= i;
+  }
+
   function jardin(id) {
     var cat = (global.MathsExos && MathsExos.catalogue) || [];
+    var prof = (global.MathsProfils && MathsProfils.profil(id)) || null;
+    var niv = prof ? prof.niveau : null;
     var t = maintenant();
-    return cat.map(function (c) {
+    return cat.filter(function (c) {
+      return auProgramme(niv, c, maitrise(id, c.code));
+    }).map(function (c) {
       var m = maitrise(id, c.code);
       var jamais = !m.tentatives;
       var jours = m.derniere ? Math.floor((t - m.derniere) / 86400000) : null;
@@ -317,6 +344,7 @@
 
   /* ===================================================================== */
   global.MathsProgression = {
+    NIVEAUX: NIVEAUX, auProgramme: auProgramme,
     neuve: neuve, maitrise: maitrise, scoreCourant: scoreCourant,
     ceinture: ceinture, ceintureAffichee: ceintureAffichee, ceintures: CEINTURES,
     apresQuestion: apresQuestion, finSession: finSession,
