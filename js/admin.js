@@ -244,8 +244,9 @@
     var comp = el('div', 'exo-carte');
     comp.appendChild(el('div', 'props-label', 'Vue d\'ensemble'));
     var tbl = el('table', 'adm-table');
-    tbl.innerHTML = '<thead><tr><th>Profil</th><th>XP</th><th>Compétences</th>' +
-      '<th>Réussite</th><th>Temps total</th><th>Cette semaine</th></tr></thead>';
+    tbl.innerHTML = '<thead><tr><th>Profil</th><th>XP</th><th>Pièces</th>' +
+      '<th>Compétences</th><th>Réussite</th><th>Temps total</th>' +
+      '<th>Cette semaine</th></tr></thead>';
     var tb = el('tbody');
     profs.forEach(function (p) {
       var r = MathsProgression.resume(p.id);
@@ -257,6 +258,9 @@
           p.emoji + '</span> ' + esc(p.prenom) +
           (p.archive ? ' <i class="adm-archive">archivé</i>' : '') + '</td>' +
         '<td>' + r.xp + '</td>' +
+        // Le solde DISPONIBLE : les pièces d'une demande en attente sont déjà
+        // retirées du compte (et rendues si la demande est refusée).
+        '<td>' + r.pieces + '</td>' +
         '<td>' + r.travaillees + ' / ' + r.total + '</td>' +
         '<td>' + (s.taux === null ? '—' : s.taux + ' %') + '</td>' +
         '<td>' + duree(s.temps) + '</td>' +
