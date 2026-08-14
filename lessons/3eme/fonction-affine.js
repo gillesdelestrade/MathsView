@@ -8,6 +8,7 @@ MathsView.register({
   level: '3eme',
   category: 'analyse',
   theme: 'Fonctions — équation d\'une droite',
+  exercices: ['fonction-affine'],
   description:
     'La droite passe par les deux points \\( A \\) et \\( B \\). ' +
     'À partir de leurs coordonnées, on calcule le <strong>coefficient directeur</strong> ' +

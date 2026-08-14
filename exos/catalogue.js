@@ -116,5 +116,11 @@ MathsExos.catalogue = [
   { code: 'thales',    libelle: 'Théorème de Thalès',     niveau: '3eme',
     chapitre: 'geometrie', prerequis: ['fractions'] },
   { code: 'trigo',     libelle: 'Trigonométrie',          niveau: '3eme',
-    chapitre: 'geometrie', prerequis: ['pythagore'] }
+    chapitre: 'geometrie', prerequis: ['pythagore'] },
+
+  /* --- Fonctions (3ème) ---------------------------------------------------
+     Chapitre à part de celui de 2nde : un boss exige TOUTES les compétences de
+     son chapitre, et une élève de troisième ne verra jamais celles du lycée. */
+  { code: 'fn-affine', libelle: 'Fonction affine',        niveau: '3eme',
+    chapitre: 'fonctions-3e', prerequis: [] }
 ];

@@ -39,6 +39,9 @@
    *   axe       : { x: k } ou { y: k }  une droite tracée en travers de TOUT le
    *               repère — l'axe d'une symétrie. Elle ne compte pas dans le
    *               cadrage : c'est une droite, elle n'a pas d'extrémités.
+   *   droites   : [{ m, p, couleur, nom }]  la droite d'équation y = mx + p,
+   *               tracée d'un bord à l'autre. Seul son point (0 ; p) entre dans
+   *               le cadrage : c'est celui qu'on doit pouvoir lire.
    *   cadre     : [[x,y], …]  points pris en compte pour la FENÊTRE seulement,
    *               sans être dessinés — de quoi garantir que la réponse
    *               attendue, et même les réponses proposées, tiennent dans le
@@ -57,6 +60,9 @@
     (o.cadre || []).forEach(function (q) { tous.push(q); });
     // L'axe n'a pas d'extrémités, mais il doit tomber DANS la fenêtre.
     if (o.axe) tous.push(o.axe.x !== undefined ? [o.axe.x, 0] : [0, o.axe.y]);
+    // D'une droite oblique, on retient l'ordonnée à l'origine : c'est elle qu'un
+    // élève vient lire sur l'axe vertical.
+    (o.droites || []).forEach(function (d) { tous.push([0, d.p]); });
     var m = o.marge === undefined ? 1 : o.marge;
     var x0 = Math.floor(Math.min.apply(null, tous.map(function (q) { return q[0]; })) - m);
     var x1 = Math.ceil(Math.max.apply(null, tous.map(function (q) { return q[0]; })) + m);
@@ -124,7 +130,23 @@
       }
     }
 
-    // 5. les polygones
+    // 5. les droites obliques : d'un bord à l'autre. Ce qui déborde du cadre est
+    //    coupé par la fenêtre du SVG, comme sur une vraie feuille.
+    (o.droites || []).forEach(function (d) {
+      var c = d.couleur || '#2563eb';
+      s.push('<line x1="' + X([x0, 0]) + '" y1="' + Y([0, d.m * x0 + d.p]) + '" x2="' +
+             X([x1, 0]) + '" y2="' + Y([0, d.m * x1 + d.p]) + '" stroke="' + c +
+             '" stroke-width="2.6"' + (d.dash ? ' stroke-dasharray="7 5"' : '') + '/>');
+      if (d.nom) {
+        // l'étiquette se pose là où la droite est encore dans le cadre
+        var xe = x1 - 0.6, ye = d.m * xe + d.p;
+        if (ye > y1 - 0.6) { ye = y1 - 0.6; xe = (ye - d.p) / d.m; }
+        if (ye < y0 + 0.6) { ye = y0 + 0.6; xe = (ye - d.p) / d.m; }
+        s.push(texte(X([xe, 0]) + (d.m > 0 ? -14 : 14), Y([0, ye]) - 8, d.nom, c, 15));
+      }
+    });
+
+    // 6. les polygones
     polys.forEach(function (p) {
       var d = p.pts.map(XY).join(' ');
       s.push('<polygon points="' + d + '" fill="' + (p.remplir === false ? 'none' : p.couleur) +
@@ -138,14 +160,14 @@
       }
     });
 
-    // 6. les segments
+    // 7. les segments
     segs.forEach(function (t) {
       s.push('<line x1="' + X(t.de) + '" y1="' + Y(t.de) + '" x2="' + X(t.a) + '" y2="' +
              Y(t.a) + '" stroke="' + (t.couleur || ENCRE) + '" stroke-width="' + (t.ep || 2) +
              '"' + (t.dash ? ' stroke-dasharray="7 5"' : '') + ' stroke-linecap="round"/>');
     });
 
-    // 7. les points nommés
+    // 8. les points nommés
     pts.forEach(function (q) {
       var col = q.couleur || '#2563eb';
       s.push('<circle cx="' + X(q.p) + '" cy="' + Y(q.p) + '" r="4.5" fill="' + col + '"/>');
