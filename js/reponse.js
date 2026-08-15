@@ -17,6 +17,11 @@
  * Ce que l'on tolère partout : les espaces (insécables comprises), la virgule
  * décimale, les trois sortes de tirets, les préfixes « x = », « S = », « x ∈ ».
  *
+ * Un COUPLE de coordonnées se compare de même par ses deux nombres : « (6;-2) »,
+ * « (6 ; −2) » et « 6 ; -2 » sont la même réponse. Et quand ce sont les bons
+ * nombres dans le mauvais ordre, on le DIT — c'est l'erreur qui compte dans la
+ * leçon de repérage.
+ *
  * Les intervalles sont comparés par STRUCTURE, jamais par leur chaîne : les
  * bornes et le sens des crochets, rien d'autre. « ]-2;2[ », « ] −2 ; 2 [ » et
  * « ]−2,0 ; 2[ » sont donc la même réponse.
@@ -66,6 +71,24 @@
   }
 
   // Renvoie { v } ou null si la saisie n'est pas un nombre lisible.
+  /* Un COUPLE de coordonnées, écrit comme on l'écrit vraiment : « (6;-2) »,
+     « (6 ; −2) », « 6;-2 », « A(6;-2) ». Le point-virgule est la séparation
+     française ; on accepte aussi la virgule quand elle ne sert pas déjà de
+     virgule décimale — « (1,5;2) » a bien un point-virgule, « (1,5,2) » serait
+     ambigu et l'on refuse plutôt que de deviner. */
+  function couple(saisie) {
+    var s = normalise(saisie).replace(/^[A-Za-z]\s*/, '');
+    s = s.replace(/^\(/, '').replace(/\)$/, '');
+    var bouts;
+    if (s.indexOf(';') >= 0) bouts = s.split(';');
+    else if ((s.match(/,/g) || []).length === 1) bouts = s.split(',');
+    else return null;
+    if (bouts.length !== 2) return null;
+    var a = nombre(bouts[0]), b = nombre(bouts[1]);
+    if (!a || !b) return null;
+    return [a.v, b.v];
+  }
+
   function nombre(saisie) {
     var s = normalise(saisie).replace(/,/g, '.');
     if (s === '') return null;
@@ -254,9 +277,33 @@
           ? 'Les bornes sont bonnes — regarde le sens des crochets.' : '');
       }
 
+      /* Un couple de coordonnées : (3 ; −2). On compare les deux nombres, pas
+         l'écriture — parenthèses, espaces et sorte de tiret sont libres. */
+      case 'couple': {
+        var c = couple(saisie);
+        if (!c) {
+          return malformee('Écris les deux coordonnées séparées par un point-virgule, ' +
+                           'par exemple (3 ; −2).');
+        }
+        var att = q.reponse;
+        if (Math.abs(c[0] - att[0]) < 1e-9 && Math.abs(c[1] - att[1]) < 1e-9) return juste();
+        // les mêmes nombres, dans l'autre ordre : l'erreur de la leçon
+        if (Math.abs(c[0] - att[1]) < 1e-9 && Math.abs(c[1] - att[0]) < 1e-9) {
+          return faux('Ce sont les bons nombres, mais dans l\'autre ordre : ' +
+                      'l\'abscisse s\'écrit en premier.');
+        }
+        return faux();
+      }
+
       default: {                                     // 'nombre'
         var n = nombre(saisie);
         if (!n) {
+          /* Un couple là où l'on n'attend qu'un nombre : c'est une confusion
+             fréquente, et « je n'ai pas compris » n'aiderait personne. */
+          if (couple(saisie)) {
+            return malformee('Ici on ne demande qu\'un seul nombre, pas les deux ' +
+                             'coordonnées.');
+          }
           return malformee('Je n\'ai pas compris ce nombre — tu peux écrire 2,5 ou 5/2.');
         }
         var att2 = (q.reponse && typeof q.reponse === 'object')
@@ -281,7 +328,7 @@
 
   global.MathsReponse = {
     normalise: normalise, sansAccent: sansAccent,
-    nombre: nombre, intervalle: intervalle, candidats: candidats,
+    nombre: nombre, couple: couple, intervalle: intervalle, candidats: candidats,
     memeEnsemble: memeEnsemble, memesBornes: memesBornes,
     valide: valide
   };

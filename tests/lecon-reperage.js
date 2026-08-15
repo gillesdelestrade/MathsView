@@ -224,6 +224,51 @@ else {
 }
 
 /* ------------------------------------------------------------------ */
+/* Les zones du plan                                                   */
+/* ------------------------------------------------------------------ */
+/* Quatre quadrants teintés, leurs signes, et quatre légendes le long des axes.
+   Le bandeau doit en outre dire où tombe le point courant — c'est ce qui relie
+   la règle générale au cas qu'on a sous les yeux. */
+function zones() {
+  return objets.filter(function (o) {
+    return o.type === 'curve' && o.attr.fillOpacity === 0.07;
+  });
+}
+placer(-4, 3);
+jouerTout();
+if (zones().length !== 4) ko('il n\'y a pas quatre quadrants');
+if (zones().some(function (z) { return z.visible; }))
+  ko('les zones sont montrées sans être demandées');
+if (panneau.innerHTML.indexOf('à gauche') < 0 ||
+    panneau.innerHTML.indexOf('au-dessus') < 0)
+  ko('le bandeau ne dit pas dans quelle zone tombe le point');
+if (panneau.innerHTML.indexOf('négatives') < 0 || panneau.innerHTML.indexOf('positives') < 0)
+  ko('le bandeau ne relie pas la zone au signe des coordonnées');
+controles.zones.onChange(true);
+board.update();
+if (!zones().every(function (z) { return z.visible; }))
+  ko('cocher « Les signes dans le plan » ne montre pas les quatre zones');
+var legendes = objets.filter(function (o) {
+  return o.type === 'text' && o.visible &&
+         /abscisses (positives|négatives)|ordonnées (positives|négatives)/
+           .test(String(typeof o.parents[2] === 'function' ? o.parents[2]() : o.parents[2]));
+});
+if (legendes.length !== 4) ko('les quatre légendes des axes ne sont pas toutes affichées');
+controles.zones.onChange(false);
+board.update();
+if (zones().some(function (z) { return z.visible; })) ko('décocher ne masque pas les zones');
+
+// et le bandeau suit le point : sur un axe, il le dit
+placer(0, -3);
+jouerTout();
+if (panneau.innerHTML.indexOf('sur l\'axe vertical') < 0)
+  ko('un point d\'abscisse nulle n\'est pas signalé sur l\'axe vertical');
+placer(5, 0);
+jouerTout();
+if (panneau.innerHTML.indexOf('sur l\'axe horizontal') < 0)
+  ko('un point d\'ordonnée nulle n\'est pas signalé sur l\'axe horizontal');
+
+/* ------------------------------------------------------------------ */
 /* Rejeu et remise à zéro                                              */
 /* ------------------------------------------------------------------ */
 placer(-5, 3);

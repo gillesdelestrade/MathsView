@@ -131,6 +131,36 @@
   }
 
   /* ===================================================================== */
+  /* 2 bis. Écrire soi-même les coordonnées                                */
+  /* ===================================================================== */
+  /* La même question que ci-dessus, mais sans propositions : on tape le couple.
+     C'est ce qu'on demande sur un cahier, et c'est le seul format où l'on voit
+     si l'élève écrit vraiment l'abscisse en premier — le moteur le lui dira
+     s'il inverse. */
+  function qEcrire(rnd, palier) {
+    var p = tirePoint(rnd, 6);
+    return {
+      enonce: 'Voici le point ' + tex('A') + ' dans un repère.' +
+        R.repere({ points: [{ p: p, nom: 'A', couleur: ROUGE }] }) +
+        '<b>Écris les coordonnées de ' + tex('A') + '</b>, sous la forme ' +
+        tex('(x\\,;\\,y)') + '.',
+      type: 'couple',
+      reponse: p,
+      etapes: [RAPPEL,
+        'Depuis l\'origine : ' + Math.abs(p[0]) + ' pas vers ' +
+          (p[0] >= 0 ? 'la droite' : 'la gauche') + ', donc l\'abscisse vaut <b>' + nb(p[0]) +
+          '</b> ; puis ' + Math.abs(p[1]) + ' pas vers ' + (p[1] >= 0 ? 'le haut' : 'le bas') +
+          ', donc l\'ordonnée vaut <b>' + nb(p[1]) + '</b>.',
+        'On écrit <b>' + tex('A' + couple(p)) + '</b> — les deux nombres séparés par un ' +
+          'point-virgule, l\'abscisse en premier.'],
+      indices: ['Compte d\'abord les pas horizontaux, puis les pas verticaux.',
+                'Écris les deux nombres entre parenthèses, séparés par un point-virgule : ' +
+                  tex('(x\\,;\\,y)') + '.'],
+      duree: 90
+    };
+  }
+
+  /* ===================================================================== */
   /* 3. Placer : lequel de ces points ?                                    */
   /* ===================================================================== */
   function qPlacer(rnd, palier) {
@@ -318,12 +348,13 @@
       var quoi = rnd.choix(
         palier === 1 ? ['proprietes', 'coord', 'coord', 'placer'] :
         palier === 2 ? ['coord', 'paire', 'placer', 'axes', 'proprietes'] :
-        palier === 3 ? ['paire', 'placer', 'deplacement', 'axes', 'coord'] :
-                       ['deplacement', 'paire', 'deplacement', 'placer', 'axes']);
+        palier === 3 ? ['ecrire', 'paire', 'placer', 'deplacement', 'axes', 'coord'] :
+                       ['ecrire', 'deplacement', 'ecrire', 'placer', 'axes']);
 
       if (quoi === 'proprietes') return qProprietes(rnd, palier);
       if (quoi === 'coord') return qCoord(rnd, palier);
       if (quoi === 'paire') return qPaire(rnd, palier);
+      if (quoi === 'ecrire') return qEcrire(rnd, palier);
       if (quoi === 'placer') return qPlacer(rnd, palier);
       if (quoi === 'axes') return qAxes(rnd, palier);
       return qDeplacement(rnd, palier);

@@ -66,9 +66,13 @@ MathsView.register({
     '<li><strong>L\'ordre ne se discute pas.</strong> On écrit l\'abscisse en premier : ' +
     '\\(A(3\\,;\\,-2)\\) se lit « abscisse 3, ordonnée −2 ». Le point \\((-2\\,;\\,3)\\) est ' +
     'un <em>autre</em> point — coche « Et si on inversait ? » pour voir où il tombe.</li>' +
-    '<li><strong>Les signes sont des directions.</strong> Abscisse positive : à droite de ' +
-    'l\'axe vertical. Négative : à gauche. Ordonnée positive : au-dessus de l\'axe ' +
-    'horizontal. Négative : en dessous.</li>' +
+    '<li><strong>Les signes découpent le plan.</strong> À <em>droite</em> de l\'axe ' +
+    'vertical, <strong>toutes</strong> les abscisses sont positives ; à <em>gauche</em>, ' +
+    'toutes négatives. <em>Au-dessus</em> de l\'axe horizontal, toutes les ordonnées sont ' +
+    'positives ; <em>en dessous</em>, toutes négatives. Coche <strong>Les signes dans le ' +
+    'plan</strong> : les quatre zones apparaissent, avec les deux signes de chacune. ' +
+    'Un point de la zone en haut à gauche a donc toujours une abscisse négative et une ' +
+    'ordonnée positive, quel qu\'il soit.</li>' +
     '<li><strong>Sur un axe, une coordonnée est nulle.</strong> Un point de l\'axe horizontal ' +
     'a pour ordonnée 0 ; un point de l\'axe vertical a pour abscisse 0. L\'origine est ' +
     '\\(O(0\\,;\\,0)\\).</li>' +
@@ -255,6 +259,58 @@ MathsView.register({
           fixed: true, highlight: false, visible: false });
 
     /* ==================================================================== */
+    /* Les zones du plan : où les coordonnées sont positives, où négatives  */
+    /* ==================================================================== */
+    /* Les signes ne se retiennent pas comme une règle, ils se voient comme un
+       découpage : à droite de l'axe vertical toutes les abscisses sont
+       positives, à gauche toutes négatives ; au-dessus de l'axe horizontal
+       toutes les ordonnées sont positives, en dessous toutes négatives. Les
+       quatre quadrants ne sont que le croisement de ces deux moitiés. */
+    var voirZones = false;
+    var BB = [-7.5, 6.5, 7.5, -6.5];
+
+    function quadrant(sx, sy, couleur) {
+      var x1 = sx > 0 ? 0 : BB[0], x2 = sx > 0 ? BB[2] : 0;
+      var y1 = sy > 0 ? 0 : BB[3], y2 = sy > 0 ? BB[1] : 0;
+      var coins = [[x1, y1], [x2, y1], [x2, y2], [x1, y2], [x1, y1]];
+      return board.create('curve', [
+        function (t) { return coins[Math.round(t)][0]; },
+        function (t) { return coins[Math.round(t)][1]; },
+        0, 4
+      ], { numberPointsHigh: 5, numberPointsLow: 5, strokeColor: couleur,
+           strokeWidth: 0, fillColor: couleur, fillOpacity: 0.07,
+           highlight: false, visible: false });
+    }
+    var zones = [quadrant(1, 1, '#0ea5e9'), quadrant(-1, 1, '#a855f7'),
+                 quadrant(-1, -1, '#f59e0b'), quadrant(1, -1, '#10b981')];
+
+    /* Dans chaque quadrant, les deux signes — le premier de la couleur des
+       abscisses, le second de celle des ordonnées. */
+    function signeQuadrant(sx, sy) {
+      // à mi-hauteur du quadrant : plus haut, l'étiquette du point vient s'y poser
+      return board.create('text', [5.9 * sx, 2.6 * sy, function () {
+        return '<span style="color:' + HORIZ + '">' + (sx > 0 ? '+' : '−') + '</span>' +
+               ' ; <span style="color:' + VERT + '">' + (sy > 0 ? '+' : '−') + '</span>';
+      }], { fontSize: 20, cssStyle: 'font-weight:800', fixed: true, anchorX: 'middle',
+            highlight: false, visible: false });
+    }
+    var signes = [signeQuadrant(1, 1), signeQuadrant(-1, 1),
+                  signeQuadrant(-1, -1), signeQuadrant(1, -1)];
+
+    // Les quatre légendes, posées le long des axes.
+    function legende(px, py, txt, couleur, ancre) {
+      return board.create('text', [px, py, txt], {
+        fontSize: 14, color: couleur, cssStyle: 'font-weight:700', fixed: true,
+        anchorX: ancre || 'middle', highlight: false, visible: false });
+    }
+    var legendes = [
+      legende(4.3, -1.15, 'abscisses positives →', HORIZ),
+      legende(-4.3, -1.15, '← abscisses négatives', HORIZ),
+      legende(2.5, 5.9, '↑ ordonnées positives', VERT),
+      legende(2.5, -5.9, '↓ ordonnées négatives', VERT)
+    ];
+
+    /* ==================================================================== */
     /* Le bandeau                                                           */
     /* ==================================================================== */
     var panneau = document.createElement('div');
@@ -289,6 +345,15 @@ MathsView.register({
           nb(x()) + '</b> et l\'<b style="color:' + VERT + '">ordonnée</b> vaut <b>' + nb(y()) +
           '</b>. On écrit <b>A(' + nb(x()) + ' ; ' + nb(y()) + ')</b> — l\'abscisse ' +
           '<b>toujours en premier</b>.</p>';
+        h += '<p class="rep-zone">Le point est ' +
+          (x() === 0 ? '<b>sur l\'axe vertical</b> — son abscisse est nulle'
+                     : '<b>à ' + (x() > 0 ? 'droite' : 'gauche') + '</b> de l\'axe ' +
+                       'vertical, là où les abscisses sont <b style="color:' + HORIZ + '">' +
+                       (x() > 0 ? 'positives' : 'négatives') + '</b>') + ', et ' +
+          (y() === 0 ? '<b>sur l\'axe horizontal</b> — son ordonnée est nulle'
+                     : '<b>' + (y() > 0 ? 'au-dessus' : 'en dessous') + '</b> de l\'axe ' +
+                       'horizontal, là où les ordonnées sont <b style="color:' + VERT + '">' +
+                       (y() > 0 ? 'positives' : 'négatives') + '</b>') + '.</p>';
         h += '<p class="rep-sous">' + (mode === 'lire'
           ? 'Pour lire, on redescend du point vers les axes en suivant les pointillés : c\'est ' +
             'le chemin des bonds, parcouru à l\'envers.'
@@ -317,6 +382,9 @@ MathsView.register({
 
       // en mode « placer », le point n'apparaît qu'à l'arrivée du trajet
       show(P, mode === 'lire' || (avX.v >= nx && avY.v >= ny));
+      zones.forEach(function (z) { show(z, voirZones); });
+      signes.forEach(function (t) { show(t, voirZones); });
+      legendes.forEach(function (t) { show(t, voirZones); });
       show(ptInv, voirInverse && pGuide.v > 0.7);
       show(noteInv, voirInverse && pGuide.v > 0.7);
 
@@ -380,6 +448,8 @@ MathsView.register({
           minuteur = setTimeout(jouer, 400);
         } },
       { type: 'button', id: 'reset', label: '↺ Réinitialiser', onClick: effacer },
+      { type: 'checkbox', id: 'zones', label: 'Les signes dans le plan', checked: false,
+        onChange: function (v) { voirZones = v; rafraichir(); } },
       { type: 'checkbox', id: 'inv', label: 'Et si on inversait ?', checked: false,
         onChange: function (v) { voirInverse = v; rafraichir(); } }
     ]);

@@ -775,6 +775,12 @@
     if (q.type === 'qcm') return q.choix[q.correct];
     if (q.type === 'vraifaux') return q.correct === 0 ? 'Vrai' : 'Faux';
     if (q.type === 'jsx') return q.solutionTxt || '';
+    // un couple de coordonnées se relit comme on l'écrit, pas « 6,-2 »
+    if (q.type === 'couple') {
+      return '(' + [].concat(q.reponse).map(function (v) {
+        return String(v).replace('-', '−').replace('.', ',');
+      }).join(' ; ') + ')';
+    }
     return String([].concat(q.reponse)[0]);
   }
 

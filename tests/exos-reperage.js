@@ -76,7 +76,8 @@ for (var palier = 1; palier <= 4; palier++) {
             : /Quelle est l'abscisse|Quelle est l'ordonnée/.test(q.enonce) ? 'coord'
             : /Lequel de ces points/.test(q.enonce) ? 'placer'
             : /Où arrive-t-on/.test(q.enonce) ? 'deplacement'
-            : /posé <b>sur un axe/.test(q.enonce) ? 'axes' : 'paire';
+            : /posé <b>sur un axe/.test(q.enonce) ? 'axes'
+            : q.type === 'couple' ? 'ecrire' : 'paire';
     vus[fam] = (vus[fam] || 0) + 1;
 
     if (!q.etapes || q.etapes.length < 2) ko(fam + ' : correction trop courte');
@@ -103,6 +104,16 @@ for (var palier = 1; palier <= 4; palier++) {
         ko(fam + ' : un point n\'est pas sur un nœud du quadrillage (' + v + ')');
     });
     var Ax = Math.round(A[0]), Ay = Math.round(A[1]);
+
+    /* --- écrire soi-même le couple ---------------------------------- */
+    if (fam === 'ecrire') {
+      if (!Array.isArray(q.reponse) || q.reponse.length !== 2)
+        ko('ecrire : la réponse n\'est pas un couple');
+      else if (q.reponse[0] !== Ax || q.reponse[1] !== Ay)
+        ko('ecrire : le point dessiné est (' + Ax + ' ; ' + Ay + '), on attend ' +
+           JSON.stringify(q.reponse));
+      continue;
+    }
 
     /* --- lire une coordonnée ---------------------------------------- */
     if (fam === 'coord') {
