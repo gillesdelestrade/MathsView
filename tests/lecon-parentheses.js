@@ -97,3 +97,36 @@ for (var essai=0; essai<450; essai++) {
 }
 print('cas : ' + JSON.stringify(cpt) + '   verdicts rendus : ' + JSON.stringify(verdicts));
 print(err.length ? 'ÉCHECS :\n - '+err.join('\n - ') : 'TOUS LES VERDICTS SONT JUSTES ET LE REJEU EST IDENTIQUE');
+
+/* ------------------------------------------------------------------ */
+/* Le bouton « ◀ Précédent »                                           */
+/* ------------------------------------------------------------------ */
+/* Il remet la figure à zéro, puis rejoue les étapes précédentes. Or chaque
+   étape ne retient qu'un INDICE dans le tableau des phrases : si la remise à
+   zéro vide ce tableau, l'écran se reconstruit MUET. C'est arrivé, et rien ne
+   le signalait — d'où ce contrôle. */
+if (typeof remiseAZero === 'function' && steps) {
+  /* On parcourt l'ARBRE affiché, pas la liste de tous les éléments jamais
+     créés : le décor en fabrique de nouveaux à chaque rendu, et les compter
+     ferait échouer la comparaison pour rien. */
+  var _ecran = function () {
+    var out = [];
+    (function marche(n) {
+      if (!n) return;
+      out.push(n._html || '');
+      (n.children || []).forEach(marche);
+      var s = n._sous || {};
+      Object.keys(s).forEach(function (k) { marche(s[k]); });
+    })(extras);
+    return out.join('|');
+  };
+  steps.forEach(function (s) { s.step(1); if (s.after) s.after(); });
+  var _avant = _ecran();
+  remiseAZero();
+  steps.forEach(function (s) { s.step(1); if (s.after) s.after(); });
+  if (_ecran() !== _avant) {
+    print('ÉCHECS :');
+    print('  - « ◀ Précédent » ne reconstruit pas le même écran : la remise à zéro ' +
+          'efface les phrases auxquelles les étapes renvoient.');
+  }
+}

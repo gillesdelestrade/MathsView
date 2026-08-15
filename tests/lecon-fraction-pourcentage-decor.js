@@ -38,12 +38,12 @@ function fauxEl(tag) {
   elements.push(e); return e;
 }
 var document = { createElement: fauxEl };
-var steps = null, extras = fauxEl('div');
+var steps = null, remiseAZero = null, extras = fauxEl('div');
 var board = { update: function(){}, create: function(){ return {}; } };
 var mv = {
   hideBoard: function(){}, typeset: function(){}, onCleanup: function(){},
   extras: extras, addControls: function(){ return {}; },
-  createAnimator: function(){ return { cancel: function(){}, runSteps: function(s){ steps = s; } }; }
+  createAnimator: function(){ return { cancel: function(){}, runSteps: function (s, r) { steps = s; remiseAZero = r; } }; }
 };
 var LECON = null; var MathsView = { register: function (l) { LECON = l; } };
 load('lessons/5eme/fraction-pourcentage.js');

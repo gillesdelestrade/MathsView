@@ -510,9 +510,14 @@ MathsView.register({
     /* ==================================================================== */
     /* États                                                                 */
     /* ==================================================================== */
+    /* On NE vide PAS `phrases` : le bouton « ◀ Précédent » appelle cette
+       remise à zéro puis rejoue les étapes précédentes, et chaque étape ne
+       retient qu'un INDICE dans ce tableau. Le vider ici, c'est effacer les
+       phrases auxquelles les étapes renvoient — l'écran se reconstruisait
+       muet. Il est de toute façon remis à zéro par construitEtapes() au
+       début de chaque lancement. */
     function effacer() {
       anim.cancel();
-      phrases = [];
       rendre(neuf());
     }
 
