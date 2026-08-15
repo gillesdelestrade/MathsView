@@ -1635,3 +1635,19 @@ body {
   background: #f5f3ff; border-radius: 0 var(--radius) var(--radius) 0;
   font-size: .97rem; line-height: 1.55;
 }
+
+/* ---------- Repérage dans le plan (5ème) ---------- */
+.rep-panneau {
+  margin-top: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+.rep-titre { font-weight: 800; margin-bottom: .5rem; }
+.rep-etapes { margin: 0; padding-left: 1.4rem; }
+.rep-etapes li { margin: .3rem 0; line-height: 1.55; color: var(--doux); }
+.rep-etapes li.faite { color: var(--texte); }
+.rep-bilan {
+  margin: .8rem 0 0; padding: .6rem .8rem; border-left: 3px solid #dc2626;
+  background: #fef2f2; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 1rem; line-height: 1.55;
+}
+.rep-sous { margin: .5rem 0 0; font-size: .9rem; color: var(--doux); line-height: 1.5; }
