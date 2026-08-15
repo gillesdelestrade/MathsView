@@ -504,3 +504,11 @@
   overflow-x: auto; white-space: pre; color: #0f172a;
 }
 .exo-choix .exo-code { margin: 0; background: transparent; border: 0; padding: 0; }
+
+/* ---------- Un petit tableau de valeurs dans un énoncé ---------- */
+.exo-tab { border-collapse: collapse; margin: .6rem 0; }
+.exo-tab th, .exo-tab td {
+  border: 1px solid var(--border); padding: .3rem .75rem; text-align: center;
+  font-size: 1rem; min-width: 3.2rem;
+}
+.exo-tab th { background: #f8fafc; font-weight: 800; font-style: italic; }

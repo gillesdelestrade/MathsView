@@ -54,6 +54,7 @@ MathsView.register({
   category: 'algebre',
   subcategory: 'Calcul littéral',
   theme: 'Calcul littéral — remplacer une lettre par sa valeur',
+  exercices: ['substitution'],
   description:
     'Dans une formule, une lettre <strong>est un nombre</strong> — celui qu\'on ne connaît ' +
     'pas encore. Dès qu\'on le connaît, on le met à sa place : c\'est ' +

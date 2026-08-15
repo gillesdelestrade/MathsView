@@ -58,7 +58,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `lecon-mediatrices` | Chaque médiatrice passe par le milieu de son côté et lui est perpendiculaire, les trois se coupent en O, le cercle tracé passe par les trois sommets — et le bandeau dit vrai sur la position de O selon la forme du triangle. |
 | `lecon-mediane-aires` | Les deux moitiés du triangle ont bien la même aire. |
 | `lecon-substitution` | Les six formules sont recalculées indépendamment et confrontées à la dernière ligne affichée ; les valeurs négatives doivent apparaître entre parenthèses, et aucune lettre ne doit survivre à la substitution. |
-| `lecon-somme-relatifs`, `lecon-comparer-fractions`, `lecon-parentheses`, `lecon-puissances`, `lecon-fraction-pourcentage` | L'animation est rejouée entièrement dans un DOM simulé : les calculs affichés sont justes, et le rejeu redonne le même écran. |
+| `lecon-somme-relatifs`, `lecon-comparer-fractions`, `lecon-parentheses`, `lecon-puissances`, `lecon-fraction-pourcentage` | L'animation est rejouée entièrement dans un DOM simulé : les calculs affichés sont justes, et le rejeu redonne le même écran. Chacun vérifie aussi le bouton **◀ Précédent** — il remet à zéro puis rejoue, et l'écran doit se reconstruire à l'identique. |
 | `lecon-variations-python` | La phrase écrite sous la console décrit ce que les nombres montrent vraiment, pour les neuf fonctions du pool. |
 
 ## Les exercices
@@ -73,6 +73,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `exos-variations` | Le script de chaque énoncé est exécuté, et la réponse recalculée sur sa sortie. |
 | `exos-mediatrices` | Chaque droite tracée est mesurée : angle avec le côté, écart au milieu. Exactement une vérifie les deux conditions, et les deux leurres échouent chacun sur une seule — franchement, jamais à un millimètre près. Les numéros ne doivent pas se chevaucher. |
 | `exos-hauteurs-medianes`, `exos-angles-6e`, `exos-angles-paralleles` | Les propriétés géométriques annoncées sont vérifiées sur la figure, et les leurres n'en vérifient aucune. |
+| `exos-substitution` | L'expression est relue dans l'énoncé et évaluée par un petit évaluateur indépendant du générateur ; les valeurs négatives doivent être entre parenthèses, et chaque proposition du QCM est calculée pour qu'une seule tombe juste. |
 | `exos-comparer-fractions`, `exos-parentheses`, `exos-puissances`, `exos-fraction-pourcentage`, `exos-somme-relatifs` | Tous les calculs sont refaits en arithmétique exacte — entiers, centièmes, produits en croix — jamais en flottants. |
 
 ## Les accessoires
