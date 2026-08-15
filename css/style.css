@@ -1656,3 +1656,53 @@ body {
   background: #f0f9ff; border-radius: 0 var(--radius) var(--radius) 0;
   font-size: .95rem; line-height: 1.55;
 }
+
+/* ---------- Proportions et pourcentages (5ème) ---------- */
+.pro-bloc { margin-top: 1rem; }
+.pro-choix { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pro-choix button {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: .45rem .85rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--texte);
+}
+.pro-choix button:hover { border-color: #2563eb; }
+.pro-choix button.active { background: #2563eb; border-color: #2563eb; color: #fff; }
+.pro-curseur { display: flex; align-items: center; gap: .6rem; margin-top: .8rem; }
+.pro-nom { font-weight: 700; font-size: .92rem; }
+.pro-val { font-weight: 700; font-size: .92rem; color: #2563eb; min-width: 6rem; }
+.pro-scene {
+  display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 1rem;
+  padding: 1rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff; min-height: 6rem;
+}
+.pro-col { display: flex; flex-direction: column; gap: .5rem; }
+.pro-titre-col, .pro-titre-col2 { font-size: .92rem; color: var(--doux); }
+.pro-grille { display: block; }
+.pro-calcul { margin-top: .9rem; }
+.pro-ligne {
+  font-size: 1.25rem; line-height: 1.8; color: var(--doux);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.pro-ligne.forte { color: #0f172a; font-weight: 700; }
+.pro-etapes { margin-top: .6rem; }
+.pro-dit {
+  margin: .5rem 0; padding: .55rem .8rem; border-left: 3px solid #2563eb;
+  background: #eff6ff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .97rem; line-height: 1.55;
+}
+.pro-comparaison:not(:empty) {
+  margin-top: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fffbeb;
+}
+.pro-comp-titre { font-weight: 800; margin-bottom: .6rem; }
+.pro-comp-duo {
+  display: flex; flex-wrap: wrap; gap: 2rem;
+  /* alignées par le bas : les deux grilles n'ont pas le même nombre de
+     lignes, et c'est la comparaison des deux pourcentages qui doit sauter
+     aux yeux, pas leur décalage vertical */
+  align-items: flex-end;
+}
+.pro-comp-cas { display: flex; flex-direction: column; gap: .4rem; align-items: flex-start; }
+.pro-comp-lab { font-size: .9rem; color: var(--doux); }
+.pro-comp-val { font-size: 1.3rem; font-weight: 800; }
+.pro-comp-dit { margin: .8rem 0 0; font-size: .95rem; line-height: 1.55; }
