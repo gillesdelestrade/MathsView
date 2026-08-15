@@ -125,16 +125,19 @@ MathsView.register({
     var MAX = 8;
     var avX = { v: 0 }, avY = { v: 0 };
 
-    function arche(depart, arrivee, hauteur, prog, couleur) {
+    /* Le ventre de l'arche se prend PERPENDICULAIREMENT au déplacement, et du
+       côté qu'on lui indique : vers le haut pour les bonds horizontaux, vers la
+       droite pour les bonds verticaux. Sans ce choix explicite, un bond vers la
+       gauche se bomberait vers le bas et un bond vertical ne se bomberait pas du
+       tout — les deux directions n'auraient pas l'air de faire le même geste. */
+    function arche(depart, arrivee, hauteur, prog, couleur, ventre) {
+      function point(t, i) {
+        var a = depart(), b = arrivee(), v = ventre();
+        return a[i] + (b[i] - a[i]) * t + v[i] * hauteur() * Math.sin(Math.PI * t);
+      }
       return board.create('curve', [
-        function (t) {
-          var a = depart(), b = arrivee();
-          return a[0] + (b[0] - a[0]) * t;
-        },
-        function (t) {
-          var a = depart(), b = arrivee();
-          return a[1] + (b[1] - a[1]) * t + hauteur() * Math.sin(Math.PI * t);
-        },
+        function (t) { return point(t, 0); },
+        function (t) { return point(t, 1); },
         0, prog
       ], { numberPointsHigh: 26, numberPointsLow: 26, strokeColor: couleur,
            strokeWidth: 2.6, highlight: false, visible: false });
@@ -148,7 +151,8 @@ MathsView.register({
         function de() { return [i * s(), 0]; }
         function a() { return [(i + 1) * s(), 0]; }
         bondsX.push(arche(de, a, function () { return 0.55; },
-          function () { return Math.max(0, Math.min(1, avX.v - i)); }, HORIZ));
+          function () { return Math.max(0, Math.min(1, avX.v - i)); }, HORIZ,
+          function () { return [0, 1]; }));          // le ventre vers le haut
         numX.push(board.create('text', [
           function () { return (i + 0.5) * s(); },
           function () { return 0.78; },
@@ -164,12 +168,15 @@ MathsView.register({
         function s() { return y() >= 0 ? 1 : -1; }
         function de() { return [x(), i * s()]; }
         function a() { return [x(), (i + 1) * s()]; }
-        bondsY.push(arche(de, a, function () { return 0; },
-          function () { return Math.max(0, Math.min(1, avY.v - i)); }, VERT));
+        // moins bombées que les horizontales : elles se suivent dans une même
+        // colonne, et un ventre trop marqué les ferait lire comme un ressort
+        bondsY.push(arche(de, a, function () { return 0.38; },
+          function () { return Math.max(0, Math.min(1, avY.v - i)); }, VERT,
+          function () { return [1, 0]; }));          // le ventre vers la droite
         numY.push(board.create('text', [
-          // un peu à l'écart : le premier numéro vertical se logerait sinon
-          // sous le dernier bond horizontal, juste au-dessus de l'axe
-          function () { return x() + 0.6; },
+          // au-delà du ventre de l'arche, et assez loin pour que le premier
+          // numéro ne se loge pas sous le dernier bond horizontal
+          function () { return x() + 0.95; },
           function () { return (i + 0.5) * s(); },
           function () { return String(i + 1); }
         ], { fontSize: 13, color: VERT, cssStyle: 'font-weight:800', fixed: true,
