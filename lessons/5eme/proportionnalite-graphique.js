@@ -54,6 +54,7 @@ MathsView.register({
   category: 'calcul',
   subcategory: 'Proportionnalité',
   theme: 'Proportionnalité — reconnaître une situation par un tableau ou un graphique',
+  exercices: ['proportionnalite-graphique'],
   description:
     'Chaque <strong>ligne du tableau</strong> donne deux nombres : ils deviennent ' +
     'l\'<strong>abscisse</strong> et l\'<strong>ordonnée</strong> d\'un <strong>point</strong>. ' +
