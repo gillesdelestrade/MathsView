@@ -55,6 +55,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `lecon-somme-angles` | Les trois copies d'angles pavent le demi-tour sans trou ni chevauchement, et la démonstration par la parallèle tient. |
 | `lecon-construire-triangles` | Le troisième sommet est calculé de trois façons ; on relit sa position et on vérifie que les trois données de départ s'y retrouvent, que les demi-droites tracées passent bien par lui, et que les cas impossibles sont expliqués. |
 | `lecon-hauteurs`, `lecon-medianes` | Les droites tracées sont bien des hauteurs, des médianes, et les points de concours ne sont pas confondus avec leurs voisins. |
+| `lecon-mediatrices` | Chaque médiatrice passe par le milieu de son côté et lui est perpendiculaire, les trois se coupent en O, le cercle tracé passe par les trois sommets — et le bandeau dit vrai sur la position de O selon la forme du triangle. |
 | `lecon-mediane-aires` | Les deux moitiés du triangle ont bien la même aire. |
 | `lecon-somme-relatifs`, `lecon-comparer-fractions`, `lecon-parentheses`, `lecon-puissances`, `lecon-fraction-pourcentage` | L'animation est rejouée entièrement dans un DOM simulé : les calculs affichés sont justes, et le rejeu redonne le même écran. |
 | `lecon-variations-python` | La phrase écrite sous la console décrit ce que les nombres montrent vraiment, pour les neuf fonctions du pool. |
