@@ -49,6 +49,7 @@ MathsView.register({
   category: 'calcul',
   subcategory: 'Proportionnalité',
   theme: 'Proportions et pourcentages — de deux quantités vers une proportion',
+  exercices: ['proportions'],
   description:
     'Quand on connaît la <strong>partie</strong> et le <strong>tout</strong>, la ' +
     '<strong>proportion</strong> est leur quotient : \\(\\dfrac{\\text{partie}}' +

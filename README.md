@@ -16,8 +16,8 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **57 leçons**, **53 générateurs d'exercices** couvrant 53 compétences,
-dont **54 leçons mènent directement à un entraînement**.
+État actuel : **57 leçons**, **54 générateurs d'exercices** couvrant 54 compétences,
+dont **55 leçons mènent directement à un entraînement**.
 
 ## Vérifier
 

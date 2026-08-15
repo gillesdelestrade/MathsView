@@ -107,6 +107,8 @@ MathsExos.catalogue = [
     chapitre: 'calcul-5e', prerequis: ['priorites'] },
   { code: 'reperage',       libelle: 'Repérage dans le plan',    niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
+  { code: 'proportions',    libelle: 'Proportions et pourcentages', niveau: '5eme',
+    chapitre: 'calcul-5e', prerequis: ['fractions'] },
   { code: 'hauteurs',       libelle: 'Les hauteurs d\'un triangle', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'medianes',       libelle: 'Les médianes d\'un triangle', niveau: '5eme',
