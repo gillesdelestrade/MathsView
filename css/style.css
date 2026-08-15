@@ -1684,6 +1684,13 @@ body {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 .pro-ligne.forte { color: #0f172a; font-weight: 700; }
+/* Le raisonnement, en retrait : c'est la conclusion qu'on doit voir en premier. */
+.pro-ligne.note {
+  color: #64748b;
+  font-size: .92em;
+  padding-left: 1.1em;
+  border-left: 2px solid #cbd5e1;
+}
 .pro-etapes { margin-top: .6rem; }
 .pro-dit {
   margin: .5rem 0; padding: .55rem .8rem; border-left: 3px solid #2563eb;

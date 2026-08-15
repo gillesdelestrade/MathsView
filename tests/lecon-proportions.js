@@ -67,6 +67,7 @@ var mv = {
 MathsView.lecon.setup(null, mv);
 
 var err = [], nb = 0;
+var chemins = { mult: 0, croix: 0 };
 function ko(m) { if (err.length < 20 && err.indexOf(m) < 0) err.push(m); }
 if (!mv._cache) ko('la figure n\'est pas masquée : cette leçon n\'en a pas');
 
@@ -164,6 +165,76 @@ Object.keys(TOTAUX).forEach(function (nom) {
       }
     }
 
+    /* --- 4bis. le passage sur 100, détaillé --------------------------- */
+    /* L'animation doit MONTRER le mécanisme, et prendre le bon chemin : la
+       multiplication quand le dénominateur divise 100, le produit en croix
+       sinon. Les nombres écrits sont recalculés ici, un par un. */
+    var f0 = p / (pgcd(p, n) || 1), d0 = n / (pgcd(p, n) || 1);
+    var kAttendu = (d0 > 1 && 100 % d0 === 0 && 100 / d0 > 1) ? 100 / d0 : null;
+    if (d0 > 1) {
+      var mult = L.filter(function (l) { return /^100 = \d+ × \d+$/.test(l.trim()); })[0];
+      var croix = L.filter(function (l) { return /^x = \(\d+ × 100\) ÷ \d+/.test(l.trim()); })[0];
+      if (mult && croix) ko(nom + ' (' + p + '/' + n + ') : les deux méthodes à la fois');
+      if (kAttendu) {
+        chemins.mult++;
+        if (!mult) ko(nom + ' (' + p + '/' + n + ') : ' + d0 + ' divise 100, mais la ' +
+                      'multiplication n\'est pas montrée');
+        else {
+          var mm = /^100 = (\d+) × (\d+)$/.exec(mult.trim());
+          if (+mm[1] !== d0)
+            ko(nom + ' (' + p + '/' + n + ') : on décompose 100 avec ' + mm[1] +
+               ' au lieu du dénominateur ' + d0);
+          if (+mm[1] * +mm[2] !== 100)
+            ko(nom + ' : ' + mm[1] + ' × ' + mm[2] + ' ne fait pas 100');
+          if (+mm[2] !== kAttendu)
+            ko(nom + ' (' + p + '/' + n + ') : le facteur annoncé est ' + mm[2] +
+               ' au lieu de ' + kAttendu);
+          // le numérateur doit être multiplié par CE MÊME facteur
+          var ligneM = L.filter(function (l) {
+            return /^\d+\/\d+ = \(\d+ × \d+\) \/ \(\d+ × \d+\)$/.test(l.trim());
+          })[0];
+          if (!ligneM) ko(nom + ' (' + p + '/' + n + ') : la multiplication des deux ' +
+                          'termes n\'est pas écrite');
+          else {
+            var mn = /^(\d+)\/(\d+) = \((\d+) × (\d+)\) \/ \((\d+) × (\d+)\)$/
+                       .exec(ligneM.trim());
+            if (+mn[1] !== f0 || +mn[2] !== d0)
+              ko(nom + ' (' + p + '/' + n + ') : on part de ' + mn[1] + '/' + mn[2] +
+                 ' au lieu de la fraction simplifiée ' + f0 + '/' + d0);
+            if (mn[4] !== mn[6])
+              ko(nom + ' (' + p + '/' + n + ') : haut multiplié par ' + mn[4] +
+                 ' et bas par ' + mn[6] + ' — la proportion changerait');
+            if (+mn[3] * +mn[4] !== Math.round(pc))
+              ko(nom + ' (' + p + '/' + n + ') : ' + mn[3] + ' × ' + mn[4] + ' ne donne ' +
+                 'pas ' + pc);
+          }
+        }
+      } else {
+        chemins.croix++;
+        if (!croix) ko(nom + ' (' + p + '/' + n + ') : ' + d0 + ' ne divise pas 100, le ' +
+                       'produit en croix devrait prendre le relais');
+        else {
+          var mx = /^x = \((\d+) × 100\) ÷ (\d+) = ([\d,]+)$/.exec(croix.trim());
+          if (!mx) ko(nom + ' (' + p + '/' + n + ') : le produit en croix est illisible');
+          else {
+            if (+mx[1] !== f0 || +mx[2] !== d0)
+              ko(nom + ' (' + p + '/' + n + ') : le produit en croix porte sur ' + mx[1] +
+                 '/' + mx[2] + ' au lieu de ' + f0 + '/' + d0);
+            if (Math.abs(lit(mx[3]) - pc) > 1e-9)
+              ko(nom + ' (' + p + '/' + n + ') : le produit en croix donne ' + mx[3] +
+                 ' au lieu de ' + pc);
+          }
+        }
+      }
+      // et, dans les deux cas, la conclusion sur 100
+      var concl = L.filter(function (l) {
+        return new RegExp('^' + f0 + '/' + d0 + ' = [\\d,]+/100$').test(l.trim());
+      })[0];
+      if (!concl) ko(nom + ' (' + p + '/' + n + ') : la fraction sur 100 n\'est pas conclue');
+      else if (Math.abs(lit(/= ([\d,]+)\/100/.exec(concl)[1]) - pc) > 1e-9)
+        ko(nom + ' (' + p + '/' + n + ') : la conclusion sur 100 ne vaut pas ' + pc);
+    }
+
     /* --- 5. le complément -------------------------------------------- */
     var ph = phrases();
     var comp = ph.filter(function (x) { return /reste/i.test(x); })[0];
@@ -174,6 +245,19 @@ Object.keys(TOTAUX).forEach(function (nom) {
       else if (Math.abs(lit(mc[1]) - (100 - pc)) > 1e-9)
         ko(nom + ' (' + p + '/' + n + ') : le complément annoncé est ' + mc[1] +
            ' % au lieu de ' + (100 - pc));
+    }
+
+    /* --- 5bis. l'écriture décimale ------------------------------------ */
+    /* Elle doit valoir le pourcentage divisé par cent, à la décimale près :
+       annoncer « 12,5 % » puis « 0,13 » serait se contredire. */
+    var dec = ph.filter(function (x) { return /écriture décimale/.test(x); })[0];
+    if (!dec) ko(nom + ' : l\'écriture décimale n\'est pas donnée');
+    else {
+      var md = /= ([\d,]+)\b/.exec(dec.replace(/^.*quotient : /, ''));
+      if (!md) ko(nom + ' : l\'écriture décimale est illisible → ' + dec);
+      else if (Math.abs(lit(md[1]) - pc / 100) > 1e-9)
+        ko(nom + ' (' + p + '/' + n + ') : on annonce ' + pc + ' % puis l\'écriture ' +
+           'décimale ' + md[1] + ' — qui vaut ' + (lit(md[1]) * 100) + ' %');
     }
 
     /* --- 6. aucune phrase répétée ------------------------------------ */
@@ -240,6 +324,9 @@ controles.reset.onClick();
 if (lignes().length || phrases().length || elG1.innerHTML || elG2.innerHTML)
   ko('la remise à zéro laisse quelque chose à l\'écran');
 
-print(nb + ' proportions vérifiées');
+print(nb + ' proportions vérifiées — ' + chemins.mult + ' par multiplication, ' +
+      chemins.croix + ' par produit en croix');
+if (!chemins.mult || !chemins.croix)
+  ko('un des deux chemins vers 100 n\'est jamais emprunté : il n\'est pas éprouvé');
 if (err.length) { print('ÉCHECS :'); err.forEach(function (m) { print('  - ' + m); }); }
 else print('LES GRILLES, LES FRACTIONS ET LES POURCENTAGES DISENT TOUS LA MÊME CHOSE');

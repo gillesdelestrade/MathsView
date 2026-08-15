@@ -78,6 +78,19 @@ MathsView.register({
     '<li><strong>Simplifier ne change rien.</strong> \\(\\frac{15}{25} = \\frac{3}{5}\\) : ' +
     'c\'est la même proportion, écrite plus simplement. Et \\(\\frac{3}{5} = \\frac{60}{100} ' +
     '= 60\\,\\%\\).</li>' +
+    '<li><strong>Passer sur 100, premier chemin : multiplier.</strong> Quand le ' +
+    'dénominateur <strong>divise</strong> 100, on cherche par combien le multiplier pour ' +
+    'arriver à 100, et on multiplie le numérateur <strong>par le même nombre</strong> — ' +
+    'sinon la fraction changerait de valeur. Pour \\(\\frac{3}{5}\\) : ' +
+    '\\(100 = 5 \\times 20\\), donc \\(\\frac{3}{5} = \\frac{3 \\times 20}' +
+    '{5 \\times 20} = \\frac{60}{100} = 60\\,\\%\\). Cela se fait de tête.</li>' +
+    '<li><strong>Second chemin : le produit en croix.</strong> Quand 100 n\'est pas un ' +
+    'multiple du dénominateur, on pose l\'égalité avec le numérateur cherché : ' +
+    '\\(\\frac{3}{8} = \\frac{x}{100}\\). Deux fractions égales ont les mêmes produits ' +
+    'en croix, donc \\(3 \\times 100 = x \\times 8\\), d\'où ' +
+    '\\(x = \\frac{3 \\times 100}{8} = 37{,}5\\) : c\'est 37,5 %. Cette méthode ' +
+    'marche <strong>toujours</strong> — c\'est le filet de sécurité quand la première ne ' +
+    'tombe pas juste.</li>' +
     '<li><strong>Pourquoi ramener sur cent.</strong> Deux proportions de totaux différents ' +
     'ne se comparent pas à vue : 12 sur 20 et 15 sur 25 ont l\'air différentes, et sont ' +
     'pourtant égales. Sur cent, elles s\'écrivent toutes deux 60 — le pourcentage est fait ' +
@@ -100,7 +113,10 @@ MathsView.register({
     var CENT = '#16a34a';        // la grille de cent
 
     function fr(v) {
-      var r = Math.round(v * 100) / 100;
+      /* Quatre décimales, pas deux : l'écriture décimale de 12,5 % est 0,125, et
+         arrondir au centième afficherait 0,13 — soit 13 %, en contradiction
+         avec le pourcentage annoncé deux lignes plus haut. */
+      var r = Math.round(v * 10000) / 10000;
       return String(r).replace('.', ',');
     }
     function pgcd(a, b) { return b ? pgcd(b, a % b) : Math.abs(a); }
@@ -136,6 +152,15 @@ MathsView.register({
     function simplifiee() {
       var g = pgcd(part, tout()) || 1;
       return [part / g, tout() / g];
+    }
+
+    /* Le passage sur 100 se fait de deux façons, et l'animation doit montrer
+       laquelle s'applique. Si le dénominateur DIVISE 100 — 5 tient 20 fois dans
+       100 — il suffit de multiplier les deux nombres par ce facteur. Sinon
+       (1/8 : 100 n'est pas un multiple de 8) il faut le produit en croix.
+       Renvoie le facteur, ou null s'il n'y en a pas d'entier. */
+    function facteurCent(d) {
+      return (d > 1 && 100 % d === 0 && 100 / d > 1) ? 100 / d : null;
     }
 
     /* La seconde situation, pour la comparaison : un autre total, et une
@@ -206,6 +231,18 @@ MathsView.register({
     function copie(e) {
       return { n: e.n, g1: e.g1, cent: e.cent, lignes: e.lignes.slice() };
     }
+    /* Ajoute des lignes au calcul, et ne laisse en gras que la dernière. Les
+       lignes « note » (le raisonnement, pas le résultat) ne prennent jamais le
+       gras : c'est la conclusion qu'on veut voir en premier. */
+    function ajoute(lignes) {
+      cur.lignes = cur.lignes.concat(lignes);
+      var dernier = cur.lignes.length - 1;
+      while (dernier >= 0 && cur.lignes[dernier].note) dernier--;
+      cur.lignes = cur.lignes.map(function (l, i) {
+        return { t: l.t, note: l.note, fort: i === dernier };
+      });
+    }
+
     function pas(dur, maj) {
       maj();
       var e = copie(cur);
@@ -235,7 +272,8 @@ MathsView.register({
       if (elT2.innerHTML !== t2) elT2.innerHTML = t2;
 
       var hc = e.lignes.map(function (l) {
-        return '<div class="pro-ligne' + (l.fort ? ' forte' : '') + '">' + l.t + '</div>';
+        return '<div class="pro-ligne' + (l.fort ? ' forte' : '') +
+               (l.note ? ' note' : '') + '">' + l.t + '</div>';
       }).join('');
       if (elCalcul.innerHTML !== hc) elCalcul.innerHTML = hc;
 
@@ -298,11 +336,7 @@ MathsView.register({
 
       if (simp[1] !== n) {
         steps.push(pas(800, function () {
-          cur.lignes = cur.lignes.concat([{ t: p + '/' + n + ' = <b>' + simp[0] + '/' +
-                                              simp[1] + '</b>', fort: true }]);
-          cur.lignes = cur.lignes.map(function (l, i) {
-            return { t: l.t, fort: i === cur.lignes.length - 1 };
-          });
+          ajoute([{ t: p + '/' + n + ' = <b>' + simp[0] + '/' + simp[1] + '</b>' }]);
           dire('On peut la <b>simplifier</b> en divisant les deux nombres par ' +
                (pgcd(p, n) || 1) + ' : <b>' + simp[0] + '/' + simp[1] + '</b>. C\'est la ' +
                '<b>même</b> proportion, écrite plus simplement.');
@@ -315,22 +349,62 @@ MathsView.register({
              'jusqu\'à retrouver la <b>même part</b>.');
       }));
 
-      steps.push(pas(700, function () {
-        cur.cent = 2;
-        cur.lignes = cur.lignes.concat([{ t: p + '/' + n + ' = <b>' + fr(pc) + '/100</b>',
-                                          fort: true }]);
-        cur.lignes = cur.lignes.map(function (l, i) {
-          return { t: l.t, fort: i === cur.lignes.length - 1 };
-        });
-        dire('Il en faut <b>' + fr(pc) + '</b> sur cent. Le calcul le confirme : ' +
-             '<b>' + p + ' × 100 ÷ ' + n + ' = ' + fr(pc) + '</b>.');
-      }));
+      /* ------------------------------------------------------------------ */
+      /* Le passage sur 100 — le cœur de la leçon, détaillé                  */
+      /* ------------------------------------------------------------------ */
+      /* Écrire « × 100 ÷ n » d'un trait ne montre rien : l'élève applique une
+         formule sans voir pourquoi. On part donc de la fraction simplifiée et
+         on montre le mécanisme, dans l'un des deux cas :
+
+           — le dénominateur DIVISE 100 : 100 = 5 × 20, donc le numérateur doit
+             être multiplié par ce MÊME 20, et 3/5 = 60/100 ;
+           — il ne le divise pas : 100 n'est pas un multiple de 8, alors on pose
+             3/8 = x/100 et le produit en croix donne x = 3 × 100 ÷ 8.
+
+         La première façon est celle qu'on veut voir chercher en premier — elle
+         se fait de tête ; la seconde est le filet de sécurité. */
+      var k = facteurCent(simp[1]);
+      var f = simp[0], d = simp[1];
+
+      if (k) {
+        steps.push(pas(1100, function () {
+          ajoute([{ t: '100 = ' + d + ' × <b>' + k + '</b>', note: true },
+                  { t: f + '/' + d + ' = (' + f + ' × <b>' + k + '</b>) / (' + d +
+                       ' × <b>' + k + '</b>)', note: true }]);
+          dire('Comment passer de <b>' + f + '/' + d + '</b> à une fraction <b>sur 100</b> ? ' +
+               'Il faut que le dénominateur devienne 100 : or <b>100 = ' + d + ' × ' + k +
+               '</b>. On multiplie donc ' + d + ' par ' + k + ' — et le numérateur ' +
+               '<b>par le même nombre</b>, sinon la proportion changerait.');
+        }));
+        steps.push(pas(900, function () {
+          cur.cent = 2;
+          ajoute([{ t: f + '/' + d + ' = <b>' + fr(pc) + '/100</b>' }]);
+          dire('En haut : <b>' + f + ' × ' + k + ' = ' + fr(pc) + '</b>. En bas : <b>' + d +
+               ' × ' + k + ' = 100</b>. Donc <b>' + f + '/' + d + ' = ' + fr(pc) +
+               '/100</b> — la grille le confirme, il en faut bien ' + fr(pc) + ' sur cent.');
+        }));
+      } else {
+        steps.push(pas(1100, function () {
+          ajoute([{ t: f + '/' + d + ' = <b>x</b>/100', note: true },
+                  { t: f + ' × 100 = <b>x</b> × ' + d, note: true }]);
+          dire('Ici <b>100 n\'est pas un multiple de ' + d + '</b> : on ne peut pas ' +
+               'multiplier par un nombre entier. On cherche alors le numérateur manquant : ' +
+               '<b>' + f + '/' + d + ' = x/100</b>. Deux fractions égales ont les mêmes ' +
+               '<b>produits en croix</b> : ' + f + ' × 100 = x × ' + d + '.');
+        }));
+        steps.push(pas(900, function () {
+          cur.cent = 2;
+          ajoute([{ t: 'x = (' + f + ' × 100) ÷ ' + d + ' = <b>' + fr(pc) + '</b>',
+                    note: true },
+                  { t: f + '/' + d + ' = <b>' + fr(pc) + '/100</b>' }]);
+          dire('On isole x en divisant par ' + d + ' : <b>x = (' + f + ' × 100) ÷ ' + d +
+               ' = ' + fr(pc) + '</b>. Cette méthode marche <b>toujours</b>, même quand le ' +
+               'premier chemin est impossible.');
+        }));
+      }
 
       steps.push(pas(800, function () {
-        cur.lignes = cur.lignes.concat([{ t: '<b>' + fr(pc) + ' %</b>', fort: true }]);
-        cur.lignes = cur.lignes.map(function (l, i) {
-          return { t: l.t, fort: i === cur.lignes.length - 1 };
-        });
+        ajoute([{ t: '<b>' + fr(pc) + ' %</b>' }]);
         dire('« Sur cent » s\'écrit <b>%</b> : la proportion vaut <b>' + fr(pc) + ' %</b>. ' +
              'Un pourcentage n\'est rien d\'autre qu\'une proportion écrite sur cent.');
       }));
