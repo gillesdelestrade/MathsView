@@ -59,6 +59,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — médiatrices d\'un triangle et cercle circonscrit',
+  exercices: ['mediatrices'],
   description:
     'La <strong>médiatrice</strong> d\'un côté est la droite <strong>perpendiculaire</strong> ' +
     'à ce côté qui passe par son <strong>milieu</strong>. Ses points sont exactement ceux ' +

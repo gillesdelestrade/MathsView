@@ -88,7 +88,10 @@
    *   P        : [[x,y],[x,y],[x,y]]  les trois sommets, en repère math ;
    *   noms     : ['A','B','C']  (facultatif : rien n'est écrit sans noms) ;
    *   remplir  : true pour teinter l'intérieur du triangle ;
-   *   traits   : [{ de, a, couleur, dash, ep, num }]  segments posés dessus ;
+   *   traits   : [{ de, a, couleur, dash, ep, num, pos }]  segments posés dessus.
+   *              `pos` dit OÙ écrire le numéro le long du trait (0 au départ,
+   *              1 à l'arrivée ; 0,62 par défaut). Deux droites qui se croisent
+   *              verraient sinon leurs numéros se poser l'un sur l'autre ;
    *   points   : [{ p, nom, couleur, place }]  place = 'haut'|'bas'|'auto' ;
    *   equerres : [{ pied, vers, base }]  le petit carré de l'angle droit ;
    *   codes    : [{ a, b, n }]  n traits en travers, au milieu de [ab].
@@ -206,7 +209,7 @@
     // 8. les numéros des traits, posés au tiers du segment côté extérieur
     traits.forEach(function (t) {
       if (!t.num) return;
-      var m = add(t.de, mul(sub(t.a, t.de), 0.62));
+      var m = add(t.de, mul(sub(t.a, t.de), t.pos === undefined ? 0.62 : t.pos));
       var d = unit(sub(t.a, t.de)), nn = [-d[1], d[0]];
       var ecart = 0.05 * Math.max(x1 - x0, y1 - y0);
       s.push(texte(X(add(m, mul(nn, ecart))), Y(add(m, mul(nn, ecart))) + 5, t.num,

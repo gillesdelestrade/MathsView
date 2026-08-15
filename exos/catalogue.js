@@ -101,6 +101,8 @@ MathsExos.catalogue = [
     chapitre: 'geometrie-5e', prerequis: ['angles-par'] },
   { code: 'construire-triangles', libelle: 'Construire un triangle', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: ['somme-angles'] },
+  { code: 'mediatrices',    libelle: 'Médiatrices et cercle circonscrit', niveau: '5eme',
+    chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'hauteurs',       libelle: 'Les hauteurs d\'un triangle', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'medianes',       libelle: 'Les médianes d\'un triangle', niveau: '5eme',

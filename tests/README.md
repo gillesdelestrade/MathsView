@@ -70,6 +70,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `exos-symetrie-axiale`, `exos-symetrie-centrale` | Le symétrique annoncé est celui de l'axe (ou du centre) **dessiné**, et les figures proposées sont superposables à celle de départ. |
 | `exos-fonction-affine` | La droite est relue dans le SVG et confrontée à l'équation annoncée. |
 | `exos-variations` | Le script de chaque énoncé est exécuté, et la réponse recalculée sur sa sortie. |
+| `exos-mediatrices` | Chaque droite tracée est mesurée : angle avec le côté, écart au milieu. Exactement une vérifie les deux conditions, et les deux leurres échouent chacun sur une seule — franchement, jamais à un millimètre près. Les numéros ne doivent pas se chevaucher. |
 | `exos-hauteurs-medianes`, `exos-angles-6e`, `exos-angles-paralleles` | Les propriétés géométriques annoncées sont vérifiées sur la figure, et les leurres n'en vérifient aucune. |
 | `exos-comparer-fractions`, `exos-parentheses`, `exos-puissances`, `exos-fraction-pourcentage`, `exos-somme-relatifs` | Tous les calculs sont refaits en arithmétique exacte — entiers, centièmes, produits en croix — jamais en flottants. |
 
