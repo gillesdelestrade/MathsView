@@ -105,6 +105,8 @@ MathsExos.catalogue = [
     chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'substitution',   libelle: 'Calculer une expression littérale', niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: ['priorites'] },
+  { code: 'reperage',       libelle: 'Repérage dans le plan',    niveau: '5eme',
+    chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'hauteurs',       libelle: 'Les hauteurs d\'un triangle', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'medianes',       libelle: 'Les médianes d\'un triangle', niveau: '5eme',

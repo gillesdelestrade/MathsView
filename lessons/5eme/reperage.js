@@ -45,6 +45,7 @@ MathsView.register({
   category: 'geometrie',
   subcategory: 'Repérage',
   theme: 'Repérage — coordonnées d\'un point dans un repère orthogonal',
+  exercices: ['reperage'],
   description:
     'Dans un repère, un point est repéré par <strong>deux nombres</strong> : son ' +
     '<strong>abscisse</strong>, qui dit de combien on avance horizontalement, et son ' +
