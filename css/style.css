@@ -1669,6 +1669,87 @@ body {
 .exo-tab th { background: #f8fafc; font-weight: 800; font-size: .9rem; color: var(--doux); }
 .exo-tab td { font-weight: 600; }
 
+/* ---------- Probabilités : le vocabulaire (5ème) ---------- */
+.prb-bloc { margin-top: 1rem; }
+.prb-choix { display: flex; flex-wrap: wrap; gap: .5rem; }
+.prb-choix button {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: .45rem .85rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--texte);
+}
+.prb-choix button:hover { border-color: #7c3aed; }
+.prb-choix button.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.prb-dit { margin-top: .8rem; line-height: 1.6; }
+
+/* La scène : ce qu'on vient de lancer, en grand et seul. */
+.prb-scene {
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  margin-top: 1rem; padding: 1.1rem; min-height: 8.5rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+}
+.prb-repos { opacity: .35; }
+.prb-attente { font-size: .85rem; color: var(--doux); }
+.prb-legende { font-size: .8rem; font-weight: 700; text-align: center; color: var(--doux); }
+.prb-paire, .prb-mains { display: flex; align-items: center; gap: .6rem; }
+.prb-egal, .prb-contre { font-weight: 800; color: var(--doux); }
+.prb-somme { font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* L'univers : toutes les issues, et celles que l'événement regroupe. */
+.prb-titre { font-size: .85rem; color: var(--doux); margin-bottom: .4rem; }
+.prb-univers:not(:empty), .prb-freq:not(:empty) {
+  margin-top: .9rem; padding: .9rem 1.1rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+}
+.prb-lot { display: flex; flex-wrap: wrap; gap: .45rem; }
+.prb-issue {
+  padding: .3rem; border: 2px solid var(--border); border-radius: var(--radius);
+  background: #fff; opacity: .5;
+}
+/* Une issue que l'événement regroupe : c'est le paquet qu'on veut faire voir. */
+.prb-issue.dedans { opacity: 1; border-color: #7c3aed; background: #f5f3ff; }
+/* Celle qui est sortie : un liseré, jamais une couleur de fond — elle peut être
+   dans le paquet ou non, et les deux informations doivent rester lisibles. */
+.prb-issue.obtenue { opacity: 1; box-shadow: 0 0 0 3px #f59e0b; }
+.prb-compte { margin-top: .55rem; font-size: .92rem; color: var(--doux); }
+
+.prb-evt:not(:empty) {
+  margin-top: .9rem; padding: .9rem 1.1rem; border-radius: var(--radius);
+  border: 1px solid #ddd6fe; background: #faf5ff;
+}
+.prb-evt-nom { font-size: 1.05rem; }
+.prb-evt-liste { margin-top: .25rem; font-size: .92rem; color: var(--doux); }
+.prb-verdict {
+  margin-top: .6rem; padding: .5rem .75rem; border-radius: var(--radius);
+  font-size: .97rem;
+}
+.prb-verdict.oui { background: #ecfdf5; border: 1px solid #a7f3d0; }
+.prb-verdict.non { background: #fff7ed; border: 1px solid #fed7aa; }
+.prb-extremes {
+  margin-top: .6rem; font-size: .92rem; color: var(--doux); line-height: 1.6;
+}
+
+/* Les fréquences : des barres, et rien de plus — c'est la FORME qui parle. */
+.prb-barres {
+  display: flex; align-items: flex-end; gap: .3rem; overflow-x: auto;
+  padding-bottom: .2rem;
+}
+.prb-col { display: flex; flex-direction: column; align-items: center; gap: .25rem; flex: 1 1 0; }
+.prb-pc { font-size: .72rem; color: var(--doux); white-space: nowrap; }
+.prb-tige {
+  width: 100%; min-width: 1.1rem; height: 90px; display: flex; align-items: flex-end;
+  background: #f1f5f9; border-radius: 3px;
+}
+.prb-rempli { width: 100%; background: #7c3aed; border-radius: 3px; }
+.prb-etiq { display: flex; justify-content: center; }
+.prb-note { margin-top: .7rem; font-size: .92rem; color: var(--doux); line-height: 1.6; }
+
+.prb-etapes { margin-top: .8rem; }
+.prb-dit-p {
+  margin: .5rem 0; padding: .55rem .8rem; border-left: 3px solid #7c3aed;
+  background: #f5f3ff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .97rem; line-height: 1.6;
+}
+
 /* ---------- Flash : les fondamentaux chronométrés ---------- */
 /* Volontairement à part du reste des exercices : cet écran ne doit pas
    ressembler à une série ordinaire. Une seule chose à l'écran, très grande, et

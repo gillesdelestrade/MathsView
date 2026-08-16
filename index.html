@@ -67,6 +67,10 @@
        qui déclarent un champ `exercices` puissent proposer un entraînement
        (SPEC §11.2). Les générateurs, eux, ne sont chargés que par
        exercices.html. -->
+  <!-- Le tirage reproductible : une leçon sur le hasard doit pouvoir REJOUER
+       exactement le même lancer, sinon « ▶ Rejouer » ne rejoue rien. C'est
+       aussi ce dont exos-base a besoin pour ouvrir une série. -->
+  <script src="js/alea.js"></script>
   <script src="js/exos-base.js"></script>
   <script src="exos/catalogue.js"></script>
   <!-- La pastille du profil connecté, commune aux trois pages : elle a besoin
@@ -113,6 +117,7 @@
   <script src="lessons/5eme/reperage.js"></script>
   <script src="lessons/5eme/proportions.js"></script>
   <script src="lessons/5eme/proportionnalite-graphique.js"></script>
+  <script src="lessons/5eme/probabilites-vocabulaire.js"></script>
   <script src="lessons/5eme/mediane-aires.js"></script>
   <script src="lessons/4eme/pythagore.js"></script>
   <script src="lessons/4eme/equations-premier-degre.js"></script>

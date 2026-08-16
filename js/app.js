@@ -42,7 +42,8 @@
     'calcul':    { label: 'Nombres et calculs' },
     'algebre':   { label: 'Algèbre' },
     'geometrie': { label: 'Géométrie' },
-    'analyse':   { label: 'Analyse' }
+    'analyse':   { label: 'Analyse' },
+    'donnees':   { label: 'Données et hasard' }
   };
   // Filet de sécurité : une leçon sans domaine connu atterrit ici (et la
   // console prévient) au lieu de disparaître du menu.
