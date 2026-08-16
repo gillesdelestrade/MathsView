@@ -126,6 +126,26 @@ fichiers.forEach(function (f) {
 });
 
 /* ------------------------------------------------------------------ */
+/* Chaque chapitre du catalogue a-t-il un libellé ?                     */
+/* ------------------------------------------------------------------ */
+/* Sans entrée dans la table, le code brut s'affiche en titre de section :
+   « geometrie-5e » au lieu de « Géométrie ». Rien ne casse, et c'est bien le
+   problème — personne ne le remarque avant de le voir en production. */
+(function () {
+  var page = readFile('exercices.html');
+  var m = /var CHAPITRES = \{([\s\S]*?)\};/.exec(page);
+  if (!m) { ko('la table des libellés de chapitre est introuvable'); return; }
+  var connus = (m[1].match(/'?[\w-]+'?\s*:/g) || []).map(function (x) {
+    return x.replace(/['\s:]/g, '');
+  });
+  MathsExos.catalogue.forEach(function (c) {
+    if (c.chapitre && connus.indexOf(c.chapitre) < 0)
+      ko('le chapitre « ' + c.chapitre + ' » n\'a pas de libellé : son code s\'affichera ' +
+         'tel quel en titre de section');
+  });
+})();
+
+/* ------------------------------------------------------------------ */
 /* Le script EN LIGNE des pages : `global` n'y existe pas               */
 /* ------------------------------------------------------------------ */
 /* Les modules de js/ sont des IIFE qui reçoivent l'objet global sous le nom
