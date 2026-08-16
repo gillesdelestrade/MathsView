@@ -29,6 +29,32 @@
     id: 'tables', competence: 'tables', level: '6eme',
     titre: 'Tables de multiplication', paliers: 4,
 
+    /* ------------------------------------------------------------------ */
+    /* Les FAITS, pour le mode flash                                       */
+    /* ------------------------------------------------------------------ */
+    /* Le mode flash ne mesure pas la compréhension mais l'AUTOMATISME : il
+       faut donc du rappel pur, et rien d'autre. Les paliers 3 et 4 de ce
+       générateur — « quel nombre manque ? », « où trouve-t-on 24 ? » — sont de
+       vraies compétences, mais elles se raisonnent : les chronométrer à trois
+       secondes n'aurait aucun sens. Le flash ne connaît donc que le sens
+       direct, énuméré ici fait par fait.
+
+       Les 81 produits sont tous listés, y compris les tables de 2 et de 10 qui
+       s'automatisent d'elles-mêmes : c'est le tirage pondéré qui les mettra de
+       côté une fois qu'elles seront sues, sans qu'on ait à en décider ici. */
+    flash: {
+      libelle: 'Tables de multiplication',
+      faits: function () {
+        var out = [];
+        for (var a = 2; a <= 10; a++) {
+          for (var b = 2; b <= 10; b++) {
+            out.push({ cle: a + 'x' + b, texte: a + ' × ' + b, reponse: a * b });
+          }
+        }
+        return out;
+      }
+    },
+
     genere: function (rnd, palier) {
       var maxi = palier === 1 ? 5 : 10;
       var a = rnd.entier(2, maxi), b = rnd.entier(2, maxi);

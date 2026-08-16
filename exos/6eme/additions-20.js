@@ -20,6 +20,28 @@
     id: 'additions-20', competence: 'additions-20', level: '6eme',
     titre: 'Additions jusqu\'à 20', paliers: 4,
 
+    /* ------------------------------------------------------------------ */
+    /* Les FAITS, pour le mode flash                                       */
+    /* ------------------------------------------------------------------ */
+    /* Comme pour les tables : du rappel pur, et rien d'autre. Le complément à
+       dix (7 + ? = 10) et la décomposition demandée au palier 4 sont des
+       stratégies, pas des faits — on les apprend, on ne les récite pas. Le
+       flash s'en tient donc aux sommes directes de deux nombres de 2 à 9, ce
+       qui couvre exactement ce qui doit finir par se savoir sans compter :
+       les 64 sommes, dont celles qui franchissent la dizaine. */
+    flash: {
+      libelle: 'Additions jusqu\'à 20',
+      faits: function () {
+        var out = [];
+        for (var a = 2; a <= 9; a++) {
+          for (var b = 2; b <= 9; b++) {
+            out.push({ cle: a + '+' + b, texte: a + ' + ' + b, reponse: a + b });
+          }
+        }
+        return out;
+      }
+    },
+
     genere: function (rnd, palier) {
 
       /* --- palier 1 : le complément à 10 --------------------------------- */

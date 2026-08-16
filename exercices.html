@@ -50,6 +50,7 @@
   <script src="js/trophees.js"></script>
   <script src="js/boutique.js"></script>
   <script src="js/defis.js"></script>
+  <script src="js/flash.js"></script>
   <script src="exos/catalogue.js"></script>
 
   <!-- Les générateurs. `outils.js` d'abord : les fn-*.js s'en servent. -->
@@ -131,6 +132,7 @@
         #chap/<code>    une série mixte sur tout un chapitre
         #revision       « Arroser mon jardin » : le moteur choisit les
                         compétences qui ont le plus fané
+        #flash          la séance des fondamentaux, chronométrée (js/flash.js)
      --------------------------------------------------------------------- */
   (function () {
     'use strict';
@@ -306,6 +308,30 @@
               (r.aArroser > 1 ? 's' : '') + '.'
              : ' Tout est bien arrosé.')) + '</p>'));
 
+      /* --- les fondamentaux ------------------------------------------- */
+      /* Tables et additions ne se comprennent pas, elles s'automatisent : la
+         séance flash est donc POUSSÉE, et non pas attendue d'un clic dans une
+         liste. Elle reste refusable — proposée en haut de page, jamais
+         imposée. */
+      if (window.MathsFlash && MathsFlash.doitProposer(id)) {
+        var j = MathsFlash.joursDepuis(id);
+        var carte = el('div', 'fl-appel');
+        carte.innerHTML =
+          '<div class="fl-appel-txt"><b>⚡ Flash — les fondamentaux</b>' +
+          '<span>' + (j === null
+            ? 'Tables et additions : 20 questions chronométrées, environ deux minutes.'
+            : 'Dernière séance il y a ' + j + ' jour' + (j > 1 ? 's' : '') +
+              '. 20 questions, environ deux minutes.') + '</span></div>';
+        var bF = el('button', 'exo-btn primaire', 'Commencer');
+        bF.onclick = function () { location.hash = 'flash'; };
+        var bP = el('button', 'exo-btn', 'Plus tard');
+        bP.onclick = function () { carte.remove(); };
+        var actF = el('div', 'fl-appel-btn');
+        actF.appendChild(bF); actF.appendChild(bP);
+        carte.appendChild(actF);
+        accueil.appendChild(carte);
+      }
+
       // Le bouton principal de la page (SPEC §5.3).
       var haut = el('div', 'exo-actions');
       var arroser = el('button', 'exo-btn primaire exo-arroser',
@@ -317,6 +343,30 @@
       bBoutique.onclick = function () { location.hash = 'boutique'; };
       haut.appendChild(bBoutique);
       accueil.appendChild(haut);
+
+      /* --- l'automatisme, à côté du jardin mais distinct de lui -------- */
+      /* Deux mesures, deux jauges. Le jardin dit « est-ce que je comprends »,
+         celle-ci « est-ce que je sais par cœur ». Les mélanger rendrait les
+         deux illisibles. */
+      if (window.MathsFlash && MathsFlash.sources().length) {
+        var rf = MathsFlash.resume(id);
+        if (rf.vus) {
+          accueil.appendChild(el('div', 'home-cat', 'Mes automatismes'));
+          var boiteF = el('div', 'fl-jauges');
+          rf.comps.forEach(function (c) {
+            boiteF.appendChild(el('div', 'fl-ligne',
+              '<div class="fl-nom">' + esc(c.libelle) + '</div>' +
+              '<div class="fl-barre"><div class="fl-jauge" style="width:' + c.pct +
+                '%"></div></div>' +
+              '<div class="fl-val">' + (Math.round(c.moyenne * 10) / 10).toString()
+                .replace('.', ',') + ' pt · ' + c.vus + '/' + c.total + ' vus</div>'));
+          });
+          var lien = el('button', 'exo-btn fl-relancer', '⚡ Séance flash');
+          lien.onclick = function () { location.hash = 'flash'; };
+          boiteF.appendChild(lien);
+          accueil.appendChild(boiteF);
+        }
+      }
 
       /* --- le jardin ------------------------------------------------- */
       accueil.appendChild(el('div', 'home-cat', 'Mon jardin'));
@@ -798,6 +848,25 @@
       if (m) {
         var d = MathsDefis.trouve(m[1]);
         if (d && d.statut === 'lance') { lancerDefi(d); return; }
+      }
+      if (h === 'flash' && window.MathsFlash) {
+        accueil.hidden = true;
+        session.hidden = false;
+        session.innerHTML = '';
+        session.appendChild(el('div', 'exo-entete',
+          '<h2>⚡ Flash — les fondamentaux</h2>' +
+          '<p class="adm-note">' + MathsFlash.NB + ' questions. Le chronomètre s\'arrête ' +
+          'à ta <b>première frappe</b> : <b>3 points</b> sous 3 secondes, <b>2 points</b> ' +
+          'jusqu\'à 6, <b>1 point</b> au-delà. Ce score ne touche ni tes ceintures ni ton ' +
+          'jardin — il mesure autre chose.</p>'));
+        var boiteFl = el('div');
+        session.appendChild(boiteFl);
+        MathsFlash.monte(boiteFl, {
+          profil: MathsProfils.courant(),
+          surFin: function () { location.hash = 'accueil'; }
+        });
+        window.scrollTo(0, 0);
+        return;
       }
       if (h === 'revision') {
         var codes = MathsProgression.aReviser(MathsProfils.courant(), 3);

@@ -1669,6 +1669,73 @@ body {
 .exo-tab th { background: #f8fafc; font-weight: 800; font-size: .9rem; color: var(--doux); }
 .exo-tab td { font-weight: 600; }
 
+/* ---------- Flash : les fondamentaux chronométrés ---------- */
+/* Volontairement à part du reste des exercices : cet écran ne doit pas
+   ressembler à une série ordinaire. Une seule chose à l'écran, très grande, et
+   rien qui distraie — on mesure une latence de rappel. */
+.fl-appel {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 1rem;
+  justify-content: space-between; margin: 1rem 0;
+  padding: .9rem 1.1rem; border-radius: var(--radius);
+  border: 1px solid #fde68a; background: #fffbeb;
+}
+.fl-appel-txt b { display: block; font-size: 1.05rem; }
+.fl-appel-txt span { font-size: .92rem; color: var(--doux); }
+.fl-appel-btn { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+.fl-jauges {
+  margin-top: .6rem; padding: .9rem 1.1rem; border: 1px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+.fl-ligne {
+  display: grid; grid-template-columns: minmax(8rem, 1fr) 2fr auto;
+  align-items: center; gap: .8rem; margin: .45rem 0;
+}
+.fl-nom { font-weight: 700; font-size: .95rem; }
+.fl-val { font-size: .85rem; color: var(--doux); white-space: nowrap; }
+.fl-relancer { margin-top: .7rem; }
+.fl-barre {
+  height: 9px; border-radius: 999px; background: #e2e8f0; overflow: hidden;
+}
+.fl-jauge {
+  height: 100%; width: 0; border-radius: 999px; background: #f59e0b;
+  transition: width .25s ease;
+}
+.fl-compteur { margin-top: .7rem; font-size: .9rem; color: var(--doux); }
+.fl-carte {
+  margin-top: .6rem; padding: 2rem 1.2rem; border-radius: var(--radius);
+  border: 2px solid var(--border); background: #fff; text-align: center;
+  transition: border-color .15s ease, background .15s ease;
+}
+.fl-carte.juste { border-color: #86efac; background: #f0fdf4; }
+.fl-carte.faux { border-color: #fca5a5; background: #fef2f2; }
+/* Le calcul doit se lire d'un coup d'œil : c'est le temps de LECTURE qui
+   s'ajouterait sinon à la latence qu'on prétend mesurer. */
+.fl-calcul {
+  font-size: clamp(2.2rem, 9vw, 3.4rem); font-weight: 800; letter-spacing: .02em;
+  font-variant-numeric: tabular-nums; margin-bottom: 1rem;
+}
+.fl-champ {
+  font: inherit; font-size: 2rem; font-weight: 800; text-align: center;
+  width: 5.5em; padding: .3rem .5rem; border-radius: var(--radius);
+  border: 2px solid var(--border); background: #fff;
+}
+.fl-champ:focus { outline: none; border-color: #f59e0b; }
+.fl-aide { margin-top: .7rem; font-size: .85rem; color: var(--doux); }
+.fl-verdict { margin-top: .9rem; font-size: 1.05rem; }
+.fl-pts { color: #f59e0b; letter-spacing: .15em; }
+.fl-ms { color: var(--doux); font-size: .9rem; }
+.fl-score { font-size: 2.6rem; font-weight: 800; }
+.fl-score span { font-size: 1.1rem; font-weight: 600; color: var(--doux); }
+.fl-bilan { margin-top: .3rem; color: var(--doux); }
+.fl-revoir {
+  margin: 1rem auto 1.2rem; max-width: 22rem; padding: .7rem .9rem;
+  border-radius: var(--radius); background: #f8fafc; text-align: left;
+}
+.fl-revoir-titre { font-size: .85rem; color: var(--doux); margin-bottom: .3rem; }
+.fl-revoir-l { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.fl-revoir-l span { color: var(--doux); font-size: .85rem; }
+
 /* ---------- Proportionnalité : tableau et graphique (5ème) ---------- */
 .prg-panneau {
   margin-top: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--border);

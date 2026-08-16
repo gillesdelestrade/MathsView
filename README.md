@@ -19,6 +19,14 @@ Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 État actuel : **58 leçons**, **55 générateurs d'exercices** couvrant 55 compétences,
 dont **56 leçons mènent directement à un entraînement**.
 
+Deux compétences échappent à ce régime : les **tables de multiplication** et les
+**additions jusqu'à 20**. Elles ne se comprennent pas, elles s'automatisent — et
+`js/flash.js` leur réserve une séance chronométrée de 20 questions, proposée
+d'office tous les deux jours. Le chronomètre s'y arrête à la **première frappe**,
+pas à la validation : c'est la latence de rappel qu'on veut voir descendre, pas
+la vitesse de frappe. Les points de rapidité alimentent une jauge d'automatisme
+qui leur est propre et ne touchent ni la maîtrise, ni les ceintures.
+
 ## Vérifier
 
 ```sh
