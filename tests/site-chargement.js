@@ -125,6 +125,31 @@ fichiers.forEach(function (f) {
   });
 });
 
+/* ------------------------------------------------------------------ */
+/* Le script EN LIGNE des pages : `global` n'y existe pas               */
+/* ------------------------------------------------------------------ */
+/* Les modules de js/ sont des IIFE qui reçoivent l'objet global sous le nom
+   `global`, et on prend vite l'habitude d'écrire `global.MachinTruc` pour
+   tester la présence d'un module. Dans le script en ligne d'une page HTML, ce
+   nom n'est lié à rien : la garde censée protéger d'un module absent lève
+   elle-même une ReferenceError, et la page entière meurt. Rien ne l'exécute
+   ici — on le relit donc. */
+['exercices.html', 'index.html', 'admin.html'].forEach(function (page) {
+  var src;
+  try { src = readFile(page); } catch (x) { return; }
+  // seulement les blocs SANS src : ceux-là s'exécutent dans la portée de la page
+  var m, re = /<script>([\s\S]*?)<\/script>/g;
+  while ((m = re.exec(src))) {
+    var lignes = m[1].split('\n');
+    lignes.forEach(function (l, i) {
+      if (/(^|[^.\w])global\s*\./.test(l) && !/^\s*(\/\/|\*)/.test(l))
+        ko(page + ' : « global. » dans le script en ligne (ligne ' + (i + 1) +
+           ' du bloc) — ce nom n\'y est lié à rien, la page lèvera une ' +
+           'ReferenceError. Il faut « window. ».');
+    });
+  }
+});
+
 print(charges + ' fichiers exécutés, ' + enregistres.length + ' générateurs enregistrés, ' +
       lecons.length + ' leçons chargées, ' + MathsExos.catalogue.length +
       ' compétences au catalogue');

@@ -34,7 +34,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 
 | | |
 |---|---|
-| `site-chargement` | La page charge-t-elle vraiment tous ses générateurs ? Les `<script>` de `exercices.html` sont rejoués **dans l'ordre** : un fichier placé avant le module dont il dépend lève une `ReferenceError` silencieuse, le générateur ne s'enregistre jamais, et le bouton « S'entraîner » de la leçon retombe sur l'accueil sans message. Vérifie aussi que chaque compétence du catalogue a son générateur et que chaque lien de leçon tombe juste. |
+| `site-chargement` | La page charge-t-elle vraiment tous ses générateurs ? Les `<script>` de `exercices.html` sont rejoués **dans l'ordre** : un fichier placé avant le module dont il dépend lève une `ReferenceError` silencieuse, le générateur ne s'enregistre jamais, et le bouton « S'entraîner » de la leçon retombe sur l'accueil sans message. Vérifie aussi que chaque compétence du catalogue a son générateur, que chaque lien de leçon tombe juste, et qu'aucun script **en ligne** d'une page HTML n'écrit `global.` — ce nom n'y est lié à rien, et la garde censée protéger d'un module absent lèverait elle-même une `ReferenceError` qui tuerait la page. |
 | `site-jardin` | Le jardin et la révision : une compétence d'un niveau supérieur n'apparaît jamais, mais ce qui a déjà été travaillé reste visible. |
 | `site-tableau-de-bord` | L'espace parent : autant de colonnes dans l'en-tête que dans chaque ligne, et les totaux affichés sont ceux du niveau du profil. |
 | `site-bandeau-profil` | Le bandeau de profil sur toutes les pages, et son menu. |

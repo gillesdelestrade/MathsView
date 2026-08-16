@@ -56,8 +56,12 @@ echo
 # Le chargement d'abord : si la page n'enregistre pas ses générateurs, tout le
 # reste ne dit plus grand-chose.
 VUS=" "
+# `tests/*.js` ferme la marche : un contrôle dont le nom ne colle à aucun motif
+# ne serait jamais lancé, et un contrôle qui ne tourne pas est pire que pas de
+# contrôle du tout — il donne l'illusion d'une vérification. Les motifs qui
+# précèdent ne servent donc plus qu'à fixer l'ORDRE de passage.
 for f in tests/site-chargement.js tests/site-*.js tests/python-*.js \
-         tests/lecon-*.js tests/exos-*.js; do
+         tests/lecon-*.js tests/exos-*.js tests/*.js; do
   [ -f "$f" ] || continue
   nom=$(basename "$f" .js)
   # les fichiers « -decor » et « -pont » sont des accessoires, pas des contrôles
