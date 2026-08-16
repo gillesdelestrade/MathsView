@@ -94,6 +94,9 @@
     if (ms < SEUILS[1]) return POINTS[1];
     return POINTS[2];
   }
+  function secondes(ms) {
+    return (Math.round(ms / 100) / 10).toString().replace('.', ',') + ' s';
+  }
   function mot(p) {
     return p === 3 ? 'tu la sais' : p === 2 ? 'tu la retrouves'
          : p === 1 ? 'tu la calcules' : '';
@@ -315,19 +318,23 @@
       if (verrou) return;
       verrou = true;
       if (!latence) latence = t0 ? Date.now() - t0 : SEUILS[1] + 1;
-      var saisie = String(champ.value).trim().replace(',', '.');
+      // on garde la saisie TELLE QU'ELLE A ÉTÉ TAPÉE pour le récapitulatif : une
+      // élève doit pouvoir y relire son erreur, pas une version normalisée
+      var brut = String(champ.value).trim();
+      var saisie = brut.replace(',', '.');
       var ok = saisie !== '' && Math.abs(parseFloat(saisie) - f.reponse) < 1e-9;
       var p = enregistre(id, f, ok, latence);
       pts += p;
       if (ok) justes++;
-      detail.push({ texte: f.texte, reponse: f.reponse, ok: ok, ms: latence, p: p });
+      detail.push({ texte: f.texte, reponse: f.reponse, saisie: brut, ok: ok,
+                    ms: latence, p: p });
 
       carte.className = 'fl-carte ' + (ok ? 'juste' : 'faux');
       var verdict = el('div', 'fl-verdict');
       verdict.innerHTML = ok
         ? '<span class="fl-pts">' + '●'.repeat(p) + '</span> <b>' + p + ' point' +
           (p > 1 ? 's' : '') + '</b> — ' + mot(p) +
-          ' <span class="fl-ms">(' + (Math.round(latence / 100) / 10) + ' s)</span>'
+          ' <span class="fl-ms">(' + secondes(latence) + ')</span>'
         : '<b>' + f.texte + ' = ' + f.reponse + '</b>';
       carte.appendChild(verdict);
       champ.disabled = true;
@@ -364,13 +371,31 @@
           '<div class="fl-revoir-titre">À revoir</div>' +
           revoir.map(function (d) {
             return '<div class="fl-revoir-l"><b>' + d.texte + ' = ' + d.reponse + '</b>' +
-                   (d.ok ? ' <span>(' + (Math.round(d.ms / 100) / 10) + ' s)</span>' : '') +
+                   (d.ok ? ' <span>(' + secondes(d.ms) + ')</span>' : '') +
                    '</div>';
           }).join('')));
       } else {
         carte.appendChild(el('div', 'fl-revoir',
           '<div class="fl-revoir-titre">Rien à revoir — tout était su.</div>'));
       }
+
+      /* Le récapitulatif complet : une ligne par question, dans l'ordre où elles
+         ont été posées. C'est ce qu'on regarde à deux, après coup — d'où la
+         colonne « ta réponse », qui montre l'erreur telle qu'elle a été tapée,
+         et la colonne du temps, qui explique le nombre de points. */
+      var recap = '<table class="fl-recap"><thead><tr>' +
+        '<th>Question</th><th>Réponse</th><th>Ta réponse</th><th>Temps</th>' +
+        '</tr></thead><tbody>' +
+        detail.map(function (d) {
+          return '<tr class="' + (d.ok ? 'juste' : 'faux') + '">' +
+            '<td class="q">' + d.texte + '</td>' +
+            '<td class="r">' + d.reponse + '</td>' +
+            '<td class="s">' + (d.saisie === '' ? '—' : d.saisie) +
+              (d.ok ? '' : ' ✘') + '</td>' +
+            '<td class="t">' + secondes(d.ms) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      carte.appendChild(el('div', 'fl-recap-boite',
+        '<div class="fl-recap-titre">Le détail de la séance</div>' + recap));
 
       var b = el('button', 'exo-btn primaire', 'Terminer');
       b.onclick = function () { if (opts.surFin) opts.surFin(bilan); };

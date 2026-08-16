@@ -1736,6 +1736,27 @@ body {
 .fl-revoir-l { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 .fl-revoir-l span { color: var(--doux); font-size: .85rem; }
 
+/* Le détail de la séance : on le relit à deux, après coup. Aligné à gauche et
+   en chiffres tabulaires — une colonne de temps qui danse ne se compare pas. */
+.fl-recap-boite { margin: 1rem auto 1.2rem; max-width: 26rem; text-align: left; }
+.fl-recap-titre { font-size: .85rem; color: var(--doux); margin-bottom: .35rem; }
+.fl-recap {
+  width: 100%; border-collapse: collapse; font-size: .95rem;
+  font-variant-numeric: tabular-nums;
+}
+.fl-recap th {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .03em;
+  color: var(--doux); font-weight: 700; text-align: right; padding: .2rem .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.fl-recap th:first-child { text-align: left; }
+.fl-recap td { padding: .22rem .5rem; text-align: right; }
+.fl-recap td.q { text-align: left; font-weight: 700; }
+.fl-recap tr.juste td { color: var(--texte); }
+.fl-recap tr.faux { background: #fef2f2; }
+.fl-recap tr.faux td.s { color: #b91c1c; font-weight: 700; }
+.fl-recap td.t { color: var(--doux); }
+
 /* ---------- Proportionnalité : tableau et graphique (5ème) ---------- */
 .prg-panneau {
   margin-top: 1rem; padding: .9rem 1.1rem; border: 1px solid var(--border);
