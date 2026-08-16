@@ -55,6 +55,7 @@ MathsView.register({
   level: '5eme',
   category: 'donnees',
   subcategory: 'Probabilités',
+  exercices: ['probabilites-vocabulaire'],
   theme: 'Probabilités — aborder le hasard et son vocabulaire sur des exemples concrets',
   description:
     'Une <strong>expérience aléatoire</strong>, c\'est une action dont on ne peut pas ' +
