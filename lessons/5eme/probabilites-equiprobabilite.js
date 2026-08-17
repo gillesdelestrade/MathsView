@@ -70,6 +70,7 @@ MathsView.register({
   level: '5eme',
   category: 'donnees',
   subcategory: 'Probabilités',
+  exercices: ['probabilites-equiprobabilite'],
   theme: 'Probabilités — d\'où viennent 1/6, 1/2, 1/8 : partager la certitude en parts égales',
   description:
     'À chaque lancer, il sort une issue et <strong>une seule</strong> : « il sort quelque ' +

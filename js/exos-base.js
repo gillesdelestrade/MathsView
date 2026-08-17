@@ -567,6 +567,17 @@
     typeset(retour);
   }
 
+  /* Une réponse attendue fractionnaire s'écrit { n, d } — c'est la forme que
+     `MathsReponse` compare (SPEC §2.4), et sans cela elle s'afficherait
+     « [object Object] » à l'élève comme au parent. */
+  function reponseTxt(q) {
+    var r = [].concat(q.reponse)[0];
+    if (r && typeof r === 'object' && r.d !== undefined) {
+      return r.d === 1 ? String(r.n) : r.n + '/' + r.d;
+    }
+    return r;
+  }
+
   // Ce qu'il fallait répondre, écrit selon le type.
   function bonneReponse(q) {
     var txt;
@@ -576,7 +587,7 @@
     else if (q.type === 'qcm') txt = q.choix[q.correct];
     else if (q.type === 'vraifaux') txt = q.correct === 0 ? 'Vrai' : 'Faux';
     else if (q.type === 'jsx') txt = q.solutionTxt || '';
-    else txt = [].concat(q.reponse)[0];
+    else txt = reponseTxt(q);
     return el('div', 'exo-reponse',
       txt === '' ? '' : 'Réponse attendue : <b>' + txt + '</b>' +
       (q.unite ? ' ' + q.unite : ''));
@@ -781,7 +792,7 @@
         return String(v).replace('-', '−').replace('.', ',');
       }).join(' ; ') + ')';
     }
-    return String([].concat(q.reponse)[0]);
+    return String(reponseTxt(q));
   }
 
   /* ===================================================================== */
