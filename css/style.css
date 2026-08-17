@@ -1937,3 +1937,119 @@ body {
 .pro-comp-lab { font-size: .9rem; color: var(--doux); }
 .pro-comp-val { font-size: 1.3rem; font-weight: 800; }
 .pro-comp-dit { margin: .8rem 0 0; font-size: .95rem; line-height: 1.55; }
+
+/* ---------- Probabilités : l'équiprobabilité (5ème) ---------- */
+.eqp-bloc { margin-top: 1rem; }
+.eqp-choix { display: flex; flex-wrap: wrap; gap: .5rem; }
+.eqp-choix button {
+  font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer;
+  padding: .45rem .85rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--ink);
+}
+.eqp-choix button:hover { border-color: #7c3aed; }
+.eqp-choix button.active { background: #7c3aed; border-color: #7c3aed; color: #fff; }
+.eqp-dit { margin-top: .8rem; line-height: 1.6; }
+
+.eqp-lot-boite:not(:empty), .eqp-barre-boite:not(:empty),
+.eqp-freq:not(:empty), .eqp-faux:not(:empty) {
+  margin-top: .9rem; padding: .9rem 1.1rem;
+  border: 1px solid var(--border); border-radius: var(--radius); background: #fff;
+}
+.eqp-titre { font-size: .85rem; color: var(--ink-soft); margin-bottom: .5rem; }
+.eqp-compte { margin-top: .6rem; font-size: .92rem; color: var(--ink-soft); }
+
+/* Les issues, et sous chacune la part de certitude qui lui revient. */
+.eqp-lot { display: flex; flex-wrap: wrap; gap: .5rem; }
+.eqp-issue {
+  display: flex; flex-direction: column; align-items: center; gap: .25rem;
+  padding: .3rem .35rem; border: 2px solid var(--border);
+  border-radius: var(--radius); background: #fff;
+}
+.eqp-issue.dedans { border-color: #7c3aed; background: #f5f3ff; }
+.eqp-proba { font-size: .8rem; font-weight: 700; color: #4c1d95; }
+.eqp-nb { font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* La barre : la certitude d'abord entière, puis coupée en parts égales.
+   Les coupes tombent une à une — c'est le partage lui-même qu'on veut voir se
+   faire, pas son résultat déjà écrit. */
+.eqp-barre { display: flex; align-items: flex-start; }
+.eqp-groupe { display: flex; flex-direction: column; min-width: 0; }
+.eqp-cells { display: flex; height: 2.8rem; }
+.eqp-cell { flex: 1; background: #ddd6fe; border-left: 2px solid transparent; }
+.eqp-cell.ouverte { border-left-color: #fff; }
+/* la toute première cellule n'a rien à sa gauche : pas de trait de coupe */
+.eqp-barre > .eqp-groupe:first-child > .eqp-cells > .eqp-cell:first-child {
+  border-left-color: transparent;
+}
+.eqp-barre > .eqp-groupe:first-child > .eqp-cells { border-radius: 8px 0 0 8px; }
+.eqp-barre > .eqp-groupe:last-child > .eqp-cells { border-radius: 0 8px 8px 0; }
+.eqp-groupe.dedans .eqp-cell { background: #7c3aed; }
+/* le regroupement des parts élémentaires (les 36 couples, par somme) */
+.eqp-groupe.groupee + .eqp-groupe.groupee > .eqp-cells { border-left: 3px solid #0f172a; }
+.eqp-part-lab {
+  padding-top: .3rem; font-size: .74rem; font-weight: 700; text-align: center;
+  color: #4c1d95; overflow: hidden;
+}
+.eqp-un {
+  flex: 1; height: 2.8rem; display: flex; align-items: center; justify-content: center;
+  background: #ddd6fe; border-radius: 8px; font-weight: 800; color: #4c1d95;
+}
+
+/* Le partage qu'on aimerait faire, et qui est faux : montré, puis barré. */
+.eqp-faux:not(:empty) { border-color: #fecaca; background: #fff7f7; }
+.eqp-faux-titre { font-size: .95rem; color: #b91c1c; margin-bottom: .5rem; }
+.eqp-barre.fausse .eqp-cell { background: #fecaca; }
+.eqp-faux-non { margin-top: .6rem; font-size: .95rem; line-height: 1.55; }
+
+/* Les calculs */
+.eqp-calc:not(:empty) { margin-top: .9rem; }
+.eqp-ligne { font-size: 1.02rem; line-height: 1.9; }
+.eqp-ligne.forte { font-weight: 700; font-size: 1.14rem; }
+.eqp-evt {
+  margin-top: .8rem; padding: .8rem 1rem;
+  border: 1px solid #ddd6fe; border-radius: var(--radius); background: #faf5ff;
+}
+.eqp-evt-nom { font-size: 1.05rem; }
+.eqp-regle {
+  margin-top: .9rem; padding: .9rem 1.1rem;
+  border: 1px solid #fed7aa; border-radius: var(--radius); background: #fffbeb;
+}
+.eqp-regle-f { font-size: 1.1rem; font-weight: 800; }
+.eqp-regle-c { margin-top: .5rem; font-size: .95rem; line-height: 1.55; color: #475569; }
+
+.eqp-tab { border-collapse: collapse; margin-top: .7rem; font-size: .93rem; }
+.eqp-tab th, .eqp-tab td {
+  border: 1px solid var(--border); padding: .22rem .6rem; text-align: center;
+}
+.eqp-tab th { background: #f8fafc; font-weight: 800; color: var(--ink-soft); }
+.eqp-menu { font-size: .85rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.eqp-total td { background: #f5f3ff; font-weight: 700; }
+
+/* Les fréquences, confrontées à la probabilité annoncée (trait pointillé). */
+.eqp-barres { display: flex; gap: .35rem; align-items: flex-end; }
+.eqp-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: .25rem; }
+.eqp-obs { font-size: .75rem; font-weight: 700; }
+.eqp-theo { font-size: .73rem; font-weight: 700; color: #7c3aed; }
+.eqp-tige {
+  position: relative; width: 100%; max-width: 2.6rem; height: 6rem;
+  display: flex; align-items: flex-end; background: #f1f5f9; border-radius: 4px;
+}
+.eqp-rempli { width: 100%; background: #a78bfa; border-radius: 4px 4px 0 0; }
+.eqp-theo-trait { position: absolute; left: -3px; right: -3px; border-top: 2px dashed #7c3aed; }
+.eqp-note { margin-top: .7rem; font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
+
+/* Une fraction, écrite comme au tableau : numérateur, barre, dénominateur. */
+.eqp-frac {
+  display: inline-flex; flex-direction: column; align-items: center;
+  vertical-align: middle; line-height: 1.15; margin: 0 .18em;
+  font-variant-numeric: tabular-nums;
+}
+.eqp-frac .eqp-h { padding: 0 .3em; }
+.eqp-frac .eqp-b { padding: 0 .3em; border-top: 2px solid currentColor; }
+
+.eqp-etapes { margin-top: .6rem; }
+.eqp-dit-p {
+  margin: .5rem 0; padding: .55rem .8rem; border-left: 3px solid #7c3aed;
+  background: #f5f3ff; border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: .97rem; line-height: 1.6;
+}
