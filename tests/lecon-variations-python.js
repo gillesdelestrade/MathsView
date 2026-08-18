@@ -1,7 +1,7 @@
 /* La leçon « Variations », côté Python.
  *
  * Ce qu'on vérifie n'est pas que le bloc s'affiche, mais qu'il DIT VRAI : pour
- * chacune des neuf fonctions, on exécute le script généré, on lit la colonne de
+ * chacune des fonctions du pool, on exécute le script généré, on lit la colonne de
  * droite, on regarde où elle se retourne réellement — et on compare à la phrase
  * que la leçon écrit sous la console. Une phrase qui annoncerait un minimum là
  * où les nombres n'en montrent pas serait pire que pas de phrase du tout.

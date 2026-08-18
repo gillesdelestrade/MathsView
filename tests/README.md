@@ -66,7 +66,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `lecon-proportions` | Le pourcentage, la fraction simplifiée, l'écriture décimale et le complément sont recalculés indépendamment, pour les quatre situations et toutes les valeurs de la partie. Les deux grilles doivent dire la même chose que le calcul : autant de carreaux que le tout, exactement cent pour la seconde. Le passage sur 100 est vérifié pas à pas : la multiplication quand le dénominateur divise 100 (avec le **même** facteur en haut et en bas), le produit en croix sinon — et les deux chemins doivent être empruntés. |
 | `lecon-substitution` | Les six formules sont recalculées indépendamment et confrontées à la dernière ligne affichée ; les valeurs négatives doivent apparaître entre parenthèses, et aucune lettre ne doit survivre à la substitution. |
 | `lecon-somme-relatifs`, `lecon-comparer-fractions`, `lecon-parentheses`, `lecon-puissances`, `lecon-fraction-pourcentage` | L'animation est rejouée entièrement dans un DOM simulé : les calculs affichés sont justes, et le rejeu redonne le même écran. Chacun vérifie aussi le bouton **◀ Précédent** — il remet à zéro puis rejoue, et l'écran doit se reconstruire à l'identique. |
-| `lecon-variations-python` | La phrase écrite sous la console décrit ce que les nombres montrent vraiment, pour les neuf fonctions du pool. |
+| `lecon-variations-python` | La phrase écrite sous la console décrit ce que les nombres montrent vraiment, pour toutes les fonctions du pool. |
 
 ## Les exercices
 

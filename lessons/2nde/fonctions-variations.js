@@ -209,9 +209,20 @@ MathsView.register({
       })(b);
     }
 
+    /* Combien de morceaux, et combien de sommets, au plus ? On le DEMANDE au
+       pool plutôt que de l'y lire : sur [−5 ; 5], la parabole n'a qu'une flèche
+       et un sommet, la cubique trois et deux, le sinus cinq et quatre. Les
+       compter ici, c'est n'avoir toujours rien à changer dans cette leçon quand
+       une fonction s'ajoute au pool. */
+    var MAXA = 1, MAXS = 0;
+    FN.forEach(function (f) {
+      var v = POOL.variations(f, POOL.defauts(f), X1, X2);
+      MAXA = Math.max(MAXA, v.arcs.length);
+      MAXS = Math.max(MAXS, v.cols.filter(function (c) { return c.sommet; }).length);
+    });
+
     /* Le surlignage : un trait épais à la couleur du SENS sur chaque morceau,
        qui s'allonge en même temps que la flèche correspondante du tableau. */
-    var MAXA = 4;
     var surlignes = [];
     for (var a = 0; a < MAXA; a++) {
       (function (i) {
@@ -257,7 +268,6 @@ MathsView.register({
          visible: false, layer: 13 });
 
     /* Les changements de sens : le point du sommet, son trait, son étiquette */
-    var MAXS = 3;
     var somPts = [], somTraits = [], somLabs = [];
     for (var s = 0; s < MAXS; s++) {
       (function (i) {

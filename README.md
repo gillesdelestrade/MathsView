@@ -121,12 +121,12 @@ Les leçons existantes suivent quelques principes, visibles dans leur en-tête d
 
 Les leçons « Fonctions » n'écrivent pas leurs formules : elles piochent dans
 `js/fonctions-base.js` (identité, `−x`, `ax + b`, `|x|`, `x²`, `x³`, `√x`, `1/x`,
-`x³ − 3x`). **Ajouter une fonction là-bas la fait apparaître dans toutes les leçons ET
+`x³ − 3x`, `cos x`, `sin x`). **Ajouter une fonction là-bas la fait apparaître dans toutes les leçons ET
 dans les quatre générateurs d'exercices**, sans toucher à rien d'autre.
 
 ```js
 var POOL = MathsView.fonctions;
-POOL.liste();                     // les 9 fonctions, dans l'ordre pédagogique
+POOL.liste();                     // les 11 fonctions, dans l'ordre pédagogique
 POOL.valeur(f, 3, p);             // f(3)
 POOL.defini(f, -2, p);            // −2 a-t-il une image ?
 POOL.branches(f, -5, 5);          // les morceaux traçables (1/x : deux branches)
@@ -146,9 +146,10 @@ Le principe : **une fonction ne déclare que le strict minimum, le pool déduit 
 | `oppose(p)` — l'écriture de `f(−x)` | le calcul montré à l'élève ; le **verdict** de parité, lui, est constaté numériquement |
 | `defini`, `xmin`/`xmax`, `trous` | l'ensemble de définition, et les branches à tracer séparément |
 
-Une fonction qui ne sait pas résoudre (`x³ − 3x`, qui demanderait Cardan) omet
-simplement `antec` : `solutions()` renvoie `null` et les leçons se rabattent sur la
-**lecture graphique** — ce qui est la bonne pédagogie à ce niveau.
+Une fonction qui ne sait pas résoudre (`x³ − 3x`, qui demanderait Cardan ; `cos x` et
+`sin x`, dont les solutions se répètent à l'infini) omet simplement `antec` :
+`solutions()` renvoie `null` et les leçons se rabattent sur la **lecture graphique** —
+ce qui est la bonne pédagogie à ce niveau.
 
 Le format complet est documenté en tête de `js/fonctions-base.js`.
 

@@ -156,6 +156,35 @@
     return k < 0 ? '−∛' + nb(-k) : '∛' + nb(k);
   }
 
+  /* Les multiples de π écrits comme au tableau : « 0 », « π », « −2π », « 3π/2 ».
+     C'est là — et jamais sur un décimal — que les courbes du cosinus et du sinus
+     se retournent : 1,57 ne serait qu'un arrondi de π/2. */
+  function piTxt(num, den) {
+    if (num === 0) return '0';
+    var s = num < 0 ? '−' : '', n = Math.abs(num);
+    return s + (n === 1 ? 'π' : nb(n) + 'π') + (den === 1 ? '' : '/' + nb(den));
+  }
+
+  /* Les abscisses où le cosinus (den = 1 : les kπ) et le sinus (den = 2 : les
+     π/2 + kπ) changent de sens. Elles se répètent sans fin, alors que sommets()
+     doit rendre une liste : on en donne assez pour couvrir largement toute
+     fenêtre d'étude, variations() ne gardant que celles qui y tombent. */
+  function sommetsTrig(den) {
+    var out = [];
+    for (var k = -6; k <= 6; k++) {
+      var num = den === 1 ? k : 2 * k + 1;
+      out.push({ v: num * Math.PI / den, txt: piTxt(num, den) });
+    }
+    return out;
+  }
+
+  /* Le calcul d'un cosinus ou d'un sinus : on écrit l'appel, puis sa valeur —
+     exacte quand elle tombe juste (cos(0) = 1), approchée sinon, car cos(3) ne
+     s'écrit pas autrement que cos(3). */
+  function calculTrig(nom, x, v) {
+    return [nom + '(' + nb(x) + ')', exact(v) ? nb(v) : '≈ ' + nb(v)];
+  }
+
   function borneTxt(v) {
     return v === -Infinity ? '−∞' : v === Infinity ? '+∞' : nb(v);
   }
@@ -671,6 +700,58 @@
                 '(f(1) = −2) — des extremums LOCAUX seulement, puisqu\'elle finit ' +
                 'par dépasser 2 et descendre sous −2. Ses solutions se lisent sur ' +
                 'le graphique : on ne sait pas les calculer au lycée.'
+    },
+    {
+      key: 'cosinus',
+      nom: 'La fonction cosinus',
+      court: 'cos x',
+      couleur: '#4338ca',
+      expr: function () { return 'cos(x)'; },
+      tex:  function () { return '\\cos(x)'; },
+      py:   function () { return 'cos(x)'; },
+      pyImports: ['from math import cos'],
+      f:    function (x) { return Math.cos(x); },
+      ensemble: 'ℝ',
+      courbe: 'une sinusoïde, qui ondule sans fin entre −1 et 1',
+      calcul: function (x) { return calculTrig('cos', x, Math.cos(x)); },
+      /* x et −x repèrent deux points du cercle symétriques par rapport à l'axe
+         des abscisses : ils ont la même abscisse, donc le même cosinus. */
+      oppose: function () { return ['cos(−x)', 'cos(x)']; },
+      sommets: function () { return sommetsTrig(1); },
+      /* Pas d'antec(), et ce n'est pas un oubli : cos(x) = k a une INFINITÉ de
+         solutions, qui se répètent de 2π en 2π, alors que solutions() ne sait
+         écrire qu'une réunion FINIE d'intervalles. Comme pour x³ − 3x, les
+         leçons se rabattent donc sur la lecture graphique. */
+      remarque: 'cos(x) est l\'abscisse du point du cercle trigonométrique associé au ' +
+                'nombre x : elle ne sort jamais de [−1 ; 1]. Faire un tour complet ramène ' +
+                'au même point, d\'où une courbe qui recopie le même motif tous les 2π. ' +
+                'Et comme x et −x donnent deux points symétriques par rapport à l\'axe ' +
+                'des abscisses, la fonction est <b>paire</b>. Attention : x se compte ici ' +
+                'en <b>radians</b>, pas en degrés.'
+    },
+    {
+      key: 'sinus',
+      nom: 'La fonction sinus',
+      court: 'sin x',
+      couleur: '#4d7c0f',
+      expr: function () { return 'sin(x)'; },
+      tex:  function () { return '\\sin(x)'; },
+      py:   function () { return 'sin(x)'; },
+      pyImports: ['from math import sin'],
+      f:    function (x) { return Math.sin(x); },
+      ensemble: 'ℝ',
+      courbe: 'une sinusoïde, la même que celle du cosinus mais glissée de π/2 ' +
+              'vers la droite',
+      calcul: function (x) { return calculTrig('sin', x, Math.sin(x)); },
+      // Les deux mêmes points symétriques ont, eux, des ordonnées OPPOSÉES.
+      oppose: function () { return ['sin(−x)', '−sin(x)']; },
+      sommets: function () { return sommetsTrig(2); },
+      // Pas d'antec() non plus, et pour la même raison que le cosinus.
+      remarque: 'sin(x) est l\'ordonnée du point du cercle trigonométrique associé au ' +
+                'nombre x : elle reste elle aussi entre −1 et 1, et se répète tous les ' +
+                '2π. Les ordonnées de deux points symétriques par rapport à l\'axe des ' +
+                'abscisses sont opposées : la fonction est <b>impaire</b>. Sa courbe est ' +
+                'celle du cosinus glissée de π/2 vers la droite.'
     }
   ];
 
