@@ -96,6 +96,12 @@
   font-size: .75rem; color: var(--ink-soft); text-transform: uppercase;
   letter-spacing: .03em;
 }
+/* Le badge de niveau porte sa propre casse et sa propre graisse : la tête
+   d'erreur est en petites capitales, il ne doit pas la suivre. */
+.adm-erreur-tete .badge {
+  text-transform: none; letter-spacing: 0; font-size: .68rem;
+  padding: .1rem .4rem; vertical-align: baseline;
+}
 .adm-erreur-enonce { margin: .2rem 0; }
 .adm-erreur-rep { font-size: .9rem; }
 .adm-erreur-rep b.ko { color: #b91c1c; }

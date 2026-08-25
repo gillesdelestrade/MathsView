@@ -402,9 +402,13 @@
         var enonce = q
           ? q.enonce + (q.tex ? ' \\(' + q.tex + '\\)' : '')
           : '<i>énoncé non rejouable (le générateur « ' + esc(e.gen) + ' » a changé)</i>';
+        // Une compétence inconnue du catalogue revient avec un niveau vide :
+        // badgeNiveau() rend alors un tiret, et la ligne tient quand même.
+        var comp = MathsExos.competence(e.comp);
         d.innerHTML =
           '<div class="adm-erreur-tete">' + jour(e.t) + ' · ' +
-            esc(MathsExos.competence(e.comp).libelle) + ' · palier ' + e.palier +
+            badgeNiveau(comp.niveau) + ' ' +
+            esc(comp.libelle) + ' · palier ' + e.palier +
             (e.indices ? ' · ' + e.indices + ' indice(s)' : '') + '</div>' +
           '<div class="adm-erreur-enonce">' + enonce + '</div>' +
           '<div class="adm-erreur-rep">Réponse donnée : <b class="ko">' +
