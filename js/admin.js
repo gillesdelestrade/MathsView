@@ -50,6 +50,26 @@
     var m = Math.round(s / 60);
     return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + ('0' + (m % 60)).slice(-2);
   }
+  /* Les niveaux scolaires : libellé lisible et suffixe de classe du badge
+     (.badge.n6 … .badge.nt, définis dans css/style.css). Mêmes clés et même
+     ordre que LEVELS dans js/app.js et NIVEAUX dans js/progression.js. */
+  var NIVEAUX = {
+    '6eme':      { label: '6ème',      badge: 'n6' },
+    '5eme':      { label: '5ème',      badge: 'n5' },
+    '4eme':      { label: '4ème',      badge: 'n4' },
+    '3eme':      { label: '3ème',      badge: 'n3' },
+    '2nde':      { label: '2nde',      badge: 'n2' },
+    '1ere':      { label: '1ère',      badge: 'n1' },
+    'terminale': { label: 'Terminale', badge: 'nt' }
+  };
+  // Un niveau inconnu — compétence sans niveau, clé jamais vue — ne doit pas
+  // faire disparaître la ligne : on rend un tiret plutôt qu'un badge vide.
+  function badgeNiveau(k) {
+    var n = NIVEAUX[k];
+    if (!n) return '<i class="adm-note">—</i>';
+    return '<span class="badge ' + n.badge + '">' + n.label + '</span>';
+  }
+
   function typeset(n) {
     if (global.MathJax && global.MathJax.typesetPromise) {
       global.MathJax.typesetPromise(n ? [n] : undefined)['catch'](function () {});
@@ -285,15 +305,16 @@
       'Le jardin de ' + esc(p.prenom) + ' — qui a le plus besoin d\'arrosage'));
     var jardin = MathsProgression.jardin(profilVu)
       .slice().sort(function (a, b) { return b.besoin - a.besoin; });
-    var t2 = el('table', 'adm-table');
-    t2.innerHTML = '<thead><tr><th>Compétence</th><th>Ceinture</th><th>Score</th>' +
-      '<th>Palier</th><th>Réussite</th><th>Dernière fois</th></tr></thead>';
+    var t2 = el('table', 'adm-table adm-jardin');
+    t2.innerHTML = '<thead><tr><th>Compétence</th><th>Niveau</th><th>Ceinture</th>' +
+      '<th>Score</th><th>Palier</th><th>Réussite</th><th>Dernière fois</th></tr></thead>';
     var tb2 = el('tbody');
     jardin.forEach(function (c) {
       var taux = c.tentatives ? Math.round(100 * c.reussites / c.tentatives) : null;
       var tr = el('tr', c.jamais ? 'pale' : (c.besoin > 5 ? 'soif' : ''));
       tr.innerHTML =
         '<td>' + esc(c.libelle) + '</td>' +
+        '<td>' + badgeNiveau(c.niveau) + '</td>' +
         '<td><span class="exo-belt" style="background:' + c.ceinture.couleur +
           ';color:' + c.ceinture.encre + '">' + c.ceinture.nom + '</span>' +
           (c.ceinture.aEntretenir ? ' <i title="à entretenir">•</i>' : '') + '</td>' +
@@ -423,11 +444,10 @@
       prenom.value = p.prenom;
       prenom.maxLength = 20;
       var niveau = el('select', 'exo-select');
-      ['6eme', '5eme', '4eme', '3eme', '2nde', '1ere', 'terminale'].forEach(function (k) {
+      Object.keys(NIVEAUX).forEach(function (k) {
         var o = document.createElement('option');
         o.value = k;
-        o.textContent = { '6eme': '6ème', '5eme': '5ème', '4eme': '4ème', '3eme': '3ème',
-                          '2nde': '2nde', '1ere': '1ère', 'terminale': 'Terminale' }[k];
+        o.textContent = NIVEAUX[k].label;
         if (k === p.niveau) o.selected = true;
         niveau.appendChild(o);
       });

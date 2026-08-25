@@ -120,7 +120,13 @@
 
 @media (max-width: 620px) {
   .adm-table { font-size: .8rem; }
+  /* Sur petit écran on sacrifie la colonne « Réussite ». Elle est en 5e
+     position dans le tableau comparatif, en 6e dans le jardin — qui a une
+     colonne « Niveau » de plus. */
   .adm-table th:nth-child(5), .adm-table td:nth-child(5) { display: none; }
+  .adm-jardin th:nth-child(5), .adm-jardin td:nth-child(5) { display: table-cell; }
+  .adm-jardin th:nth-child(6), .adm-jardin td:nth-child(6) { display: none; }
+  .adm-jardin .badge { font-size: .62rem; padding: .18rem .4rem; }
   .adm-bloc-nom { flex-basis: 50%; }
 }
 
