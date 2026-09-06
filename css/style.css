@@ -1219,6 +1219,46 @@ body {
   display: inline-block; margin-top: .5rem; padding: .4rem .9rem; border-radius: 8px;
   background: var(--accent-soft); font-size: 1.2rem; font-weight: 800;
 }
+/* ---------- Règles de calcul sur les puissances (2nde) ---------- */
+.pr-ui { max-width: 860px; }
+.pr-ligne {
+  font-size: 1.35rem; margin: .45rem 0; line-height: 1.6; font-variant-numeric: tabular-nums;
+}
+.pr-ligne.pr-titre { font-size: 1.7rem; font-weight: 800; }
+.pr-ligne.pr-deduc { color: var(--ink-soft); font-size: 1.2rem; }
+.pr-ligne.pr-res b { color: #7c3aed; }
+.pr-ligne.pr-verif { font-size: 1rem; color: var(--ink-soft); }
+.pr-ligne.pr-verif b { color: var(--ink); }
+.pr-ligne sup { font-size: .6em; vertical-align: super; }
+.pr-x { color: var(--ink-soft); margin: 0 .2rem; }
+.pr-un { font-weight: 700; }
+.pr-f {
+  display: inline-block; position: relative; padding: 0 .12rem; border-radius: 4px;
+  font-weight: 700;
+}
+.pr-f.g1 { color: #2563eb; }
+.pr-f.g2 { color: #ea580c; }
+.pr-grp.g1 { color: #2563eb; }
+.pr-grp.g2 { color: #ea580c; }
+.pr-f.barre { color: #94a3b8; text-decoration: line-through; text-decoration-color: #dc2626; text-decoration-thickness: 2px; }
+.pr-f.compte { background: var(--accent-soft); color: var(--accent); }
+.pr-f.compte::after {
+  content: attr(data-i); position: absolute; left: 50%; transform: translateX(-50%);
+  bottom: -1.05em; font-size: .55em; font-weight: 700; color: var(--accent);
+}
+.pr-braces { display: flex; gap: 1.2rem; flex-wrap: wrap; margin: .9rem 0 0; font-size: .8rem; font-weight: 700; }
+.pr-braces .g1 { color: #2563eb; }
+.pr-braces .g2 { color: #ea580c; }
+.pr-braces .tout { color: var(--accent); }
+.pr-brace::before { content: '⎵ '; }
+.pr-frac {
+  display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle;
+  margin: 0 .25rem; line-height: 1.3;
+}
+.pr-frac .pr-num { padding: 0 .3rem .05rem; }
+.pr-frac .pr-den { padding: .05rem .3rem 0; border-top: 2px solid currentColor; }
+.pr-ligne .pr-frac .pr-frac { font-size: .9em; }
+
 .pui-table { border-collapse: collapse; margin: .3rem 0; font-variant-numeric: tabular-nums; }
 .pui-table td {
   padding: .18rem .6rem; border: 1px solid var(--border); font-weight: 700; text-align: right;
