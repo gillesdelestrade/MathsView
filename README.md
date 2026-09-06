@@ -286,6 +286,11 @@ compréhension. Les pièces récompensent donc uniquement ce qui est difficile �
 Le coffre est tiré de la **graine de la série**, pas de `Math.random()` : recharger la
 page de fin n'en fait pas réapparaître un.
 
+Une élève peut travailler **en dessous de son niveau** — tous les entraînements restent
+ouverts, et sa maîtrise progresse normalement. Mais l'XP, la ceinture et le boss d'une
+compétence d'un niveau inférieur comptent × 0,6 (un niveau en dessous), × 0,4 (deux),
+× 0,25 (au-delà). Sans cela, le chemin le plus court vers les pièces serait la 6ème.
+
 ### La boutique
 
 Un achat n'est **jamais une transaction** : c'est une **demande**. Les pièces partent en

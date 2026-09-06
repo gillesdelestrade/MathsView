@@ -377,6 +377,12 @@ Mise à jour après chaque question :
 - **Anti-farming** : si le palier de la question est inférieur de 2 crans ou plus
   au palier courant de l'élève, tous les gains sont multipliés par `0.2`.
   Enchaîner 50 additions faciles ne doit rien rapporter.
+- **Sous le niveau** : une compétence d'un niveau inférieur à celui du profil
+  fait progresser la maîtrise normalement (revenir sur une notion oubliée est
+  une bonne chose), mais **XP et pièces** (ceinture, boss) sont multipliés par
+  `0.6` un niveau en dessous, `0.4` deux niveaux, `0.25` au-delà. Un niveau
+  inconnu ne réduit rien. Sinon, le chemin le plus court vers les pièces serait
+  la 6ème.
 - `palier` monte d'un cran quand `score` franchit 25 / 50 / 75 avec au moins
   3 réussites consécutives à ce palier.
 
@@ -524,6 +530,9 @@ rend le système réversible.**
 
   Régularité et paliers de maîtrise : deux choses difficiles à truander et
   corrélées à ce qu'on veut vraiment.
+
+  Ceinture et boss d'une compétence **sous le niveau du profil** rapportent
+  moins (× 0.6 / 0.4 / 0.25 selon l'écart, voir §5.2) ; l'XP aussi.
 
 ### 7.5 Export / import
 

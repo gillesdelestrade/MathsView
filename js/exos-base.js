@@ -498,6 +498,11 @@
       });
       S.bilan.xp += res.xp;
       S.bilan.pieces += res.pieces;
+      // On retient l'exercice le plus « en dessous » : c'est lui qu'on explique.
+      if (res.ecart && res.ecart.coef < 1 &&
+          (!S.bilan.ecart || res.ecart.coef < S.bilan.ecart.coef)) {
+        S.bilan.ecart = res.ecart;
+      }
       if (res.nouvelleCeinture) {
         S.bilan.ceintures.push({ comp: t.gen.competence, ceinture: res.ceintureApres });
       }
@@ -677,6 +682,15 @@
       var pieces = S.bilan.pieces + reg.pieces + reg.coffre + piecesTr;
       if (pieces) gains.appendChild(el('span', 'exo-pieces', '+' + pieces + ' pièces'));
       rec.appendChild(gains);
+      // Exercices sous le niveau du profil : on dit pourquoi ça rapporte moins.
+      if (S.bilan.ecart) {
+        var ec = S.bilan.ecart;
+        rec.appendChild(el('div', 'exo-mot exo-sous-niveau',
+          'Des exercices de <b>' + echappe(ec.nomComp) + '</b> alors que tu es en <b>' +
+          echappe(ec.nomProfil) + '</b> : ta maîtrise progresse pareil, mais XP et pièces ' +
+          'comptent <b>× ' + String(ec.coef).replace('.', ',') + '</b>. Pour gagner plein, ' +
+          'entraîne-toi sur ton niveau.'));
+      }
       if (reg.pieces) {
         rec.appendChild(el('div', 'exo-mot',
           'Trois séries cette semaine — la régularité, c\'est ce qui compte le plus.'));

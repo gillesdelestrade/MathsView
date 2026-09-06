@@ -112,13 +112,17 @@
     // presque rien.
     var facile = pal <= (m.palier || 1) - 2;
 
+    // Exercice d'un niveau inférieur à celui du profil : la maîtrise progresse
+    // pareil, mais XP et pièces sont réduits (voir coefNiveau).
+    var ecart = ecartNiveau(id, info.comp);
+
     var gain = 0, xp = 0;
     if (info.ok) {
       gain = 8 * facteur * malus * (facile ? 0.2 : 1);
       m.score = Math.min(100, m.score + gain);
       m.serie = (m.serie || 0) + 1;
       m.reussites = (m.reussites || 0) + 1;
-      xp = Math.max(1, Math.round(gain));
+      xp = Math.max(1, Math.round(gain * ecart.coef));
     } else {
       m.score = Math.max(0, m.score - 5);
       m.serie = 0;
@@ -138,7 +142,8 @@
     var apres = ceintureAffichee(m);
     var pieces = 0;
     if (ceinture(m.meilleur).min > ceinture(brut.meilleur || 0).min) {
-      pieces = ceinture(m.meilleur).pieces;      // nouvelle ceinture obtenue
+      // nouvelle ceinture obtenue — réduite si la compétence est sous le niveau
+      pieces = Math.round(ceinture(m.meilleur).pieces * ecart.coef);
     }
 
     e.maitrises[info.comp] = m;
@@ -157,7 +162,8 @@
 
     return { gain: gain, xp: xp, pieces: pieces, maitrise: m,
              ceintureAvant: avant, ceintureApres: apres,
-             nouvelleCeinture: apres.nom !== avant.nom, facile: facile };
+             nouvelleCeinture: apres.nom !== avant.nom, facile: facile,
+             ecart: ecart };
   }
 
   /* ===================================================================== */
@@ -241,20 +247,33 @@
 
   // Bilan d'un boss : réussi à partir de 80 %. Gros lot, et le chapitre est
   // marqué comme validé.
+  // Le niveau d'un chapitre : le plus élevé de ses compétences. C'est lui qui
+  // décide si le gros lot du boss est réduit pour ce profil.
+  function ecartChapitre(id, chapitre) {
+    var np = niveauProfil(id), best = null, coef = 1;
+    compsDe(chapitre).forEach(function (c) {
+      var k = coefNiveau(np, c.niveau);
+      if (best === null || k > coef) { coef = k; best = c.niveau; }
+    });
+    return { coef: coef, niveauProfil: np, niveauComp: best,
+             nomProfil: NOMS_NIVEAUX[np] || np, nomComp: NOMS_NIVEAUX[best] || best };
+  }
+
   function bossFini(id, chapitre, justes, total) {
     var e = MathsProfils.etat(id);
     var reussi = total > 0 && justes / total >= 0.8;
-    var pieces = 0;
+    var pieces = 0, ecart = ecartChapitre(id, chapitre);
     e.boss = e.boss || {};
     var avant = e.boss[chapitre];
     if (reussi) {
-      pieces = (avant && avant.reussi) ? 0 : 25;     // le gros lot ne tombe qu'une fois
+      // le gros lot ne tombe qu'une fois — et réduit si le chapitre est sous le niveau
+      pieces = (avant && avant.reussi) ? 0 : Math.round(25 * ecart.coef);
       e.boss[chapitre] = { reussi: true, le: maintenant(), justes: justes, total: total,
                            parfait: justes === total || (avant && avant.parfait) };
       e.pieces = (e.pieces || 0) + pieces;
       MathsProfils.setEtat(id, e);
     }
-    return { reussi: reussi, pieces: pieces, justes: justes, total: total };
+    return { reussi: reussi, pieces: pieces, justes: justes, total: total, ecart: ecart };
   }
 
   /* ===================================================================== */
@@ -264,6 +283,37 @@
      LEVELS dans js/app.js, qui ne l'exporte pas — et la progression a besoin
      de le connaître pour ne montrer à chacune que SON programme. */
   var NIVEAUX = ['6eme', '5eme', '4eme', '3eme', '2nde', '1ere', 'terminale'];
+  var NOMS_NIVEAUX = { '6eme': '6ème', '5eme': '5ème', '4eme': '4ème', '3eme': '3ème',
+                       '2nde': '2nde', '1ere': '1ère', 'terminale': 'Terminale' };
+
+  /* Travailler EN DESSOUS de son niveau reste permis — et utile : une élève de
+     2nde qui a oublié les fractions doit pouvoir y revenir, et sa maîtrise de la
+     compétence progresse normalement. Mais la RÉCOMPENSE baisse : sinon, le
+     chemin le plus court vers les pièces serait d'enchaîner les exercices de
+     6ème. Un niveau en dessous rapporte 60 %, deux niveaux 40 %, trois ou plus
+     le quart. Un niveau inconnu, côté profil ou côté compétence, ne réduit
+     jamais rien : dans le doute, on compte plein. */
+  var COEF_ECART = [1, 0.6, 0.4, 0.25];
+  function coefNiveau(niveauProfil, niveauComp) {
+    var i = NIVEAUX.indexOf(niveauProfil), j = NIVEAUX.indexOf(niveauComp);
+    if (i < 0 || j < 0 || j >= i) return 1;
+    return COEF_ECART[Math.min(COEF_ECART.length - 1, i - j)];
+  }
+  function niveauProfil(id) {
+    var p = global.MathsProfils && MathsProfils.profil ? MathsProfils.profil(id) : null;
+    return p ? p.niveau : null;
+  }
+  function niveauComp(code) {
+    var c = global.MathsExos && MathsExos.competence ? MathsExos.competence(code) : null;
+    return c ? c.niveau : null;
+  }
+  // Le coefficient qui s'applique à ce profil sur cette compétence, et de quoi
+  // l'expliquer à l'écran.
+  function ecartNiveau(id, code) {
+    var np = niveauProfil(id), nc = niveauComp(code);
+    return { coef: coefNiveau(np, nc), niveauProfil: np, niveauComp: nc,
+             nomProfil: NOMS_NIVEAUX[np] || np, nomComp: NOMS_NIVEAUX[nc] || nc };
+  }
 
   /*
    * Une compétence est-elle au programme de ce profil ? Tout ce qui est de son
@@ -344,7 +394,8 @@
 
   /* ===================================================================== */
   global.MathsProgression = {
-    NIVEAUX: NIVEAUX, auProgramme: auProgramme,
+    NIVEAUX: NIVEAUX, NOMS_NIVEAUX: NOMS_NIVEAUX, auProgramme: auProgramme,
+    coefNiveau: coefNiveau, ecartNiveau: ecartNiveau, ecartChapitre: ecartChapitre,
     neuve: neuve, maitrise: maitrise, scoreCourant: scoreCourant,
     ceinture: ceinture, ceintureAffichee: ceintureAffichee, ceintures: CEINTURES,
     apresQuestion: apresQuestion, finSession: finSession,

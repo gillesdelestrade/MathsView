@@ -286,6 +286,11 @@
 }
 .exo-xp { background: var(--accent-soft); color: var(--accent); }
 .exo-pieces { background: #fef3c7; color: #b45309; }
+/* Exercices sous le niveau du profil : XP et pièces réduits, et on le dit. */
+.exo-sous-niveau {
+  text-align: center; font-size: .9rem; padding: .45rem .8rem;
+  background: #fff7ed; border-left: 3px solid #f59e0b; border-radius: 0 8px 8px 0;
+}
 .exo-ceinture-neuve {
   text-align: center; font-weight: 700; margin: .35rem 0; padding: .4rem;
   background: #fff; border-radius: 8px;
