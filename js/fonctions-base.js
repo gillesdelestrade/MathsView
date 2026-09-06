@@ -787,12 +787,24 @@
        contredire : la leçon montre le script, les exercices interrogent le
        tableau, et l'un est exactement ce que l'autre produit.
 
-       `o` : { x1, x2, den, dec }. `den` est le dénominateur du pas — 1 pour
-       aller de 1 en 1, 2 pour 0,5, 10 pour 0,1. C'est la façon dont on écrit
-       un pas décimal en Python : on boucle sur des ENTIERS et on divise, parce
-       que range n'accepte pas de pas décimal. */
+       `o` : { x1, x2, den, dec } ou { xs, dec }.
+       `den` est le dénominateur du pas — 1 pour aller de 1 en 1, 2 pour 0,5,
+       10 pour 0,1. C'est la façon dont on écrit un pas décimal en Python : on
+       boucle sur des ENTIERS et on divise, parce que range n'accepte pas de pas
+       décimal.
+       `xs` remplace range par une LISTE de valeurs, choisies une à une : c'est
+       l'autre façon de dire à la machine quels x calculer, et la seule qui
+       permette des x quelconques (−2, 0.5, 3…). */
     grille: function (fn, p, o) {
-      var den = o.den || 1, out = [];
+      var self = this, out = [];
+      if (o.xs) {
+        o.xs.forEach(function (x, i) {
+          if (!self.defini(fn, x, p)) return;
+          out.push({ i: i, x: x, y: self.valeur(fn, x, p) });
+        });
+        return out;
+      }
+      var den = o.den || 1;
       for (var i = Math.round(o.x1 * den); i <= Math.round(o.x2 * den); i++) {
         var x = den === 1 ? i : i / den;
         if (!this.defini(fn, x, p)) continue;
@@ -839,25 +851,22 @@
       L.push('    return ' + fn.py(p || {}));
       L.push('');
       var appel = dec === null ? 'f(x)' : 'round(f(x), ' + dec + ')';
-      if (den === 1) {
+      if (o.xs) {
+        // Une liste : les x sont écrits un à un, la machine les prend dans l'ordre.
+        L.push('for x in [' + o.xs.map(pyNb).join(', ') + ']:');
+      } else if (den === 1) {
         L.push('for x in range(' + o.x1 + ', ' + (o.x2 + 1) + '):');
-        if (fn.pyGarde) {
-          L.push('    if ' + fn.pyGarde + ':');
-          L.push('        print(x, ' + appel + ')');
-        } else {
-          L.push('    print(x, ' + appel + ')');
-        }
       } else {
         // range ne connaît que les entiers : on boucle sur i, puis on divise.
         L.push('for i in range(' + Math.round(o.x1 * den) + ', ' +
                (Math.round(o.x2 * den) + 1) + '):');
         L.push('    x = i / ' + den);
-        if (fn.pyGarde) {
-          L.push('    if ' + fn.pyGarde + ':');
-          L.push('        print(x, ' + appel + ')');
-        } else {
-          L.push('    print(x, ' + appel + ')');
-        }
+      }
+      if (fn.pyGarde) {
+        L.push('    if ' + fn.pyGarde + ':');
+        L.push('        print(x, ' + appel + ')');
+      } else {
+        L.push('    print(x, ' + appel + ')');
       }
       return L.join('\n');
     },

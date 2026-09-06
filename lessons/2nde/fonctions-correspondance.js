@@ -15,9 +15,15 @@
  * abscisses : les pointillés font la lecture graphique de f(x), y compris pour
  * des x qui ne sont PAS dans le tableau (c'est tout l'intérêt de la courbe).
  *
+ * Sous le tableau, le MÊME tableau écrit en Python : un script que l'élève
+ * peut exécuter et modifier. Deux façons de dire à la machine quels x calculer :
+ * un range (les entiers de −5 à 5, d'un coup) ou une liste de valeurs (les x
+ * écrits un à un — et donc n'importe lesquels, 2.5 compris).
+ *
  * Les fonctions proposées ne sont pas écrites ici : elles viennent du pool
  * commun js/fonctions-base.js. En ajouter une là-bas la fait apparaître ici,
- * avec ses paramètres, son domaine et ses calculs détaillés.
+ * avec ses paramètres, son domaine et ses calculs détaillés — et son écriture
+ * Python.
  */
 MathsView.register({
   id: 'fonctions-correspondance',
@@ -54,6 +60,12 @@ MathsView.register({
     'Ligne du bas : les images calculées. Un tableau ne donne qu\'un ' +
     '<em>échantillon</em> — ici 11 nombres — alors que la fonction en transforme une ' +
     'infinité. La courbe, elle, les montre tous.</li>' +
+    '<li><strong>Le tableau, à la machine.</strong> Sous le tableau, un script Python ' +
+    'le recalcule : la fonction \\(f\\) devient une fonction Python, et une boucle ' +
+    '<code>for</code> affiche \\(x\\) et \\(f(x)\\) ligne après ligne. On peut donner les ' +
+    '\\(x\\) avec <code>range(-5, 6)</code> — tous les entiers de \\(-5\\) à \\(5\\), le ' +
+    '\\(6\\) étant exclu — ou avec une <em>liste</em> <code>[-5, -4, …, 5]</code>, où l\'on ' +
+    'écrit soi-même les valeurs voulues, entières ou non.</li>' +
     '<li><strong>La courbe représentative.</strong> C\'est l\'ensemble des points de ' +
     'coordonnées \\((x\\,;f(x))\\). Un point est sur la courbe <em>si et seulement si</em> ' +
     'son ordonnée est l\'image de son abscisse.</li>' +
@@ -418,6 +430,121 @@ MathsView.register({
     }
 
     /* ==================================================================== */
+    /* Le même tableau, en Python                                           */
+    /*                                                                      */
+    /* Le tableau de valeurs, c'est exactement ce qu'un script calcule :    */
+    /* pour chaque x, f(x). Deux façons de lui dire QUELS x prendre : un    */
+    /* range — les entiers de −5 à 5, d'un coup — ou une liste, où l'on     */
+    /* écrit soi-même les valeurs, qui n'ont alors plus à être entières.    */
+    /* Le script est modifiable et s'exécute ici.                           */
+    /* ==================================================================== */
+    var pySection = document.createElement('div');
+    pySection.className = 'py-section';
+    pySection.innerHTML =
+      '<div class="py-titre">Le même tableau, écrit en Python</div>' +
+      '<p class="py-intro">Le tableau de valeurs, une machine sait le faire : on lui ' +
+      'donne la fonction \\(f\\), on lui dit quels \\(x\\) prendre, et elle affiche ' +
+      '\\(x\\) puis \\(f(x)\\) sur chaque ligne — <b>une ligne affichée, c\'est une ' +
+      'colonne du tableau</b>. Pour choisir les \\(x\\), deux écritures :</p>';
+
+    // Le choix de l'écriture des x : range ou liste.
+    var pyMode = 'range';
+    var pyChoix = document.createElement('div');
+    pyChoix.className = 'py-choix';
+    var MODES = [
+      { id: 'range', label: 'avec range(-5, 6)',
+        sous: 'tous les entiers de −5 à 5 (le 6 est exclu)' },
+      { id: 'liste', label: 'avec une liste [-5, -4, …, 5]',
+        sous: 'les x écrits un à un — n\'importe lesquels' }
+    ];
+    var pyBtns = MODES.map(function (m) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<span class="py-choix-nom">' + m.label + '</span>' +
+                    '<span class="py-choix-sous">' + m.sous + '</span>';
+      b.onclick = function () { choisirMode(m.id); };
+      pyChoix.appendChild(b);
+      return b;
+    });
+    pySection.appendChild(pyChoix);
+
+    var pyLecture = document.createElement('p');
+    pyLecture.className = 'py-lecture';
+
+    function scriptPourFonction() {
+      return POOL.scriptPython(fn(), par,
+        pyMode === 'liste' ? { xs: XS.slice() } : { x1: XS[0], x2: XS[N - 1], den: 1 });
+    }
+
+    /* La phrase sous la console. Elle n'est écrite que si le script est bien
+       celui de la fonction choisie : commenter un script qu'on n'a pas écrit,
+       c'est risquer de raconter n'importe quoi. */
+    function lectureTxt(lignes) {
+      var sans = XS.filter(function (x) { return !ok(x); });
+      var t = 'La console affiche <b>' + lignes.length + ' ligne' + (lignes.length > 1 ? 's' : '') +
+        '</b> : ce sont les ' + lignes.length + ' colonnes du tableau, \\(x\\) à gauche et ' +
+        '\\(f(x)\\) à droite' +
+        (lignes.some(function (L) { return L.indexOf('.') >= 0; })
+          ? ' — avec le point décimal de Python, et arrondi à deux décimales par <code>round</code>'
+          : '') + '.';
+      if (sans.length) {
+        t += ' Le <code>if</code> saute ' + (sans.length === 1 ? 'la valeur' : 'les valeurs') +
+          ' sans image (' + sans.map(function (x) { return nb(x); }).join(', ') +
+          ') : ce sont les colonnes barrées.';
+      }
+      t += pyMode === 'liste'
+        ? ' Avec une liste, tu choisis toi-même les \\(x\\) : remplace-la par ' +
+          '<code>[-2, 0.5, 2.5]</code> et exécute — tu obtiens des images que le tableau ' +
+          'ne donne pas.'
+        : ' <code>range(-5, 6)</code> ne sait donner que des entiers : pour calculer ' +
+          '\\(f(2{,}5)\\), passe à l\'écriture avec une liste.';
+      return t;
+    }
+
+    function aideTxt() {
+      return pyMode === 'liste'
+        ? 'Une liste s\'écrit entre crochets, ses valeurs séparées par des virgules ; ' +
+          'la boucle <b>for</b> les prend dans l\'ordre. Le point est la virgule décimale ' +
+          'de Python : on écrit <b>2.5</b>, pas 2,5. Tapé sur une calculatrice qui a Python ' +
+          '(Numworks, TI, Casio), le script affiche les mêmes lignes.'
+        : '<b>range(a, b)</b> donne les entiers de a inclus à b <em>exclu</em> : pour ' +
+          'aller jusqu\'à 5, on écrit range(-5, 6). Tapé sur une calculatrice qui a Python ' +
+          '(Numworks, TI, Casio), le script affiche les mêmes lignes.';
+    }
+
+    var pyConsole = MathsConsole.monte(pySection, {
+      script: scriptPourFonction(),
+      surSortie: function (lignes, erreur, intact) {
+        pyLecture.innerHTML = (!erreur && lignes.length && intact) ? lectureTxt(lignes) : '';
+        if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([pyLecture]);
+      }
+    });
+    // L'aide dépend de l'écriture choisie : on la pose nous-mêmes, pour la réécrire.
+    var pyAide = document.createElement('p');
+    pyAide.className = 'py-aide';
+    pySection.appendChild(pyAide);
+    pySection.appendChild(pyLecture);
+
+    function majMode() {
+      pyBtns.forEach(function (b, i) { b.classList.toggle('active', MODES[i].id === pyMode); });
+      pyAide.innerHTML = aideTxt();
+    }
+
+    /* On ne réécrit le script que s'il n'a pas été retouché : sinon, bouger un
+       curseur effacerait ce que l'élève vient d'écrire. */
+    function majScript(force) {
+      if (!force && !pyConsole.intact()) return;
+      pyConsole.remettre(scriptPourFonction());
+    }
+
+    function choisirMode(id) {
+      if (id === pyMode) return;
+      pyMode = id;
+      majMode();
+      majScript(true);              // changer d'écriture, c'est changer de script
+    }
+
+    /* ==================================================================== */
     /* Choix de la fonction et de ses paramètres                            */
     /* ==================================================================== */
     var pick = document.createElement('div');
@@ -455,6 +582,7 @@ MathsView.register({
           val.textContent = nb(par[s.name]);
           fitView();
           board.update();
+          majScript(false);
         };
         lab.appendChild(name); lab.appendChild(input); lab.appendChild(val);
         paramsBox.appendChild(lab);
@@ -471,6 +599,7 @@ MathsView.register({
       par = POOL.defauts(fn());
       updatePick();
       renderParams();
+      majScript(true);
       fitView();
       play();                       // nouvelle fonction : on repart du tableau vide
     }
@@ -514,11 +643,13 @@ MathsView.register({
 
     mv.extras.appendChild(wrap);
     mv.extras.appendChild(panel);
+    mv.extras.appendChild(pySection);
 
     board.on('update', refresh);
 
     updatePick();
     renderParams();
+    majMode();
     fitView();
     play();            // charge les étapes : en pas à pas, la figure attend l'appui
   }

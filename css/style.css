@@ -1531,6 +1531,23 @@ body {
   font-size: .95rem; line-height: 1.5;
 }
 .py-aide { margin: .7rem 0 0; font-size: .88rem; color: var(--doux); line-height: 1.5; }
+/* Le choix de l'écriture des x (range ou liste), dans « De x à f(x) ». */
+.py-choix { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 .2rem; }
+.py-choix button {
+  display: flex; flex-direction: column; align-items: flex-start; gap: .1rem;
+  font: inherit; cursor: pointer; text-align: left;
+  padding: .45rem .8rem; border-radius: var(--radius);
+  border: 1px solid var(--border); background: #fff; color: var(--ink-soft);
+}
+.py-choix button:hover { background: #f8fafc; }
+.py-choix button.active {
+  color: #7c3aed; border-color: #7c3aed; box-shadow: inset 0 0 0 1px #7c3aed;
+}
+.py-choix-nom {
+  font-weight: 700; font-size: .95rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.py-choix-sous { font-size: .8rem; color: var(--doux); }
 
 /* ---------- Somme des angles d'un triangle (5ème) ---------- */
 .sat-panneau {
