@@ -93,6 +93,60 @@ MathsView.register({
     '\\( (-4,3) + (+4,3) = 0 \\).</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Additionner et soustraire des relatifs',
+    figures: [{
+      legende: '(−7,2) + (+3,5) : on part de −7,2, on avance de 3,5.',
+      boundingbox: [-9.2, 2.4, 2.4, -1.4],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 28,
+      dessine: function (board) {
+        function txt(x, y, t, o) {
+          var a = { anchorX: 'middle', anchorY: 'middle', fontSize: 11, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('text', [x, y, t], a);
+        }
+        function seg(p, q, o) {
+          var a = { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('segment', [p, q], a);
+        }
+        function pt(x, y, col) {
+          board.create('point', [x, y], { name: '', size: 3, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+        }
+        // Droite graduée de a à b, un trait par unité, nombres pairs étiquetés.
+        function droite(a, b, y, pas) {
+          board.create('arrow', [[a - 0.4, y], [b + 0.6, y]], { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false });
+          for (var v = a; v <= b; v++) {
+            seg([v, y - 0.15], [v, y + 0.15]);
+            if (v % pas === 0) txt(v, y - 0.55, String(v).replace('-', '−'), { fontSize: 9 });
+          }
+        }
+        droite(-9, 2, 0, 2);
+        pt(-7.2, 0, '#dc2626'); pt(-3.7, 0, '#16a34a');
+        txt(-7.2, -1.0, '−7,2', { fontSize: 10, color: '#dc2626', cssStyle: 'font-weight:700' });
+        txt(-3.7, -1.0, '−3,7', { fontSize: 10, color: '#16a34a', cssStyle: 'font-weight:700' });
+        board.create('arrow', [[-7.2, 0.7], [-3.7, 0.7]], { strokeColor: '#2563eb', strokeWidth: 2, fixed: true, highlight: false });
+        txt(-5.45, 1.25, '+ 3,5 : vers la droite', { fontSize: 9.5, color: '#2563eb', cssStyle: 'font-weight:700' });
+        txt(-3.4, 1.95, '7,2 − 3,5 = 3,7 ; signe de −7,2 → −3,7', { fontSize: 9, color: '#64748b', cssStyle: 'font-style:italic' });
+      }
+    }],
+    points: [
+      '<b>Mêmes signes</b> : on <b>additionne</b> les distances à zéro et on garde le signe commun.',
+      '<b>Signes contraires</b> : on <b>soustrait</b> la petite distance de la grande, et on garde le signe du nombre le plus <b>éloigné de 0</b>.',
+      '<b>Soustraire, c\'est ajouter l\'opposé</b> : \\( a - b = a + (-b) \\).',
+      'Plusieurs termes : on regroupe les positifs ensemble, les négatifs ensemble, puis on termine.',
+      'Pour poser l\'opération, on aligne les <b>virgules</b> et on complète avec des zéros.',
+      'Deux <b>opposés</b> s\'annulent : \\( (-4{,}3) + (+4{,}3) = 0 \\)'
+    ],
+    exemples: [
+      '\\( (-7{,}2) + (-3{,}5) = -10{,}7 \\) : mêmes signes, on additionne.',
+      '\\( (-7{,}2) + (+3{,}5) = -3{,}7 \\) : signes contraires, 7,2 − 3,5 et le signe de −7,2.',
+      '\\( (-7{,}2) - (-3{,}5) = (-7{,}2) + (+3{,}5) = -3{,}7 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

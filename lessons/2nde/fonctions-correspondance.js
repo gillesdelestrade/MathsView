@@ -93,6 +93,45 @@ MathsView.register({
     showNavigation: true
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'De x à f(x) : image, tableau, courbe',
+    figures: [{
+      legende: 'f(x) = x² : de x = 2 on monte à la courbe, on lit f(2) = 4.',
+      boundingbox: [-3.6, 9.8, 3.6, -1.8],
+      keepaspectratio: false,
+      axis: true,
+      largeur: 54, hauteur: 48,
+      dessine: function (board) {
+        board.create('functiongraph', [function (x) { return x * x; }, -3.1, 3.1], { strokeColor: '#0284c7', strokeWidth: 2.2, fixed: true, highlight: false });
+        var xs = [-3, -2, -1, 0, 1, 2, 3];
+        xs.forEach(function (x) {
+          board.create('point', [x, x * x], { name: '', size: 2, strokeColor: '#0284c7', fillColor: '#ffffff', fixed: true, highlight: false, showInfobox: false });
+        });
+        board.create('segment', [[2, 0], [2, 4]], { strokeColor: '#dc2626', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[2, 4], [0, 4]], { strokeColor: '#dc2626', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        board.create('point', [2, 0], { name: '', size: 2.6, strokeColor: '#dc2626', fillColor: '#dc2626', fixed: true, highlight: false, showInfobox: false });
+        board.create('point', [2, 4], { name: '', size: 2.6, strokeColor: '#dc2626', fillColor: '#dc2626', fixed: true, highlight: false, showInfobox: false });
+        board.create('text', [2.3, -0.75, 'x = 2'], { anchorX: 'middle', anchorY: 'top', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [-0.15, 4.3, 'f(2) = 4'], { anchorX: 'right', anchorY: 'bottom', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [1.2, 8.6, 'y = x²'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#0284c7', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Une <b>fonction</b> f associe à chaque nombre x <b>un seul</b> nombre, noté f(x) : l\'<b>image</b> de x.',
+      'Si f(3) = 9 : 9 est <b>l\'image</b> de 3, et 3 est <b>un antécédent</b> de 9. L\'image est unique ; un nombre peut avoir plusieurs antécédents, ou aucun.',
+      'Le <b>tableau de valeurs</b> : ligne du haut les x choisis, ligne du bas leurs images. Ce n\'est qu\'un échantillon.',
+      'La <b>courbe représentative</b> est l\'ensemble des points \\( (x\\,;f(x)) \\). Un point est sur la courbe si son ordonnée est l\'image de son abscisse.',
+      'Lire une image : partir de x sur l\'axe des abscisses, monter jusqu\'à la courbe, lire l\'ordonnée.',
+      'L\'<b>ensemble de définition</b> : les x qui ont une image. \\( \\sqrt{x} \\) n\'existe pas pour x < 0, \\( \\dfrac{1}{x} \\) n\'existe pas pour x = 0.'
+    ],
+    exemples: [
+      'f(x) = x² : f(2) = 4 et f(−2) = 4. Le nombre 4 a deux antécédents, 2 et −2 ; le nombre −1 n\'en a aucun.',
+      'Tableau de f(x) = x² : x = −2, −1, 0, 1, 2 donne f(x) = 4, 1, 0, 1, 4.',
+      'A(3 ; 9) est sur la courbe car f(3) = 9 ; B(3 ; 8) n\'y est pas. Valeur calculée : \\( f(2) = \\sqrt{2} \\) (exacte) ; valeur lue : ≈ 1,41 (approchée).'
+    ]
+  },
+
   setup: function (board, mv) {
     var POOL = MathsView.fonctions;
     var FN = POOL.liste();

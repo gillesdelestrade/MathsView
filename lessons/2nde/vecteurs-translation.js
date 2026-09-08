@@ -73,6 +73,55 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-10, 7.5, 10, -7.5], keepaspectratio: true, axis: true, grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'La translation',
+    figures: [{
+      legende: 'Chaque sommet glisse du même vecteur u : la figure ne se déforme pas.',
+      boundingbox: [-4.4, 2.9, 4.2, -2.6],
+      largeur: 58, hauteur: 34,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [-3, -1], B = [-1, -1.5], C = [-2.5, 1];
+        var u = [3.5, 1];
+        var A2 = [A[0] + u[0], A[1] + u[1]], B2 = [B[0] + u[0], B[1] + u[1]], C2 = [C[0] + u[0], C[1] + u[1]];
+        board.create('polygon', [A, B, C], { fillColor: '#2563eb', fillOpacity: .15,
+          borders: { strokeColor: '#2563eb', strokeWidth: 2 }, vertices: { visible: false }, fixed: true, highlight: false });
+        board.create('polygon', [A2, B2, C2], { fillColor: '#16a34a', fillOpacity: .15,
+          borders: { strokeColor: '#16a34a', strokeWidth: 2 }, vertices: { visible: false }, fixed: true, highlight: false });
+        fl(A, A2, '#ea580c', 2, 2); fl(B, B2, '#ea580c', 2, 2); fl(C, C2, '#ea580c', 2, 2);
+        fl([-4, -2.2], [-0.5, -1.2], '#ea580c', 3);
+        tx(-2.5, -1.9, 'u', '#ea580c', 'middle', 'bottom');
+        tx(-3.2, -0.9, 'A', '#0f172a', 'right'); tx(-1, -1.7, 'B', '#0f172a', 'middle', 'top'); tx(-2.5, 1.2, 'C', '#0f172a', 'middle', 'bottom');
+        tx(0.35, 0.15, "A'", '#0f172a', 'right'); tx(2.5, -0.7, "B'", '#0f172a', 'middle', 'top'); tx(1, 2.2, "C'", '#0f172a', 'middle', 'bottom');
+      }
+    }],
+    points: [
+      'L\'image de M par la <b>translation de vecteur</b> \\( \\vec{u} \\) est le point M\' tel que \\( \\overrightarrow{MM\'} = \\vec{u} \\).',
+      '\\( \\vec{u} \\) donne la <b>direction</b>, le <b>sens</b> et la <b>distance</b> du glissement.',
+      'Pour une figure, on construit l\'image de chaque <b>sommet</b>, puis on relie comme au départ.',
+      'Comme \\( \\overrightarrow{AA\'} = \\overrightarrow{BB\'} \\), <b>ABB\'A\'</b> est un parallélogramme.',
+      'La translation <b>conserve</b> longueurs, angles, aires, alignement, parallélisme : la figure n\'est ni tournée ni retournée.',
+      'En coordonnées : si \\( \\vec{u}\\,(a\\,;\\,b) \\) et M(x ; y), alors <b>M\'(x + a ; y + b)</b>.'
+    ],
+    exemples: [
+      '\\( \\vec{u}\\,(3{,}5\\,;\\,1) \\) et A(−3 ; −1) : A\'(−3 + 3,5 ; −1 + 1) = A\'(0,5 ; 0).',
+      'B(−1 ; −1,5) : B\'(2,5 ; −0,5). C(−2,5 ; 1) : C\'(1 ; 2).',
+      'Deux translations de suite, de vecteurs \\( \\vec{u} \\) puis \\( \\vec{v} \\) : une seule translation, de vecteur \\( \\vec{u} + \\vec{v} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

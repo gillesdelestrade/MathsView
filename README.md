@@ -85,9 +85,42 @@ cette notion »** qui mène droit à la série correspondante.
 | `description`, `notes` | HTML, formules LaTeX entre `\( … \)` |
 | `board` | options du repère JSXGraph |
 | `setup(board, mv)` | le code qui construit la figure |
+| `fiche` | *(optionnel)* le modèle de fiche bristol à recopier, voir ci-dessous |
 
 3. Ajoute la balise `<script src="lessons/…/mon-fichier.js"></script>` dans `index.html`
    (l'ordre y est celui des cartes d'accueil, par niveau croissant).
+
+### La fiche bristol à recopier
+
+Une leçon qui déclare un champ `fiche` affiche, sous ses notes, le **modèle d'une fiche
+bristol 200 × 125 mm** que l'élève recopie à la main pour ancrer la leçon. Le modèle est
+dessiné à sa taille réelle (en millimètres, à l'écran comme à l'impression via le bouton
+« Imprimer le modèle »), et il tient sur une seule fiche : un titre, une ou deux figures,
+l'essentiel en phrases courtes, quelques exemples en bas.
+
+L'**intercalaire** (l'onglet en haut) porte la couleur du domaine, et sa **position
+latérale** dépend du domaine : un cran par grand domaine, dans l'ordre de `CATEGORIES`
+(Nombres et calculs tout à gauche … Données et hasard tout à droite). Les autres
+emplacements sont dessinés en pointillé : l'élève voit où découper le sien, et les fiches
+d'un même domaine s'alignent une fois rangées.
+
+```js
+fiche: {
+  titre: 'Théorème de Pythagore',            // facultatif : le titre de la leçon sinon
+  figures: [{                                // une ou deux figures, FIGÉES
+    legende: 'Le carré sur l\'hypoténuse vaut les deux autres réunis.',
+    boundingbox: [-4.6, 5.2, 7.9, -4.6],
+    largeur: 56, hauteur: 46,                // en mm, facultatif
+    dessine: function (board) { /* board.create(…) avec fixed: true */ }
+  }],
+  points:   [ 'Une idée par phrase.', … ],   // HTML et \( formules \) acceptés
+  exemples: [ '\\( AB^2 = 3^2 + 4^2 = 25 \\), donc AB = 5.', … ]
+}
+```
+
+Le module est `js/fiches.js`, le style dans `css/style.css` (section « fiche »), et
+`tests/site-fiches.js` monte chaque fiche avec le vrai JSXGraph : une figure qui plante,
+une phrase trop longue ou un domaine sans emplacement d'onglet font échouer le contrôle.
 
 ### Ce que `mv` fournit à `setup`
 
@@ -398,6 +431,7 @@ MathsView/
 ├── css/                    style · exos · admin
 ├── js/
 │   ├── app.js              moteur des leçons (menu, routage). Ne pas modifier.
+│   ├── fiches.js           la fiche bristol à recopier, sous les leçons qui en ont une
 │   ├── fonctions-base.js   le pool de fonctions de référence
 │   ├── alea.js             aléatoire semé — le seul Math.random() du module
 │   ├── reponse.js          normalisation et comparaison des réponses

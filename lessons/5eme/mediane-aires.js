@@ -70,6 +70,61 @@ MathsView.register({
     'cela que la démonstration est nécessaire.</p>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Une médiane partage le triangle en deux aires égales',
+    figures: [{
+      legende: 'Même hauteur h, bases égales BA\' = A\'C : donc S₁ = S₂.',
+      boundingbox: [-4.2, 5.2, 5.4, -1.4],
+      largeur: 56, hauteur: 42,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [1, 4], Object.assign({ name: 'A', label: { offset: [-4, 10] } }, PT));
+        var B = board.create('point', [-3, 0], Object.assign({ name: 'B', label: { offset: [-14, -2] } }, PT));
+        var C = board.create('point', [4, 0], Object.assign({ name: 'C', label: { offset: [6, -2] } }, PT));
+        var Ap = board.create('point', [0.5, 0], { name: 'A\'', size: 2, strokeColor: '#ea580c', fillColor: '#ea580c',
+          fixed: true, highlight: false, showInfobox: false,
+          label: { fontSize: 11, offset: [-5, -13], strokeColor: '#ea580c', cssStyle: 'font-weight:700' } });
+        function tri(pts, col, txt, x, y) {
+          board.create('polygon', pts, {
+            fillColor: col, fillOpacity: .3, borders: { strokeColor: '#334155', strokeWidth: 2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x, y, txt], { anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        tri([A, B, Ap], '#60a5fa', 'S₁', -0.6, 1.2);
+        tri([A, Ap, C], '#34d399', 'S₂', 2.1, 1.2);
+        // La hauteur issue de A, en pointillés rouges, et son angle droit.
+        var H = board.create('point', [1, 0], { visible: false });
+        board.create('segment', [A, H], { strokeColor: '#dc2626', strokeWidth: 1.6, dash: 2, fixed: true, highlight: false });
+        board.create('angle', [C, H, A], { type: 'square', radius: .35, strokeColor: '#dc2626', fillColor: '#dc2626',
+          fillOpacity: .3, fixed: true, highlight: false, name: '', withLabel: false });
+        board.create('text', [1.25, 2.3, 'h'], { anchorX: 'left', anchorY: 'middle', fontSize: 12, color: '#dc2626',
+          cssStyle: 'font-weight:700;font-style:italic', fixed: true, highlight: false });
+        // Le codage des deux demi-côtés égaux.
+        [-1.25, 2.25].forEach(function (x) {
+          board.create('segment', [[x, -0.22], [x, 0.22]], { strokeColor: '#ea580c', strokeWidth: 2, fixed: true, highlight: false });
+        });
+      }
+    }],
+    points: [
+      'La médiane [AA\'] joint A au <b>milieu</b> A\' de [BC] : BA\' = A\'C.',
+      'Les triangles ABA\' et AA\'C ont la <b>même hauteur</b> h : la distance de A à la droite (BC).',
+      'Ils ont des <b>bases égales</b> : BA\' = A\'C = BC ÷ 2.',
+      'Donc \\( S_1 = \\dfrac{BA\' \\times h}{2} = \\dfrac{A\'C \\times h}{2} = S_2 \\) : une médiane partage le ' +
+        'triangle en <b>deux aires égales</b>.',
+      'Chaque morceau vaut la <b>moitié</b> de l\'aire du triangle.',
+      'Même aire ne veut pas dire <b>superposables</b> : les deux morceaux n\'ont pas la même forme.'
+    ],
+    exemples: [
+      'BC = 8 cm et h = 5 cm : aire de ABC = 8 × 5 ÷ 2 = 20 cm², donc S₁ = S₂ = 10 cm².',
+      'BA\' = 3 cm et h = 4 cm : S₁ = 3 × 4 ÷ 2 = 6 cm², donc S₂ = 6 cm² aussi, sans rien mesurer d\'autre.',
+      'Méthode : pour comparer deux aires, on compare les <b>bases</b> et les <b>hauteurs</b>, on ne mesure pas.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

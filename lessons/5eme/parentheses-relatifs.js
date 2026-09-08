@@ -81,6 +81,65 @@ MathsView.register({
     'a le droit de les garder pour y voir plus clair.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les parenthèses : indispensables ?',
+    figures: [{
+      legende: 'Le test : on enlève, et on regarde.',
+      boundingbox: [0, 4.4, 10, -0.4],
+      keepaspectratio: false,
+      largeur: 60, hauteur: 34,
+      dessine: function (board) {
+        function txt(x, y, t, o) {
+          var a = { anchorX: 'middle', anchorY: 'middle', fontSize: 11, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('text', [x, y, t], a);
+        }
+        function seg(p, q, o) {
+          var a = { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('segment', [p, q], a);
+        }
+        function pt(x, y, col) {
+          board.create('point', [x, y], { name: '', size: 3, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+        }
+        // Droite graduée de a à b, un trait par unité, nombres pairs étiquetés.
+        function droite(a, b, y, pas) {
+          board.create('arrow', [[a - 0.4, y], [b + 0.6, y]], { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false });
+          for (var v = a; v <= b; v++) {
+            seg([v, y - 0.15], [v, y + 0.15]);
+            if (v % pas === 0) txt(v, y - 0.55, String(v).replace('-', '−'), { fontSize: 9 });
+          }
+        }
+        function ligne(y, avant, apres, verdict, col) {
+          txt(0.2, y, avant, { anchorX: 'left', fontSize: 11, cssStyle: 'font-weight:700' });
+          board.create('arrow', [[3.9, y], [4.7, y]], { strokeColor: '#64748b', strokeWidth: 1.2, fixed: true, highlight: false });
+          txt(4.9, y, apres, { anchorX: 'left', fontSize: 11 });
+          txt(9.8, y, verdict, { anchorX: 'right', fontSize: 9, color: col, cssStyle: 'font-weight:700' });
+        }
+        txt(0.2, 4.0, 'signe', { anchorX: 'left', fontSize: 9, color: '#64748b', cssStyle: 'font-style:italic' });
+        ligne(3.3, '5 + (−3)', '5 + −3', 'interdit ✗', '#dc2626');
+        ligne(2.4, '(−3) + 5', '−3 + 5', 'inutile ✓', '#16a34a');
+        txt(0.2, 1.6, 'priorité', { anchorX: 'left', fontSize: 9, color: '#64748b', cssStyle: 'font-style:italic' });
+        ligne(0.9, '8 − (3 − 5) = 10', '8 − 3 − 5 = 0', 'change ✗', '#dc2626');
+        ligne(0.0, '7 + (3 × 2) = 13', '7 + 3 × 2 = 13', 'inutile ✓', '#16a34a');
+      }
+    }],
+    points: [
+      'Une parenthèse de <b>signe</b> enferme un nombre relatif : \\( 5 + (-3) \\). On n\'écrit jamais <b>deux symboles à la suite</b>.',
+      'En début d\'écriture, elle est inutile : on écrit \\( -3 + 5 \\).',
+      'Une parenthèse de <b>priorité</b> force un calcul à passer en premier : \\( (5 - 8) \\times 2 \\).',
+      '<b>Le test</b> : on l\'enlève. Écriture interdite ou résultat changé → elle était <b>indispensable</b>.',
+      'Simplifier une écriture : \\( a + (-b) = a - b \\) et \\( a - (-b) = a + b \\).',
+      'Des parenthèses qui ne sont pas indispensables restent permises, pour y voir clair.'
+    ],
+    exemples: [
+      '\\( 7 + (3 \\times 2) = 7 + 3 \\times 2 = 13 \\) : la multiplication est déjà prioritaire.',
+      '\\( 8 - (3 - 5) = 8 - (-2) = 10 \\), mais \\( 8 - 3 - 5 = 0 \\) : ici elles sont indispensables.',
+      '\\( 4 - (-6) = 4 + 6 = 10 \\) ; \\( -2 + (+9) = -2 + 9 = 7 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

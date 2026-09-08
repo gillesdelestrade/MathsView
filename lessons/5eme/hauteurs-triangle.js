@@ -86,6 +86,58 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les hauteurs d\'un triangle',
+    figures: [{
+      legende: 'Les trois hauteurs se coupent en H, l\'orthocentre.',
+      boundingbox: [-4.2, 6.3, 5.4, -1.2],
+      largeur: 56, hauteur: 46,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [1, 5], Object.assign({ name: 'A', label: { offset: [-4, 10] } }, PT));
+        var B = board.create('point', [-3, 0], Object.assign({ name: 'B', label: { offset: [-14, -2] } }, PT));
+        var C = board.create('point', [4, 0], Object.assign({ name: 'C', label: { offset: [6, -2] } }, PT));
+        board.create('polygon', [A, B, C], {
+          fillColor: '#2563eb', fillOpacity: .06, borders: { strokeColor: '#334155', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        var cotes = [[B, C, A], [C, A, B], [A, B, C]];   // côté opposé, sommet
+        cotes.forEach(function (t) {
+          var cote = board.create('line', [t[0], t[1]], { visible: false });
+          var h = board.create('perpendicularsegment', [cote, t[2]], {
+            strokeColor: '#7c3aed', strokeWidth: 2, fixed: true, highlight: false,
+            point: { visible: false }
+          });
+          board.create('angle', [t[2], h.point, t[0]], {
+            type: 'square', radius: .38, strokeColor: '#ea580c', fillColor: '#ea580c', fillOpacity: .3,
+            fixed: true, highlight: false, name: '', withLabel: false
+          });
+        });
+        board.create('point', [1, 2.4], { name: 'H', size: 2.5, strokeColor: '#dc2626', fillColor: '#dc2626',
+          fixed: true, highlight: false, showInfobox: false,
+          label: { fontSize: 12, offset: [7, 2], strokeColor: '#dc2626', cssStyle: 'font-weight:700' } });
+      }
+    }],
+    points: [
+      'Une <b>hauteur</b> d\'un triangle est la <b>droite</b> qui passe par un <b>sommet</b> et qui est ' +
+        '<b>perpendiculaire</b> au côté opposé.',
+      'Le point où elle coupe ce côté est le <b>pied</b> de la hauteur. Un triangle a trois hauteurs, une par sommet.',
+      'Les trois hauteurs sont <b>concourantes</b> : elles passent par un même point, l\'<b>orthocentre</b> H.',
+      'H est <b>dedans</b> si les trois angles sont aigus, <b>sur le sommet</b> de l\'angle droit si le triangle est ' +
+        'rectangle, <b>dehors</b> s\'il a un angle obtus.',
+      'Si le pied tombe en dehors du côté, on <b>prolonge</b> le côté en pointillés pour tracer la hauteur.',
+      'Deux hauteurs suffisent pour placer H : la troisième passe forcément par ce point.'
+    ],
+    exemples: [
+      'Aire d\'un triangle = (côté × hauteur correspondante) ÷ 2. BC = 7 cm et hauteur issue de A = 4 cm : ' +
+        'aire = 7 × 4 ÷ 2 = 14 cm².',
+      'Triangle rectangle en C : les côtés [CA] et [CB] sont deux des hauteurs, donc H = C.',
+      'Ne pas confondre : l\'orthocentre (hauteurs) et le centre du cercle circonscrit (médiatrices).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

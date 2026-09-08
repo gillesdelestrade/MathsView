@@ -106,6 +106,46 @@ MathsView.register({
               recalcule le pas tout seul et ignore celui qu'on demande. */
            defaultAxes: { y: { ticks: { insertTicks: false, ticksDistance: 2 } } } },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Reconnaître la proportionnalité',
+    figures: [{
+      legende: 'Vert : alignés avec l\'origine, proportionnel. Rouge : alignés, mais pas par O.',
+      boundingbox: [-0.9, 17.5, 6.6, -2.4],
+      keepaspectratio: false,
+      largeur: 56, hauteur: 46,
+      dessine: function (board) {
+        board.create('axis', [[0, 0], [1, 0]], { strokeColor: '#334155', ticks: { insertTicks: false, ticksDistance: 1, minorTicks: 0, label: { fontSize: 8 }, drawZero: false }, fixed: true, highlight: false });
+        board.create('axis', [[0, 0], [0, 1]], { strokeColor: '#334155', ticks: { insertTicks: false, ticksDistance: 5, minorTicks: 0, label: { fontSize: 8, offset: [-14, 0] }, drawZero: false }, fixed: true, highlight: false });
+        function serie(pts, col, f) {
+          board.create('functiongraph', [f, -0.5, 6.2], { strokeColor: col, strokeWidth: 1.8, dash: 2, fixed: true, highlight: false });
+          pts.forEach(function (P) {
+            board.create('point', P, { name: '', size: 3, fillColor: col, strokeColor: col, fixed: true, highlight: false, showInfobox: false });
+          });
+        }
+        serie([[1, 3], [2, 6], [4, 12]], '#16a34a', function (x) { return 3 * x; });
+        serie([[1, 7], [3, 11], [5, 15]], '#dc2626', function (x) { return 2 * x + 5; });
+        board.create('point', [0, 0], { name: '', size: 3, fillColor: '#0f172a', strokeColor: '#0f172a', fixed: true, highlight: false, showInfobox: false });
+        board.create('text', [0.35, -1.3, 'O'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [4.6, 10.3, 'y = 3x'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#16a34a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [0.5, 9.8, 'taxi'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Chaque ligne du tableau donne un <b>point</b> : 1<sup>er</sup> nombre en abscisse, 2<sup>e</sup> en ordonnée.',
+      'Proportionnel si, et seulement si, les points sont <b>alignés et</b> la droite passe par l\'<b>origine</b> O.',
+      'Alignés ne suffit pas : si la droite coupe l\'axe vertical ailleurs qu\'en 0, ce n\'est pas proportionnel.',
+      'Par le tableau : on divise chaque nombre de la 2<sup>e</sup> ligne par celui de la 1<sup>re</sup>. Tous les quotients <b>égaux</b> : proportionnel.',
+      'Ce quotient commun est le <b>coefficient</b> k : on multiplie par k pour passer de x à y.',
+      'Un seul quotient différent, ou un point hors de la droite : pas proportionnel.'
+    ],
+    exemples: [
+      'Cahiers : 1 → 3 €, 2 → 6 €, 4 → 12 €. Quotients 3, 3, 3 : proportionnel, k = 3.',
+      'Taxi : 1 km → 7 €, 3 km → 11 €, 5 km → 15 €. Alignés, mais la droite passe par 5, pas par 0 : non.',
+      'Carré : côté 1 → aire 1, côté 2 → aire 4, côté 3 → aire 9. Points non alignés : non.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

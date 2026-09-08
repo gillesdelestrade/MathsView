@@ -90,6 +90,53 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les ensembles de nombres',
+    figures: [{
+      legende: 'Chaque ensemble contient le précédent et ajoute des nombres.',
+      boundingbox: [0, 10, 16, 0],
+      largeur: 60, hauteur: 40,
+      dessine: function (board) {
+        // Rectangles emboîtés en escalier : chaque ensemble déborde du
+        // précédent par une bande à droite, où l'on écrit ses nouveaux nombres.
+        var boites = [
+          ['ℝ', 15.5, 9.6, '#fee2e2', '√2<br>π'],
+          ['ℚ', 12.5, 8.9, '#fef3c7', '1/3'],
+          ['𝔻', 9.5, 8.2, '#dcfce7', '0,5'],
+          ['ℤ', 6.5, 7.5, '#dbeafe', '−2'],
+          ['ℕ', 3.5, 6.8, '#e9d5ff', '0 ; 3']
+        ];
+        var gauche = 0.5;
+        boites.forEach(function (b) {
+          board.create('polygon', [[0.3, 0.3], [b[1], 0.3], [b[1], b[2]], [0.3, b[2]]], {
+            fillColor: b[3], fillOpacity: 1, borders: { strokeColor: '#334155', strokeWidth: 1 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          var cx = b[1] - 1.5;                       // milieu de la bande propre
+          board.create('text', [cx, b[2] - 0.7, b[0]], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+          board.create('text', [cx, 2.2, b[4]], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-style:italic;text-align:center', fixed: true, highlight: false });
+        });
+      }
+    }],
+    points: [
+      '\\( \\mathbb{N} \\) : les <b>entiers naturels</b> 0, 1, 2, 3… Ni signe moins, ni virgule.',
+      '\\( \\mathbb{Z} \\) : les <b>entiers relatifs</b>, on ajoute les opposés : …, −2, −1, 0, 1, 2, …',
+      '\\( \\mathbb{D} \\) : les <b>décimaux</b>, un nombre <b>fini</b> de chiffres après la virgule : \\( \\dfrac{a}{10^n} \\).',
+      '\\( \\mathbb{Q} \\) : les <b>rationnels</b>, quotients \\( \\dfrac{a}{b} \\) d\'entiers (b ≠ 0). Écriture décimale finie ou périodique.',
+      '\\( \\mathbb{R} \\) : les <b>réels</b>, tous les points de la droite graduée. Ceux qui ne sont pas rationnels sont <b>irrationnels</b> : √2, π.',
+      'Emboîtement : \\( \\mathbb{N} \\subset \\mathbb{Z} \\subset \\mathbb{D} \\subset \\mathbb{Q} \\subset \\mathbb{R} \\). ' +
+        '\\( x \\in E \\) : « appartient » ; \\( E \\subset F \\) : « est inclus dans ».'
+    ],
+    exemples: [
+      '\\( -3 \\in \\mathbb{Z} \\) mais \\( -3 \\notin \\mathbb{N} \\) ; \\( 0{,}5 \\in \\mathbb{D} \\) mais \\( 0{,}5 \\notin \\mathbb{Z} \\).',
+      '\\( \\dfrac{1}{3} \\in \\mathbb{Q} \\) mais \\( \\dfrac{1}{3} \\notin \\mathbb{D} \\) : 0,333… ne s\'arrête jamais. ' +
+        '\\( \\sqrt{2} \\in \\mathbb{R} \\) mais \\( \\sqrt{2} \\notin \\mathbb{Q} \\).',
+      'C\'est le nombre qui compte, pas son écriture : \\( \\dfrac{4}{2} = 2 \\in \\mathbb{N} \\), \\( \\sqrt{4} = 2 \\in \\mathbb{N} \\), ' +
+        '\\( \\dfrac{7}{8} = 0{,}875 \\in \\mathbb{D} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

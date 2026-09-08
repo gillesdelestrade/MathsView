@@ -92,6 +92,63 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les intervalles',
+    figures: [{
+      legende: 'Crochet fermé : la borne est comprise. Ouvert : elle est exclue.',
+      boundingbox: [-6.3, 4.4, 6.6, -1.6],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 36,
+      dessine: function (board) {
+        function axe(y) {
+          board.create('segment', [[-6, y], [6.3, y]], { strokeColor: '#334155', strokeWidth: 1.4, lastArrow: true, fixed: true, highlight: false });
+          for (var i = -5; i <= 5; i++) {
+            board.create('segment', [[i, y - 0.12], [i, y + 0.12]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+            board.create('text', [i, y - 0.3, String(i).replace('-', '−')], { anchorX: 'middle', anchorY: 'top', fontSize: 9, color: '#64748b', fixed: true, highlight: false });
+          }
+        }
+        // Crochet en x : ouvert vers la droite (d = 1) ou vers la gauche (d = −1).
+        function crochet(x, y, d, col) {
+          board.create('curve', [[x + 0.25 * d, x, x, x + 0.25 * d], [y + 0.45, y + 0.45, y - 0.45, y - 0.45]], { strokeColor: col, strokeWidth: 2.2, fixed: true, highlight: false });
+        }
+        function bande(x1, x2, y, col) {
+          board.create('polygon', [[x1, y - 0.28], [x2, y - 0.28], [x2, y + 0.28], [x1, y + 0.28]], {
+            fillColor: col, fillOpacity: .35, borders: { visible: false }, vertices: { visible: false }, highlight: false, fixed: true
+          });
+        }
+        function point(x, y, plein, col) {
+          board.create('point', [x, y], { name: '', size: 2.6, strokeColor: col, fillColor: plein ? col : '#ffffff', strokeWidth: 1.6, fixed: true, highlight: false, showInfobox: false });
+        }
+        // [−3 ; 2[
+        axe(2.6);
+        bande(-3, 2, 2.6, '#7c3aed');
+        crochet(-3, 2.6, 1, '#7c3aed'); crochet(2, 2.6, 1, '#7c3aed');
+        point(-3, 2.6, true, '#7c3aed'); point(2, 2.6, false, '#7c3aed');
+        board.create('text', [-0.5, 3.35, '[−3 ; 2[  ⟺  −3 ⩽ x < 2'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 11, color: '#7c3aed', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        // [1 ; +∞[
+        axe(0);
+        bande(1, 6.3, 0, '#0d9488');
+        crochet(1, 0, 1, '#0d9488');
+        point(1, 0, true, '#0d9488');
+        board.create('text', [1.9, 0.75, '[1 ; +∞[  ⟺  x ⩾ 1'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 11, color: '#0d9488', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Un <b>intervalle</b> est un morceau de la droite des réels : tous les nombres compris entre deux <b>bornes</b>.',
+      'Crochet <b>fermé</b> [&nbsp;] : la borne <b>appartient</b> à l\'intervalle. Crochet <b>ouvert</b> ]&nbsp;[ : elle est <b>exclue</b>. Le crochet se tourne vers l\'intérieur pour « attraper » la borne.',
+      'Intervalle et inégalités disent la même chose : \\( x \\in [-3\\,;2[ \\iff -3 \\leqslant x < 2 \\).',
+      'Du côté de \\( -\\infty \\) ou \\( +\\infty \\), le crochet est <b>toujours ouvert</b> : l\'infini n\'est pas un nombre.',
+      'La plus petite borne s\'écrit à gauche. \\( [a\\,;a] = \\{a\\} \\) et \\( ]a\\,;a[ = \\varnothing \\).',
+      'Amplitude (longueur) : \\( b - a \\) ; centre : \\( \\dfrac{a+b}{2} \\).'
+    ],
+    exemples: [
+      '\\( x \\geqslant 1 \\iff x \\in [1\\,;+\\infty[ \\) ; \\( \\mathbb{R}^+ = [0\\,;+\\infty[ \\) ; \\( \\mathbb{R} = \\;]-\\infty\\,;+\\infty[ \\).',
+      '\\( -3 \\in [-3\\,;2[ \\) mais \\( 2 \\notin [-3\\,;2[ \\) ; \\( 1{,}999 \\in [-3\\,;2[ \\).',
+      '\\( [-3\\,;2] \\) : amplitude \\( 2 - (-3) = 5 \\), centre \\( \\dfrac{-3+2}{2} = -0{,}5 \\). Écrire \\( [2\\,;-3] \\) ou \\( [1\\,;+\\infty] \\) est une faute.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

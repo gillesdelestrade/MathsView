@@ -85,6 +85,56 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Angles et droites parallèles',
+    figures: [{
+      legende: '(d₁) ∥ (d₂). Vert : correspondants. Orange : alternes-internes.',
+      boundingbox: [-4.6, 4.2, 4.6, -4.2],
+      largeur: 58, hauteur: 42,
+      dessine: function (board) {
+        // Tous les points de construction restent invisibles : seuls les
+        // traits et les secteurs d'angle se voient.
+        function pt(P) { return board.create('point', P, { visible: false, fixed: true }); }
+        var A = pt([1, 2]), B = pt([-1, -2]);
+        var D1g = pt([-4, 2]), D1d = pt([4, 2]), D2g = pt([-4, -2]), D2d = pt([4, -2]), H = pt([2, 4]);
+        board.create('line', [D1g, D1d], { strokeColor: '#0f172a', strokeWidth: 1.6, fixed: true, highlight: false });
+        board.create('line', [D2g, D2d], { strokeColor: '#0f172a', strokeWidth: 1.6, fixed: true, highlight: false });
+        board.create('line', [A, B], { strokeColor: '#64748b', strokeWidth: 1.4, fixed: true, highlight: false });
+        function ang(pts, col, r) {
+          board.create('angle', pts, { radius: r, fillColor: col, fillOpacity: .5, strokeColor: col,
+            name: '', fixed: true, highlight: false });
+        }
+        // Correspondants (verts) : en haut à droite de chaque croisement.
+        ang([D1d, A, H], '#059669', 0.9);
+        ang([D2d, B, A], '#059669', 0.9);
+        // Alternes-internes (orange) : entre les droites, de part et d'autre de la sécante.
+        ang([B, A, D1d], '#f97316', 0.65);
+        ang([A, B, D2g], '#f97316', 0.65);
+        function txt(x, y, t, col) {
+          board.create('text', [x, y, t], { anchorX: 'middle', anchorY: 'middle', fontSize: 11,
+            color: col || '#1e293b', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        txt(-3.7, 2.4, '(d₁)'); txt(-3.7, -1.6, '(d₂)');
+        txt(0.55, 2.35, 'A'); txt(-0.55, -2.4, 'B');
+      }
+    }],
+    points: [
+      'Deux droites coupées par une <b>sécante</b> forment huit angles.',
+      'Angles <b>correspondants</b> : du même côté de la sécante, l\'un entre les droites, l\'autre à l\'extérieur.',
+      'Angles <b>alternes-internes</b> : entre les deux droites, de part et d\'autre de la sécante.',
+      '<b>Propriété :</b> si les droites sont <b>parallèles</b>, les angles correspondants sont égaux, et les alternes-internes aussi.',
+      '<b>Réciproque :</b> si deux angles correspondants (ou alternes-internes) sont égaux, les droites sont <b>parallèles</b>.',
+      'Droites non parallèles : ces angles ne sont pas égaux.'
+    ],
+    exemples: [
+      '(d₁) ∥ (d₂) et un angle correspondant mesure 63° : l\'autre mesure aussi 63°.',
+      'Deux angles alternes-internes mesurent 117° et 117° : les droites sont parallèles.',
+      'Deux angles alternes-internes mesurent 63° et 70° : les droites ne sont pas parallèles.',
+      'Deux angles adjacents le long d\'une droite : 63° + 117° = 180°.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

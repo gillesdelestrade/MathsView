@@ -86,6 +86,49 @@ MathsView.register({
   board: { boundingbox: [-7.5, 6.5, 7.5, -6.5], axis: true, grid: true,
            keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Lire et placer un point dans un repère',
+    figures: [{
+      legende: 'A(3 ; −2) : 3 vers la droite, puis 2 vers le bas.',
+      boundingbox: [-4.6, 4.6, 4.6, -4.6],
+      axis: true,
+      largeur: 50, hauteur: 46,
+      dessine: function (board) {
+        board.create('grid', [], { strokeColor: '#cbd5e1', strokeOpacity: .6 });
+        function pt(P, nom, dx, dy, col) {
+          board.create('point', P, { name: '', size: 3, fillColor: col, strokeColor: col, fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: 'middle', anchorY: 'middle', fontSize: 11,
+            color: col, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        // Le trajet vers A : d'abord l'abscisse, puis l'ordonnée.
+        board.create('segment', [[0, 0], [3, 0]], { strokeColor: '#dc2626', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('segment', [[3, 0], [3, -2]], { strokeColor: '#16a34a', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('text', [1.5, 0.55, '+3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [3.55, -1, '−2'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#16a34a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        pt([3, -2], 'A(3 ; −2)', -0.2, -0.65, '#1d4ed8');
+        // B, pour l'ordre des coordonnées.
+        board.create('segment', [[-2, 3], [-2, 0]], { strokeColor: '#94a3b8', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[-2, 3], [0, 3]], { strokeColor: '#94a3b8', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        pt([-2, 3], 'B(−2 ; 3)', -0.9, 0.6, '#7c3aed');
+        board.create('text', [-0.3, -0.45, 'O'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Un repère : deux axes gradués perpendiculaires qui se coupent en O, l\'<b>origine</b>.',
+      'L\'axe horizontal porte les <b>abscisses</b>, l\'axe vertical les <b>ordonnées</b>.',
+      'Un point a deux coordonnées, <b>toujours dans cet ordre</b> : A(abscisse ; ordonnée).',
+      'Pour <b>placer</b> A(3 ; −2) : partir de O, avancer de 3 vers la droite, puis descendre de 2.',
+      'Pour <b>lire</b> : du point, tracer les pointillés vers les deux axes et lire les deux nombres.',
+      'À gauche de l\'axe vertical, l\'abscisse est négative ; sous l\'axe horizontal, l\'ordonnée est négative.'
+    ],
+    exemples: [
+      'A(3 ; −2) et B(−2 ; 3) sont deux points <b>différents</b> : l\'ordre compte.',
+      'Un point de l\'axe horizontal a pour ordonnée 0 : C(4 ; 0). L\'origine est O(0 ; 0).',
+      'Un point en haut à gauche a une abscisse négative et une ordonnée positive : D(−3 ; 1).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

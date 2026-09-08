@@ -92,6 +92,40 @@ MathsView.register({
     'l\'expression <em>sans</em> connaître la lettre — ce n\'est pas le même travail.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Calculer une expression littérale',
+    figures: [{
+      legende: 'La lettre cède la place à sa valeur, entre parenthèses.',
+      boundingbox: [-0.3, 4.6, 8.3, -0.3],
+      keepaspectratio: false,
+      largeur: 56, hauteur: 30,
+      dessine: function (board) {
+        function ligne(y, t, col, gras) {
+          board.create('text', [0.2, y, t], { anchorX: 'left', anchorY: 'middle', fontSize: 14,
+            color: col || '#1e293b', cssStyle: gras ? 'font-weight:700' : '', fixed: true, highlight: false });
+        }
+        ligne(3.9, 'A = 3x + 2      avec  x = 5', '#1e293b', true);
+        ligne(2.8, 'A = 3 × x + 2', '#64748b');
+        ligne(1.7, 'A = 3 × (5) + 2', '#e11d48', true);
+        ligne(0.6, 'A = 15 + 2 = 17', '#1e293b', true);
+      }
+    }],
+    points: [
+      'Dans une formule, une lettre <b>est un nombre</b> que l\'on ne connaît pas encore.',
+      '<b>Substituer</b>, c\'est remplacer la lettre par sa valeur, puis calculer.',
+      'Le signe × est souvent <b>sous-entendu</b> : \\( 3x \\) veut dire \\( 3 \\times x \\). On le rétablit avant de remplacer.',
+      'On écrit la valeur <b>entre parenthèses</b> : avec \\( x = -2 \\), \\( x^2 = (-2)^2 = 4 \\).',
+      'Ensuite, les <b>priorités</b> habituelles : parenthèses, puissances, × et ÷, puis + et −.',
+      'Une formule vaut pour <b>toutes</b> les valeurs de la lettre : à chaque valeur, un résultat.'
+    ],
+    exemples: [
+      '\\( A = 3x + 2 \\) avec \\( x = 5 \\) : \\( A = 3 \\times 5 + 2 = 17 \\), et surtout pas « 35 + 2 ».',
+      '\\( B = x^2 - 4x \\) avec \\( x = -2 \\) : \\( B = (-2)^2 - 4 \\times (-2) = 4 + 8 = 12 \\).',
+      'Aire d\'un disque \\( \\pi r^2 \\) avec \\( r = 3 \\) cm : \\( \\pi \\times 3 \\times 3 \\approx 28{,}3 \\) cm².'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();          // leçon sans figure
 

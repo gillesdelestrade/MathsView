@@ -48,6 +48,8 @@
         <div id="board" class="jxgbox board"></div>
         <div id="lesson-extras"></div>
         <div id="lesson-notes" class="lesson-notes"></div>
+        <!-- La fiche bristol à recopier (js/fiches.js), pour les leçons qui en déclarent une -->
+        <div id="lesson-fiche" class="lesson-fiche"></div>
       </section>
     </main>
   </div>
@@ -58,6 +60,9 @@
 
   <!-- Moteur MathsView -->
   <script src="js/app.js"></script>
+  <!-- La fiche bristol à recopier : modèle affiché sous les leçons qui
+       déclarent un champ `fiche`. -->
+  <script src="js/fiches.js"></script>
   <!-- Pool de fonctions de référence, partagé par les leçons « Fonctions ».
        À charger APRÈS le moteur et AVANT le catalogue. -->
   <script src="js/python-mini.js"></script>

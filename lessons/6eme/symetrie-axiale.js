@@ -49,6 +49,60 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Symétrie axiale',
+    figures: [{
+      legende: '(d) est la médiatrice de [AA\'] et de [CC\'].',
+      boundingbox: [-5.2, 3.8, 5.2, -2.8],
+      largeur: 58, hauteur: 38,
+      dessine: function (board) {
+        var ORIG = '#2563eb', IMG = '#dc2626', AXE = '#7c3aed';
+        var A = [-3.6, 2.4], B = [-1, 1.2], C = [-3, -1.4];
+        var A2 = [3.6, 2.4], B2 = [1, 1.2], C2 = [3, -1.4];
+        function poly(pts, col) {
+          board.create('polygon', pts, {
+            fillColor: col, fillOpacity: .15, borders: { strokeColor: col, strokeWidth: 2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+        }
+        function pt(P, nom, dx, dy, col) {
+          board.create('point', P, { name: '', size: 2.5, color: col, fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: col, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        var cache = { visible: false, name: '', withLabel: false, fixed: true, showInfobox: false };
+        board.create('line', [board.create('point', [0, -3], cache), board.create('point', [0, 4], cache)], { strokeColor: AXE, strokeWidth: 2, dash: 2, fixed: true, highlight: false });
+        board.create('text', [0.3, 3.4, '(d)'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: AXE, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        poly([A, B, C], ORIG); poly([A2, B2, C2], IMG);
+        // Le trait A → A', son milieu sur l'axe, l'angle droit.
+        board.create('segment', [A, A2], { strokeColor: '#64748b', strokeWidth: 1.2, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [C, C2], { strokeColor: '#64748b', strokeWidth: 1.2, dash: 2, fixed: true, highlight: false });
+        board.create('polygon', [[0, A[1]], [0.3, A[1]], [0.3, A[1] - 0.3], [0, A[1] - 0.3]], {
+          fillColor: 'none', fillOpacity: 0, borders: { strokeColor: '#64748b', strokeWidth: 1 }, vertices: { visible: false }, highlight: false, fixed: true
+        });
+        // Les deux moitiés égales, marquées d'un trait.
+        [-1.8, 1.8].forEach(function (x) {
+          board.create('segment', [[x, A[1] - 0.2], [x, A[1] + 0.2]], { strokeColor: '#64748b', strokeWidth: 1.5, fixed: true, highlight: false });
+        });
+        pt(A, 'A', -0.35, 0.3, ORIG); pt(B, 'B', 0, -0.4, ORIG); pt(C, 'C', -0.35, -0.3, ORIG);
+        pt(A2, 'A\'', 0.4, 0.3, IMG); pt(B2, 'B\'', 0, -0.4, IMG); pt(C2, 'C\'', 0.4, -0.3, IMG);
+      }
+    }],
+    points: [
+      'Le <b>symétrique</b> de A par rapport à une droite (d) est le point A\' tel que (d) est la <b>médiatrice</b> de [AA\'].',
+      'Pour le construire : tracer la <b>perpendiculaire</b> à (d) passant par A, puis reporter la <b>même distance</b> de l\'autre côté.',
+      'Un point de l\'axe est son <b>propre symétrique</b>.',
+      'Pour une figure, on construit le symétrique de chaque <b>sommet</b>, puis on relie.',
+      'La figure et son image sont <b>superposables</b> par pliage le long de l\'axe.',
+      'La symétrie <b>conserve</b> les longueurs, les angles, les aires et l\'alignement.'
+    ],
+    exemples: [
+      'A est à 2 cm de l\'axe : A\' est à 2 cm de l\'axe, de l\'autre côté, sur la même perpendiculaire.',
+      'Si AB = 3 cm, alors A\'B\' = 3 cm.',
+      'Le symétrique d\'un triangle rectangle est un triangle rectangle de mêmes dimensions.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

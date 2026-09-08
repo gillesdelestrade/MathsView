@@ -47,6 +47,47 @@ MathsView.register({
     '<li>Astuce : <strong>× 0,1 revient à ÷ 10</strong>, et <strong>÷ 0,1 revient à × 10</strong>.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Multiplier et diviser par 10, 100, 1000',
+    figures: [{
+      legende: '3,45 × 100 = 345 : la virgule saute 2 crans vers la droite.',
+      boundingbox: [-1, 3.6, 12.4, -1.3],
+      largeur: 60, hauteur: 26,
+      dessine: function (board) {
+        function txt(x, y, t, taille, col) {
+          board.create('text', [x, y, t], { anchorX: 'middle', anchorY: 'middle', fontSize: taille, cssStyle: 'font-weight:700', color: col || '#1e293b', fixed: true, highlight: false });
+        }
+        txt(0, 1, '3', 22); txt(2, 1, '4', 22); txt(4, 1, '5', 22);
+        txt(1, 0.55, ',', 24, '#dc2626');
+        txt(5, 0.55, ',', 24, '#0d9488');
+        // Deux sauts d'un cran, en arcs fléchés.
+        function saut(cx, n) {
+          board.create('curve', [function (t) { return cx - Math.cos(t); }, function (t) { return 1.6 + 0.9 * Math.sin(t); }, 0, Math.PI], {
+            strokeColor: '#dc2626', strokeWidth: 1.6, lastArrow: true, fixed: true, highlight: false
+          });
+          txt(cx, 2.85, n, 10, '#dc2626');
+        }
+        saut(2, '1'); saut(4, '2');
+        txt(8.6, 1, '= 345', 18, '#0d9488');
+        txt(5.7, -0.75, '× 100 : deux crans vers la droite', 10, '#dc2626');
+      }
+    }],
+    points: [
+      'Pour multiplier ou diviser par 10, 100, 1000, on ne change pas les chiffres : on <b>déplace la virgule</b>.',
+      '<b>× 10, × 100, × 1000</b> : la virgule va vers la <b>droite</b> de 1, 2 ou 3 crans. Le nombre grandit.',
+      '<b>÷ 10, ÷ 100, ÷ 1000</b> : la virgule va vers la <b>gauche</b> de 1, 2 ou 3 crans. Le nombre rapetisse.',
+      '<b>× 0,1 ; × 0,01 ; × 0,001</b> : vers la gauche aussi. Multiplier par 0,1, c\'est diviser par 10.',
+      'Quand il manque un chiffre, on complète par des <b>zéros</b>.',
+      'Un entier a une virgule cachée après ses unités : 7 = 7,0.'
+    ],
+    exemples: [
+      '3,45 × 100 = 345 ; 27,8 ÷ 10 = 2,78.',
+      '5 × 0,01 = 0,05 ; 0,6 ÷ 0,1 = 6.',
+      '4,2 × 1000 = 4 200 : deux zéros ajoutés pour remplir les cases.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

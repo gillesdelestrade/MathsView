@@ -61,6 +61,46 @@ MathsView.register({
     '\\((5 + 3) \\times 4 = 8 \\times 4 = 32\\).</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Priorités opératoires',
+    figures: [{
+      legende: 'Trois étages, de haut en bas.',
+      boundingbox: [-0.4, 4.6, 10.3, -0.9],
+      keepaspectratio: false,
+      largeur: 58, hauteur: 34,
+      dessine: function (board) {
+        function etage(y, col, num, txt, ex) {
+          board.create('polygon', [[0, y], [4.2, y], [4.2, y + 1], [0, y + 1]], {
+            fillColor: col, fillOpacity: .35, borders: { strokeColor: col, strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [0.25, y + 0.5, num], { anchorX: 'left', anchorY: 'middle', fontSize: 11, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+          board.create('text', [2.4, y + 0.5, txt], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+          board.create('text', [4.7, y + 0.5, ex], { anchorX: 'left', anchorY: 'middle', fontSize: 10.5, fixed: true, highlight: false });
+        }
+        etage(3.3, '#f59e0b', '1', '( … )', '(5 + 3) × 4 = 8 × 4 = 32');
+        etage(1.9, '#2563eb', '2', '× et ÷', '5 + 3 × 4 = 5 + 12 = 17');
+        etage(0.5, '#16a34a', '3', '+ et −', '20 − 8 − 5 = 12 − 5 = 7');
+        board.create('arrow', [[-0.15, 4.3], [-0.15, 0.4]], { strokeColor: '#64748b', strokeWidth: 1.2, fixed: true, highlight: false });
+        board.create('text', [0, -0.45, 'à égalité : de gauche à droite'], { anchorX: 'left', anchorY: 'middle', fontSize: 9, color: '#64748b', cssStyle: 'font-style:italic', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'On ne calcule pas dans l\'ordre d\'écriture : il y a des <b>priorités</b>.',
+      '<b>1.</b> Les <b>parenthèses</b> d\'abord (la plus intérieure en premier).',
+      '<b>2.</b> Puis les <b>× et ÷</b>. <b>3.</b> Enfin les <b>+ et −</b>.',
+      'À priorité égale, on va <b>de gauche à droite</b> : \\( 36 \\div 6 \\div 3 = 6 \\div 3 = 2 \\).',
+      'Même piège avec deux soustractions : \\( 20 - 8 - 5 = 7 \\), et non 17.',
+      'Une parenthèse <b>force</b> une opération à passer en premier.'
+    ],
+    exemples: [
+      '\\( 5 + 3 \\times 4 = 5 + 12 = 17 \\) (et non 32).',
+      '\\( (5 + 3) \\times 4 = 8 \\times 4 = 32 \\).',
+      '\\( 18 - 2 \\times (4 + 1) = 18 - 2 \\times 5 = 18 - 10 = 8 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

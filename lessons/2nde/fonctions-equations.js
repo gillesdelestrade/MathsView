@@ -83,6 +83,48 @@ MathsView.register({
     axis: true, grid: true, keepaspectratio: false, showNavigation: true
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Résoudre f(x) = k et f(x) < k',
+    figures: [{
+      legende: 'x² = 4 : deux points d\'intersection. x² < 4 : la courbe sous la droite.',
+      boundingbox: [-3.6, 8.6, 3.6, -2],
+      keepaspectratio: false,
+      axis: true,
+      largeur: 54, hauteur: 46,
+      dessine: function (board) {
+        var k = 4;
+        // La partie de l'axe où x² < 4, en vert, bornes exclues.
+        board.create('polygon', [[-2, -0.18], [2, -0.18], [2, 0.18], [-2, 0.18]], {
+          fillColor: '#16a34a', fillOpacity: .35, borders: { visible: false }, vertices: { visible: false }, highlight: false, fixed: true
+        });
+        board.create('functiongraph', [function (x) { return x * x; }, -2.9, 2.9], { strokeColor: '#0284c7', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('functiongraph', [function (x) { return k; }, -3.5, 3.5], { strokeColor: '#dc2626', strokeWidth: 1.8, fixed: true, highlight: false });
+        [-2, 2].forEach(function (x) {
+          board.create('point', [x, k], { name: '', size: 2.8, strokeColor: '#dc2626', fillColor: '#dc2626', fixed: true, highlight: false, showInfobox: false });
+          board.create('segment', [[x, k], [x, 0]], { strokeColor: '#dc2626', strokeWidth: 1.2, dash: 2, fixed: true, highlight: false });
+          board.create('point', [x, 0], { name: '', size: 2.6, strokeColor: '#16a34a', fillColor: '#ffffff', strokeWidth: 1.6, fixed: true, highlight: false, showInfobox: false });
+        });
+        board.create('text', [-3.5, 4.35, 'y = 4'], { anchorX: 'left', anchorY: 'bottom', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [2.2, 7.2, 'y = x²'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#0284c7', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [0, -1.2, 'S = ]−2 ; 2['], { anchorX: 'middle', anchorY: 'top', fontSize: 10, color: '#16a34a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Résoudre <b>f(x) = k</b> : chercher tous les x dont l\'image vaut k, les <b>antécédents</b> de k. Les solutions sont des nombres : \\( S = \\{-2\\,;2\\} \\).',
+      'Résoudre <b>f(x) < k</b> : tous les x dont l\'image est plus petite que k. Les solutions sont des <b>intervalles</b>.',
+      'Graphiquement : on trace la droite horizontale <b>y = k</b>. Ses <b>intersections</b> avec la courbe donnent les solutions de f(x) = k.',
+      'f(x) < k : la partie de la courbe <b>sous</b> la droite ; f(x) > k : <b>au-dessus</b>. On lit les réponses sur l\'<b>axe des abscisses</b>.',
+      '< et > : bornes <b>exclues</b> (crochets ouverts) ; ⩽ et ⩾ : bornes <b>incluses</b>. Les bornes sont les solutions de f(x) = k.',
+      'Le graphique donne des valeurs <b>approchées</b>, le calcul des valeurs <b>exactes</b>. Diviser par un nombre négatif <b>change le sens</b>.'
+    ],
+    exemples: [
+      '\\( x^2 = 4 \\) : \\( S = \\{-2\\,;2\\} \\) ; \\( x^2 < 4 \\) : \\( S = \\;]-2\\,;2[ \\) ; \\( x^2 \\geqslant 4 \\) : \\( S = \\;]-\\infty\\,;-2] \\cup [2\\,;+\\infty[ \\).',
+      '\\( x^2 = 5 \\) : \\( S = \\{-\\sqrt{5}\\,;\\sqrt{5}\\} \\) (exact), lu ≈ ±2,24 ; \\( x^2 = -1 \\) : aucune solution, un carré n\'est jamais négatif.',
+      '\\( -2x < 4 \\iff x > -2 \\) (et non x < −2) : \\( S = \\;]-2\\,;+\\infty[ \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     var POOL = MathsView.fonctions;
     var FN = POOL.liste();

@@ -50,6 +50,53 @@ MathsView.register({
     '<p>Convertir, c\'est déplacer la virgule et compléter avec des zéros — jamais ' +
     'multiplier les chiffres eux-mêmes.</p>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les conversions',
+    figures: [{
+      legende: '2,5 m : la virgule au bord des mètres. On lit 250 cm.',
+      boundingbox: [-0.2, 2.35, 7.2, -0.35],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 24,
+      dessine: function (board) {
+        var unites = ['km', 'hm', 'dam', 'm', 'dm', 'cm', 'mm'];
+        var chiffres = ['', '', '', '2', '5', '0', ''];
+        function t(x, y, s, opt) {
+          board.create('text', [x, y, s], Object.assign({ anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false }, opt || {}));
+        }
+        // La grille : 7 colonnes, une ligne d'en-tête et une ligne de chiffres.
+        for (var i = 0; i <= 7; i++)
+          board.create('segment', [[i, 0], [i, 2]], { strokeColor: '#334155', strokeWidth: i === 0 || i === 7 ? 1.5 : 1, fixed: true, highlight: false });
+        [0, 1, 2].forEach(function (y) {
+          board.create('segment', [[0, y], [7, y]], { strokeColor: '#334155', strokeWidth: y === 1 ? 1 : 1.5, fixed: true, highlight: false });
+        });
+        board.create('polygon', [[0, 1], [7, 1], [7, 2], [0, 2]], {
+          fillColor: '#d1fae5', fillOpacity: .7, borders: { visible: false }, vertices: { visible: false }, highlight: false, fixed: true
+        });
+        unites.forEach(function (u, i) {
+          t(i + 0.5, 1.5, u, { fontSize: 11, color: i === 3 ? '#059669' : '#334155' });
+          if (chiffres[i]) t(i + 0.5, 0.5, chiffres[i], { fontSize: 14, color: i === 3 ? '#059669' : '#334155' });
+        });
+        // La virgule, collée au bord droit de la colonne des mètres.
+        t(3.93, 0.4, ',', { fontSize: 16, color: '#dc2626', anchorX: 'middle' });
+      }
+    }],
+    points: [
+      'Un <b>tableau de conversion</b> a une colonne par rang. On y range les chiffres, la <b>virgule au bord</b> de la colonne de l\'unité de départ.',
+      'Longueurs : chaque rang vaut <b>10</b> fois le précédent → <b>une</b> colonne par unité (km, hm, dam, m, dm, cm, mm).',
+      'Aires : chaque rang vaut <b>100</b> fois le précédent → <b>deux</b> colonnes par unité (km², …, m², dm², cm², mm²).',
+      'Volumes : chaque rang vaut <b>1000</b> fois le précédent → <b>trois</b> colonnes par unité. 1 dm³ = 1 L et 1 cm³ = 1 mL.',
+      'Pour lire dans une autre unité, on <b>déplace la virgule</b> et on complète avec des <b>zéros</b>.',
+      'On ne multiplie jamais les chiffres eux-mêmes.'
+    ],
+    exemples: [
+      '2,5 m = 25 dm = 250 cm = 2 500 mm.',
+      '3 m² = 300 dm² = 30 000 cm² (deux colonnes par unité).',
+      '1,5 L = 1,5 dm³ = 1 500 cm³ = 1 500 mL (trois colonnes par unité).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

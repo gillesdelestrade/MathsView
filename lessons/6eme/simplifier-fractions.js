@@ -62,6 +62,55 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-3.4, 6.2, 11.4, -1.3], keepaspectratio: false, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Simplifier une fraction',
+    figures: [{
+      legende: '6/8 et 3/4 : la même longueur coloriée.',
+      boundingbox: [-1.3, 3.2, 9.3, -0.4],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 34,
+      dessine: function (board) {
+        // Une barre = une unité (8 de large), coloriée sur n parts sur d.
+        function barre(y, n, d, txt) {
+          var w = 8 / d;
+          for (var i = 0; i < d; i++) {
+            board.create('polygon', [[i * w, y], [(i + 1) * w, y], [(i + 1) * w, y + 1], [i * w, y + 1]], {
+              fillColor: i < n ? '#0d9488' : '#ffffff', fillOpacity: i < n ? .55 : 1,
+              borders: { strokeColor: '#334155', strokeWidth: 1.2 }, vertices: { visible: false },
+              highlight: false, fixed: true
+            });
+          }
+          board.create('text', [-0.35, y + 0.5, txt], {
+            anchorX: 'right', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', fixed: true, highlight: false
+          });
+        }
+        barre(1.8, 6, 8, '6/8');
+        barre(0.2, 3, 4, '3/4');
+        // La longueur coloriée n'a pas bougé.
+        board.create('segment', [[6, -0.2], [6, 3.0]], {
+          strokeColor: '#dc2626', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false
+        });
+      }
+    }],
+    points: [
+      '<b>Simplifier</b> une fraction, c\'est écrire le <b>même nombre</b> avec un ' +
+        'numérateur et un dénominateur plus petits.',
+      'On <b>divise</b> le numérateur <b>et</b> le dénominateur par un <b>même</b> nombre.',
+      'Ce nombre doit diviser les deux : c\'est un <b>diviseur commun</b>.',
+      'On recommence tant qu\'on trouve un diviseur commun.',
+      'Quand le seul diviseur commun est 1, la fraction est <b>irréductible</b>.',
+      'Pour trouver un diviseur commun : deux nombres pairs → ÷ 2 ; ' +
+        'deux nombres finissant par 0 ou 5 → ÷ 5 ; sommes des chiffres dans la table de 3 → ÷ 3.'
+    ],
+    exemples: [
+      '\\( \\dfrac{6}{8} = \\dfrac{6 \\div 2}{8 \\div 2} = \\dfrac{3}{4} \\)',
+      '\\( \\dfrac{12}{18} = \\dfrac{12 \\div 2}{18 \\div 2} = \\dfrac{6}{9} = ' +
+        '\\dfrac{6 \\div 3}{9 \\div 3} = \\dfrac{2}{3} \\) — ou d\'un coup : ÷ 6.',
+      '\\( \\dfrac{5}{7} \\) est irréductible : 5 et 7 n\'ont que 1 comme diviseur commun.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* État                                                                 */

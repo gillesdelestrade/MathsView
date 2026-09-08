@@ -102,6 +102,58 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Inéquation |x − a| ⩽ r',
+    figures: [{
+      legende: '|x − 3| ⩽ 2 : les x à distance au plus 2 de 3, soit [1 ; 5].',
+      boundingbox: [-1.6, 3.4, 7.8, -1.3],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 30,
+      dessine: function (board) {
+        var a = 3, r = 2;
+        board.create('segment', [[-1.3, 0], [7.5, 0]], { strokeColor: '#334155', strokeWidth: 1.4, lastArrow: true, fixed: true, highlight: false });
+        for (var i = -1; i <= 7; i++) {
+          board.create('segment', [[i, -0.1], [i, 0.1]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+          board.create('text', [i, -0.25, String(i).replace('-', '−')], { anchorX: 'middle', anchorY: 'top', fontSize: 9, color: '#64748b', fixed: true, highlight: false });
+        }
+        board.create('polygon', [[a - r, -0.2], [a + r, -0.2], [a + r, 0.2], [a - r, 0.2]], {
+          fillColor: '#a78bfa', fillOpacity: .45, borders: { visible: false }, vertices: { visible: false }, highlight: false, fixed: true
+        });
+        function crochet(x, d) {
+          board.create('curve', [[x + 0.2 * d, x, x, x + 0.2 * d], [0.38, 0.38, -0.38, -0.38]], { strokeColor: '#7c3aed', strokeWidth: 2.2, fixed: true, highlight: false });
+        }
+        crochet(a - r, 1); crochet(a + r, -1);
+        board.create('point', [a, 0], { name: '', size: 3, strokeColor: '#dc2626', fillColor: '#dc2626', fixed: true, highlight: false, showInfobox: false });
+        // Les deux arcs de longueur r, de part et d'autre de a.
+        function arc(x1, x2, txt) {
+          var c = (x1 + x2) / 2, R = (x2 - x1) / 2;
+          var xs = [], ys = [];
+          for (var t = 0; t <= 20; t++) { var th = Math.PI * t / 20; xs.push(c - R * Math.cos(th)); ys.push(0.3 + 1.1 * Math.sin(th)); }
+          board.create('curve', [xs, ys], { strokeColor: '#dc2626', strokeWidth: 1.4, fixed: true, highlight: false });
+          board.create('text', [c, 1.55, txt], { anchorX: 'middle', anchorY: 'bottom', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        arc(a - r, a, 'r = 2'); arc(a, a + r, 'r = 2');
+        board.create('text', [a, -0.85, 'a = 3'], { anchorX: 'middle', anchorY: 'top', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [a - r, 2.55, 'a − r = 1'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 10, color: '#7c3aed', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [a + r, 2.55, 'a + r = 5'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 10, color: '#7c3aed', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      '\\( |x - a| \\) est la <b>distance</b> entre x et a sur la droite graduée. \\( |X| \\) est la distance de X à 0.',
+      'Pour \\( r \\geqslant 0 \\) : \\( |X| \\leqslant r \\iff -r \\leqslant X \\leqslant r \\).',
+      '\\( |x - a| \\leqslant r \\iff a - r \\leqslant x \\leqslant a + r \\iff x \\in [a - r\\,;a + r] \\) : intervalle de <b>centre a</b> et de <b>rayon r</b>.',
+      'Inégalité stricte \\( |x - a| < r \\) : mêmes bornes, crochets <b>ouverts</b>.',
+      '\\( |x - a| \\geqslant r \\) : tout ce qui est <b>en dehors</b> : \\( ]-\\infty\\,;a - r] \\cup [a + r\\,;+\\infty[ \\).',
+      'Le centre est le nombre qu\'on <b>soustrait</b> : \\( |x + 4| = |x - (-4)| \\), donc a = −4.'
+    ],
+    exemples: [
+      '\\( |x - 3| \\leqslant 2 \\iff x \\in [1\\,;5] \\) ; \\( |x - 3| < 2 \\iff x \\in \\;]1\\,;5[ \\) ; \\( |x - 3| \\geqslant 2 \\iff x \\in \\;]-\\infty\\,;1] \\cup [5\\,;+\\infty[ \\).',
+      '\\( |x + 4| \\leqslant 2 \\iff x \\in [-6\\,;-2] \\) (et non [2 ; 6]). Réciproquement \\( [1\\,;5] \\) s\'écrit \\( |x - 3| \\leqslant 2 \\) : centre 3, rayon 2.',
+      '« x est une valeur approchée de π à \\( 10^{-3} \\) près » s\'écrit \\( |x - \\pi| \\leqslant 10^{-3} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

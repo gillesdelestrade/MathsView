@@ -68,6 +68,47 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les additions jusqu\'à 20',
+    figures: [{
+      legende: '8 + 5 : on remplit la boîte de dix avec 2, il reste 3.',
+      boundingbox: [-0.8, 3.6, 12.2, -1.2],
+      largeur: 60, hauteur: 30,
+      dessine: function (board) {
+        function boite(x0, pleins, col, extra, colExtra) {
+          for (var i = 0; i < 10; i++) {
+            var cx = x0 + (i % 5) + 0.5, cy = i < 5 ? 1.5 : 0.5;
+            board.create('polygon', [[cx - .5, cy - .5], [cx + .5, cy - .5], [cx + .5, cy + .5], [cx - .5, cy + .5]], {
+              fillColor: '#ffffff', fillOpacity: 1, borders: { strokeColor: '#94a3b8', strokeWidth: 1 },
+              vertices: { visible: false }, highlight: false, fixed: true
+            });
+            if (i < pleins) board.create('point', [cx, cy], { name: '', size: 3.5, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+            else if (i < pleins + extra) board.create('point', [cx, cy], { name: '', size: 3.5, strokeColor: colExtra, fillColor: colExtra, fixed: true, highlight: false, showInfobox: false });
+          }
+        }
+        boite(0, 8, '#2563eb', 2, '#f59e0b');
+        boite(6.5, 0, '#2563eb', 3, '#f59e0b');
+        board.create('text', [2.5, 2.6, '8 + 2 = 10'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', color: '#2563eb', fixed: true, highlight: false });
+        board.create('text', [9, 2.6, '+ 3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', color: '#f59e0b', fixed: true, highlight: false });
+        board.create('text', [5.75, -0.6, '8 + 5 = 10 + 3 = 13'], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Les <b>compléments à 10</b> se savent par cœur : 1 + 9, 2 + 8, 3 + 7, 4 + 6, 5 + 5.',
+      'Pour additionner, on <b>passe par 10</b> : on complète le premier nombre à 10, puis on ajoute le reste.',
+      'On <b>coupe le deuxième nombre</b> en deux morceaux, jamais le premier.',
+      'Une boîte de dix pleine se <b>reconnaît</b> sans compter : c\'est du calcul, pas du comptage.',
+      'Les <b>doubles</b> s\'apprennent tels quels : 6 + 6 = 12, 7 + 7 = 14, 8 + 8 = 16, 9 + 9 = 18.',
+      'L\'<b>ordre ne change rien</b> : 3 + 9 = 9 + 3. On part du plus grand, il y a moins de chemin.'
+    ],
+    exemples: [
+      '8 + 5 : il manque 2 à 8 pour faire 10, donc 8 + 5 = 8 + 2 + 3 = 10 + 3 = 13.',
+      '9 + 7 = 9 + 1 + 6 = 10 + 6 = 16.',
+      '7 + 8 = 7 + 7 + 1 = 14 + 1 = 15 : un double, plus un.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

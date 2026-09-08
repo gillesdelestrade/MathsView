@@ -55,6 +55,52 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: true, grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Somme de deux vecteurs',
+    figures: [{
+      legende: 'Bout à bout : u puis v. La somme va du départ de u à l\'arrivée de v.',
+      boundingbox: [-4.2, 2.6, 2.4, -2.4],
+      largeur: 56, hauteur: 34,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [-3, -1.5], B = [0, -0.5], E = [1, 1.5], C = [-2, 0.5];
+        board.create('polygon', [A, B, E, C], { fillColor: '#0d9488', fillOpacity: .08,
+          borders: { strokeColor: '#94a3b8', strokeWidth: 1.2, dash: 2 }, vertices: { visible: false }, fixed: true, highlight: false });
+        fl(A, B, '#2563eb', 3); fl(B, E, '#ea580c', 3); fl(A, E, '#0d9488', 3.5);
+        [A, B, E].forEach(pt);
+        tx(-3.15, -1.6, 'A', '#0f172a', 'right', 'top'); tx(0.15, -0.7, 'B', '#0f172a', 'left', 'top'); tx(1.15, 1.6, 'E', '#0f172a', 'left');
+        tx(-1.5, -1.25, 'u', '#2563eb', 'middle', 'top');
+        tx(0.75, 0.4, 'v', '#ea580c', 'left');
+        tx(-1.1, 0.35, 'u + v', '#0d9488', 'right', 'bottom');
+      }
+    }],
+    points: [
+      'Pour additionner deux vecteurs, on les met <b>bout à bout</b> : l\'origine du second sur l\'extrémité du premier.',
+      'La somme va du <b>départ du premier</b> à l\'<b>arrivée du second</b>.',
+      '<b>Relation de Chasles</b> : pour tous points A, B, E, \\( \\overrightarrow{AB} + \\overrightarrow{BE} = \\overrightarrow{AE} \\).',
+      '<b>Règle du parallélogramme</b> : partis du même point, \\( \\vec{u} + \\vec{v} \\) est la <b>diagonale</b> du parallélogramme.',
+      'Coordonnées : on additionne une à une, \\( \\vec{u} + \\vec{v}\\,(x + x\'\\,;\\,y + y\') \\).',
+      '\\( \\vec{u} + \\vec{v} = \\vec{v} + \\vec{u} \\), et \\( \\overrightarrow{AB} + \\overrightarrow{BA} = \\vec{0} \\), donc \\( \\overrightarrow{BA} = -\\overrightarrow{AB} \\).'
+    ],
+    exemples: [
+      '\\( \\vec{u}\\,(3\\,;\\,1) \\) et \\( \\vec{v}\\,(1\\,;\\,2) \\) : \\( \\vec{u} + \\vec{v}\\,(4\\,;\\,3) \\).',
+      '\\( \\overrightarrow{AB} + \\overrightarrow{BC} + \\overrightarrow{CD} = \\overrightarrow{AD} \\) : les points intermédiaires disparaissent.',
+      '\\( \\overrightarrow{AB} - \\overrightarrow{AC} = \\overrightarrow{AB} + \\overrightarrow{CA} = \\overrightarrow{CB} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

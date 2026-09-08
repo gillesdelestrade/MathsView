@@ -26,6 +26,54 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 8, 8, -8] },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Fonction affine',
+    figures: [{
+      legende: 'f(x) = 2x − 1 : de A à B, on avance de 2 et on monte de 4.',
+      boundingbox: [-2.6, 6.2, 4.6, -2.6],
+      axis: true,
+      largeur: 56, hauteur: 52,
+      dessine: function (board) {
+        var m = 2, p = -1;
+        var A = [1, 1], B = [3, 5];
+        board.create('functiongraph', [function (x) { return m * x + p; }, -2.5, 4.5], {
+          strokeColor: '#0284c7', strokeWidth: 2.2, fixed: true, highlight: false
+        });
+        // L'escalier Δx puis Δy.
+        board.create('segment', [A, [B[0], A[1]]], { strokeColor: '#dc2626', strokeWidth: 1.6, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[B[0], A[1]], B], { strokeColor: '#16a34a', strokeWidth: 1.6, dash: 2, fixed: true, highlight: false });
+        board.create('text', [2, 0.55, 'Δx = 2'], { anchorX: 'middle', anchorY: 'top', fontSize: 11, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [3.25, 3, 'Δy = 4'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, color: '#16a34a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        // Les noms sont posés à l'écart de l'escalier : A en haut à gauche du
+        // point, B à droite, pour ne rien recouvrir.
+        function pt(P, nom, dx, dy, ancre) {
+          board.create('point', P, { name: '', size: 3, strokeColor: '#0f172a', fillColor: '#0f172a', fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: ancre, anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        pt(A, 'A (1 ; 1)', -0.2, 0.5, 'right');
+        pt(B, 'B (3 ; 5)', 0.25, 0.15, 'left');
+        // L'ordonnée à l'origine.
+        board.create('point', [0, p], { name: '', size: 3, strokeColor: '#7c3aed', fillColor: '#7c3aed', fixed: true, highlight: false, showInfobox: false });
+        board.create('text', [-0.25, p, 'p = −1'], { anchorX: 'right', anchorY: 'middle', fontSize: 11, color: '#7c3aed', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Une <b>fonction affine</b> s\'écrit \\( f(x) = mx + p \\). Sa représentation graphique est une <b>droite</b>.',
+      '\\( m \\) est le <b>coefficient directeur</b> : quand x augmente de 1, f(x) augmente de m.',
+      '\\( p \\) est l\'<b>ordonnée à l\'origine</b> : la droite coupe l\'axe des ordonnées au point (0 ; p).',
+      'Avec deux points A et B de la droite : \\( m = \\dfrac{y_B - y_A}{x_B - x_A} \\), puis \\( p = y_A - m \\, x_A \\).',
+      'Si m > 0 la droite <b>monte</b> ; si m < 0 elle <b>descend</b> ; si m = 0 elle est horizontale.',
+      'Si p = 0, la fonction est <b>linéaire</b> : la droite passe par l\'origine.'
+    ],
+    exemples: [
+      'A (1 ; 1) et B (3 ; 5) : \\( m = \\dfrac{5 - 1}{3 - 1} = \\dfrac{4}{2} = 2 \\), ' +
+        '\\( p = 1 - 2 \\times 1 = -1 \\). Donc \\( f(x) = 2x - 1 \\).',
+      'Vérification avec B : \\( f(3) = 2 \\times 3 - 1 = 5 \\). ✓',
+      '\\( g(x) = -3x + 4 \\) : m = −3, la droite descend ; p = 4. Image de 2 : \\( g(2) = -6 + 4 = -2 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     var opts = {
       size: 5, snapToGrid: true, snapSizeX: 1, snapSizeY: 1,

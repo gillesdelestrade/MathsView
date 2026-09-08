@@ -31,6 +31,71 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-7, 8, 9, -7], keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Théorème de Pythagore',
+    figures: [{
+      legende: 'Le carré sur l\'hypoténuse vaut les deux autres réunis.',
+      boundingbox: [-4.6, 5.2, 7.9, -4.6],
+      largeur: 56, hauteur: 46,
+      dessine: function (board) {
+        // Triangle 3-4-5, angle droit en C, à l'origine.
+        var C = [0, 0], A = [3, 0], B = [0, 4];
+        function carre(P, Q, col, txt) {
+          // Carré construit sur [PQ], vers l'extérieur du triangle (rotation de −90°).
+          var dx = Q[0] - P[0], dy = Q[1] - P[1];
+          var R = [Q[0] + dy, Q[1] - dx], S = [P[0] + dy, P[1] - dx];
+          board.create('polygon', [P, Q, R, S], {
+            fillColor: col, fillOpacity: .4, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [(P[0] + R[0]) / 2, (P[1] + R[1]) / 2, txt], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700',
+            fixed: true, highlight: false
+          });
+        }
+        carre(C, A, '#60a5fa', 'b²');   // sous [CA] : vers le bas
+        carre(B, C, '#34d399', 'a²');   // à gauche de [BC]
+        carre(A, B, '#fb923c', 'c²');   // sur l'hypoténuse, vers l'extérieur
+        board.create('polygon', [A, B, C], {
+          fillColor: '#ffffff', fillOpacity: 1, borders: { strokeColor: '#0f172a', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        // L'angle droit en C.
+        board.create('polygon', [[0, 0], [0.45, 0], [0.45, 0.45], [0, 0.45]], {
+          fillColor: '#ffffff', fillOpacity: 0, borders: { strokeColor: '#0f172a', strokeWidth: 1.2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        function nom(x, y, t) {
+          board.create('text', [x, y, t], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700',
+            fixed: true, highlight: false
+          });
+        }
+        nom(-0.45, -0.45, 'C'); nom(3.5, 0.35, 'A'); nom(-0.4, 4.4, 'B');
+        // Les côtés, en petites lettres près du triangle.
+        board.create('text', [1.5, 0.35, 'b'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 11, cssStyle: 'font-style:italic', fixed: true, highlight: false });
+        board.create('text', [0.3, 2, 'a'], { anchorX: 'left', anchorY: 'middle', fontSize: 11, cssStyle: 'font-style:italic', fixed: true, highlight: false });
+        board.create('text', [1.2, 2.25, 'c'], { anchorX: 'right', anchorY: 'bottom', fontSize: 11, cssStyle: 'font-style:italic', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Dans un triangle <b>rectangle</b>, le plus grand côté est l\'<b>hypoténuse</b> : ' +
+        'il est en face de l\'angle droit.',
+      '<b>Théorème :</b> si ABC est rectangle en C, alors \\( AB^2 = AC^2 + BC^2 \\).',
+      'Sur la figure : l\'aire du grand carré est la <b>somme</b> des aires des deux petits.',
+      'Il sert à <b>calculer une longueur</b> quand on connaît les deux autres.',
+      '<b>Réciproque :</b> si \\( AB^2 = AC^2 + BC^2 \\), alors ABC est rectangle en C.',
+      'Si l\'égalité est fausse, le triangle <b>n\'est pas</b> rectangle.'
+    ],
+    exemples: [
+      'AC = 3 cm et BC = 4 cm : \\( AB^2 = 3^2 + 4^2 = 9 + 16 = 25 \\), donc AB = 5 cm.',
+      'AB = 13 cm et AC = 5 cm : \\( BC^2 = 13^2 - 5^2 = 169 - 25 = 144 \\), donc BC = 12 cm.',
+      'Côtés 5, 6 et 8 : \\( 8^2 = 64 \\) et \\( 5^2 + 6^2 = 61 \\). ' +
+        '\\( 64 \\neq 61 \\), le triangle n\'est pas rectangle.'
+    ]
+  },
+
   setup: function (board, mv) {
     var BLUE = '#2563eb', GREEN = '#0d9488', ORANGE = '#f59e0b';
 

@@ -76,6 +76,41 @@ MathsView.register({
     '<p>Attention enfin à l\'ordre : \\( 2^3 = 8 \\) mais \\( 3^2 = 9 \\). La base et ' +
     'l\'exposant ne jouent pas le même rôle, on ne peut pas les échanger.</p>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les puissances',
+    figures: [{
+      legende: '4 au carré : l\'aire d\'un carré de côté 4.',
+      boundingbox: [-1.3, 5.5, 5.3, -1.1],
+      keepaspectratio: true,
+      largeur: 44, hauteur: 44,
+      dessine: function (board) {
+        for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) {
+          board.create('polygon', [[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1]], {
+            fillColor: '#60a5fa', fillOpacity: .4, borders: { strokeColor: '#1e3a8a', strokeWidth: 1 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+        }
+        board.create('text', [2, -0.55, '4'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-style:italic', fixed: true, highlight: false });
+        board.create('text', [-0.5, 2, '4'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-style:italic', fixed: true, highlight: false });
+        board.create('text', [2, 4.8, '4² = 4 × 4 = 16'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Une <b>puissance</b> abrège une multiplication répétée : \\( 3^4 = 3 \\times 3 \\times 3 \\times 3 = 81 \\).',
+      'Dans \\( a^n \\), a est la <b>base</b> (le nombre répété) et n l\'<b>exposant</b> (il <b>compte</b> les facteurs).',
+      'L\'exposant n\'est pas un facteur : \\( 3^4 \\neq 3 \\times 4 \\).',
+      '\\( a^2 \\) se lit « a au <b>carré</b> », \\( a^3 \\) « a au <b>cube</b> », et \\( a^1 = a \\).',
+      '\\( 10^n \\) s\'écrit <b>1 suivi de n zéros</b> : \\( 10^3 = 1\\,000 \\).',
+      'Carrés à connaître : 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144.'
+    ],
+    exemples: [
+      '\\( 2^5 = 2 \\times 2 \\times 2 \\times 2 \\times 2 = 32 \\).',
+      '\\( 2^3 = 8 \\) mais \\( 3^2 = 9 \\) : base et exposant ne s\'échangent pas.',
+      '\\( 10^6 = 1\\,000\\,000 \\) (un million) ; \\( 7^2 = 49 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

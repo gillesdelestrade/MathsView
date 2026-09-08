@@ -89,6 +89,55 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les médianes d\'un triangle',
+    figures: [{
+      legende: 'Les trois médianes se coupent en G, aux deux tiers de chacune.',
+      boundingbox: [-4.2, 5.4, 5.4, -1.3],
+      largeur: 56, hauteur: 46,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [1, 4], Object.assign({ name: 'A', label: { offset: [-4, 10] } }, PT));
+        var B = board.create('point', [-3, 0], Object.assign({ name: 'B', label: { offset: [-14, -2] } }, PT));
+        var C = board.create('point', [4, 0], Object.assign({ name: 'C', label: { offset: [6, -2] } }, PT));
+        board.create('polygon', [A, B, C], {
+          fillColor: '#2563eb', fillOpacity: .06, borders: { strokeColor: '#334155', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        var MIL = { size: 2, strokeColor: '#ea580c', fillColor: '#ea580c', fixed: true, highlight: false,
+                    showInfobox: false, label: { fontSize: 11, strokeColor: '#ea580c', cssStyle: 'font-weight:700' } };
+        var Ap = board.create('midpoint', [B, C], Object.assign({ name: 'A\'', label: { offset: [-4, -14] } }, MIL));
+        var Bp = board.create('midpoint', [A, C], Object.assign({ name: 'B\'', label: { offset: [7, 4] } }, MIL));
+        var Cp = board.create('midpoint', [A, B], Object.assign({ name: 'C\'', label: { offset: [-16, 4] } }, MIL));
+        [[A, Ap], [B, Bp], [C, Cp]].forEach(function (s) {
+          board.create('segment', s, { strokeColor: '#7c3aed', strokeWidth: 2, fixed: true, highlight: false });
+        });
+        board.create('point', [2 / 3, 4 / 3], { name: 'G', size: 2.5, strokeColor: '#dc2626', fillColor: '#dc2626',
+          fixed: true, highlight: false, showInfobox: false,
+          label: { fontSize: 12, offset: [7, 5], strokeColor: '#dc2626', cssStyle: 'font-weight:700' } });
+      }
+    }],
+    points: [
+      'Une <b>médiane</b> d\'un triangle est le segment qui joint un <b>sommet</b> au <b>milieu</b> du côté opposé.',
+      'Un triangle a trois médianes, une par sommet : [AA\'], [BB\'] et [CC\'].',
+      'Elles sont <b>concourantes</b> en un point G, le <b>centre de gravité</b>. Il est toujours ' +
+        '<b>à l\'intérieur</b> du triangle.',
+      'G est aux <b>deux tiers</b> de chaque médiane en partant du sommet : \\( AG = \\dfrac{2}{3}\\,AA\' \\), ' +
+        'donc \\( AG = 2 \\times GA\' \\).',
+      'Une médiane partage le triangle en <b>deux triangles de même aire</b>.',
+      'Dans un triangle <b>isocèle</b>, la médiane issue du sommet principal est aussi hauteur, ' +
+        'médiatrice et bissectrice.'
+    ],
+    exemples: [
+      'AA\' = 6 cm : \\( AG = \\dfrac{2}{3} \\times 6 = 4 \\) cm et \\( GA\' = 2 \\) cm.',
+      'GB\' = 1,5 cm : BG = 2 × 1,5 = 3 cm, donc BB\' = 3 + 1,5 = 4,5 cm.',
+      'Ne pas confondre : centre de gravité (médianes), orthocentre (hauteurs), ' +
+        'centre du cercle circonscrit (médiatrices).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette (la même que la leçon des hauteurs)                           */

@@ -41,6 +41,57 @@ MathsView.register({
     'ce sont des <strong>identités</strong>.</p>',
   board: { boundingbox: [-4.5, 4.5, 5.5, -4.5], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Identités remarquables',
+    figures: [{
+      legende: '(a + b)² : un carré a², un carré b², deux rectangles ab.',
+      boundingbox: [-1.3, 5.6, 5.9, -1.1],
+      largeur: 52, hauteur: 48,
+      dessine: function (board) {
+        var a = 3, b = 1.6;
+        function rect(x0, y0, w, h, col, txt) {
+          board.create('polygon', [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]], {
+            fillColor: col, fillOpacity: .45, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x0 + w / 2, y0 + h / 2, txt], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700',
+            fixed: true, highlight: false
+          });
+        }
+        rect(0, 0, a, a, '#60a5fa', 'a²');
+        rect(a, 0, b, a, '#fbbf24', 'ab');
+        rect(0, a, a, b, '#fbbf24', 'ab');
+        rect(a, a, b, b, '#f87171', 'b²');
+        // Les côtés, cotés a et b.
+        function cote(x, y, txt) {
+          board.create('text', [x, y, txt], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 12, fixed: true, highlight: false,
+            cssStyle: 'font-style:italic'
+          });
+        }
+        cote(a / 2, -0.55, 'a'); cote(a + b / 2, -0.55, 'b');
+        cote(-0.55, a / 2, 'a'); cote(-0.55, a + b / 2, 'b');
+      }
+    }],
+    points: [
+      'Une <b>identité remarquable</b> est une égalité vraie pour <b>toutes</b> les valeurs de a et b.',
+      '\\( (a+b)^2 = a^2 + 2ab + b^2 \\)',
+      '\\( (a-b)^2 = a^2 - 2ab + b^2 \\)',
+      '\\( (a+b)(a-b) = a^2 - b^2 \\)',
+      'Le <b>double produit</b> 2ab vient des <b>deux</b> rectangles a × b de la figure : ne pas l\'oublier.',
+      'Lues de gauche à droite, elles servent à <b>développer</b> ; de droite à gauche, à <b>factoriser</b>.'
+    ],
+    exemples: [
+      '\\( (x+3)^2 = x^2 + 6x + 9 \\)',
+      '\\( (2x-5)^2 = 4x^2 - 20x + 25 \\)',
+      '\\( (x+4)(x-4) = x^2 - 16 \\)',
+      'Factoriser : \\( x^2 - 9 = (x+3)(x-3) \\). ' +
+        'Calcul mental : \\( 101^2 = (100+1)^2 = 10\\,000 + 200 + 1 = 10\\,201 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

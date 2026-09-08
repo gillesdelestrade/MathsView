@@ -81,6 +81,54 @@ MathsView.register({
     '<strong>circonférence</strong>.</p>',
   board: { boundingbox: [-0.75, 8.5, 15.25, -3.5], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les périmètres',
+    figures: [{
+      legende: 'Deux côtés de même couleur ont la même longueur.',
+      boundingbox: [-0.9, 4.4, 12.6, -1.3],
+      largeur: 62, hauteur: 32,
+      dessine: function (board) {
+        var L = 5, l = 3, BLEU = '#2563eb', VERT = '#0d9488';
+        function seg(P, Q, col) {
+          board.create('segment', [P, Q], { strokeColor: col, strokeWidth: 3, fixed: true, highlight: false });
+        }
+        function t(x, y, s, col, opt) {
+          board.create('text', [x, y, s], Object.assign({ anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            color: col || '#1e293b', cssStyle: 'font-weight:700', fixed: true, highlight: false }, opt || {}));
+        }
+        board.create('polygon', [[0, 0], [L, 0], [L, l], [0, l]], {
+          fillColor: '#bfdbfe', fillOpacity: .35, borders: { visible: false }, vertices: { visible: false },
+          highlight: false, fixed: true
+        });
+        seg([0, 0], [L, 0], BLEU); seg([0, l], [L, l], BLEU);
+        seg([0, 0], [0, l], VERT); seg([L, 0], [L, l], VERT);
+        t(L / 2, -0.55, 'L', BLEU); t(L / 2, l + 0.55, 'L', BLEU);
+        t(-0.5, l / 2, 'ℓ', VERT); t(L + 0.5, l / 2, 'ℓ', VERT);
+        // Le cercle et son diamètre.
+        var cx = 9.6, cy = 1.5, r = 1.6;
+        board.create('circle', [[cx, cy], r], { strokeColor: '#f59e0b', strokeWidth: 3, fillColor: '#fef3c7', fillOpacity: .5, fixed: true, highlight: false });
+        board.create('segment', [[cx - r, cy], [cx + r, cy]], { strokeColor: '#64748b', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false });
+        board.create('point', [cx, cy], { name: '', size: 1.5, color: '#64748b', fixed: true, highlight: false, showInfobox: false });
+        t(cx, cy + 0.4, 'd', '#64748b');
+        t(cx, cy - r - 0.6, 'P = π × d', '#b45309', { fontSize: 11 });
+      }
+    }],
+    points: [
+      'Le <b>périmètre</b> d\'une figure est la <b>longueur de son tour</b> : la ficelle qu\'il faut pour en faire le tour complet.',
+      'C\'est une <b>longueur</b> : elle se mesure en mm, cm, m… jamais en cm².',
+      'Deux côtés de <b>même longueur</b> se comptent d\'un coup : c\'est de là que viennent les multiplications des formules.',
+      'Carré de côté c : \\( \\mathcal{P} = 4 \\times c \\). Rectangle : \\( \\mathcal{P} = 2 \\times (L + \\ell) \\).',
+      'Triangle de côtés a, b, c : \\( \\mathcal{P} = a + b + c \\).',
+      'Cercle de rayon r : \\( \\mathcal{P} = 2 \\times \\pi \\times r = \\pi \\times d \\), avec π ≈ 3,14.'
+    ],
+    exemples: [
+      'Carré de côté 4 cm : P = 4 × 4 = 16 cm.',
+      'Rectangle de longueur 5 cm et de largeur 3 cm : P = 2 × (5 + 3) = 2 × 8 = 16 cm.',
+      'Cercle de rayon 2 cm : P = 2 × π × 2 ≈ 12,6 cm.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Repères de mise en page                                              */

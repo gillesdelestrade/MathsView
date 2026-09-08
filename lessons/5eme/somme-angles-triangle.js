@@ -83,6 +83,58 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-11.5, 6.4, 11.5, -6.4], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'La somme des angles d\'un triangle',
+    figures: [{
+      legende: 'La parallèle à (AB) par C : Â, Ĉ et B̂ forment un angle plat.',
+      boundingbox: [-4.4, 4.6, 5.8, -1.2],
+      largeur: 58, hauteur: 40,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [-3, 0], Object.assign({ name: 'A', label: { offset: [-14, -2] } }, PT));
+        var B = board.create('point', [4, 0], Object.assign({ name: 'B', label: { offset: [6, -2] } }, PT));
+        var C = board.create('point', [1, 3.2], Object.assign({ name: 'C', label: { offset: [-3, 10] } }, PT));
+        board.create('polygon', [A, B, C], {
+          fillColor: '#2563eb', fillOpacity: .06, borders: { strokeColor: '#334155', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        var PL = board.create('point', [-3.6, 3.2], { visible: false });
+        var PR = board.create('point', [5.4, 3.2], { visible: false });
+        board.create('segment', [PL, PR], { strokeColor: '#ea580c', strokeWidth: 1.6, dash: 2, fixed: true, highlight: false });
+        function ang(p1, v, p3, col, r, txt, off) {
+          board.create('angle', [p1, v, p3], {
+            radius: r, strokeColor: col, fillColor: col, fillOpacity: .3, strokeWidth: 1.3,
+            fixed: true, highlight: false, name: txt, withLabel: !!txt,
+            label: { fontSize: 11, strokeColor: col, cssStyle: 'font-weight:700', offset: off || [0, 0] }
+          });
+        }
+        ang(B, A, C, '#dc2626', .9, 'Â', [4, 2]);
+        ang(C, B, A, '#059669', .9, 'B̂', [-8, 2]);
+        ang(A, C, B, '#7c3aed', .7, 'Ĉ', [-2, -10]);
+        ang(PL, C, A, '#dc2626', .7, '', null);
+        ang(B, C, PR, '#059669', .7, '', null);
+      }
+    }],
+    points: [
+      'Dans <b>tout</b> triangle, la somme des trois angles vaut <b>180°</b> : ' +
+        '\\( \\widehat{A} + \\widehat{B} + \\widehat{C} = 180° \\).',
+      'Cela ne dépend ni de la forme, ni de la taille du triangle.',
+      'Connaissant deux angles, on trouve le troisième par une <b>soustraction</b>.',
+      'Pourquoi : la parallèle à (AB) passant par C fait apparaître Â et B̂ à côté de Ĉ ' +
+        '(angles <b>alternes-internes</b>) ; les trois forment un <b>angle plat</b>.',
+      'Un triangle a au plus <b>un</b> angle droit ou obtus.',
+      'Triangle <b>équilatéral</b> : trois angles de 60°. Triangle <b>rectangle</b> : les deux angles aigus ' +
+        'sont <b>complémentaires</b>, leur somme fait 90°.'
+    ],
+    exemples: [
+      '\\( \\widehat{A} = 50° \\) et \\( \\widehat{B} = 60° \\) : \\( \\widehat{C} = 180° - 50° - 60° = 70° \\).',
+      'Triangle rectangle en A avec \\( \\widehat{B} = 35° \\) : \\( \\widehat{C} = 90° - 35° = 55° \\).',
+      'Triangle isocèle en A avec \\( \\widehat{A} = 40° \\) : \\( \\widehat{B} = \\widehat{C} = (180° - 40°) \\div 2 = 70° \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette — une couleur par angle, tenue d'un bout à l'autre           */

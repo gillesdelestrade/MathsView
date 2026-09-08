@@ -71,6 +71,45 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les tables de multiplication',
+    figures: [{
+      legende: '3 × 7 : 3 lignes de 7 points, soit 21 points.',
+      boundingbox: [-1.2, 4.2, 8.2, -1.5],
+      largeur: 58, hauteur: 36,
+      dessine: function (board) {
+        var L = 3, C = 7;
+        for (var i = 0; i < L; i++) for (var j = 0; j < C; j++) {
+          board.create('point', [j + 0.5, L - 0.5 - i], {
+            name: '', size: 3.5, strokeColor: '#0d9488', fillColor: '#0d9488',
+            fixed: true, highlight: false, showInfobox: false
+          });
+        }
+        board.create('polygon', [[0, 0], [C, 0], [C, L], [0, L]], {
+          fillColor: '#0d9488', fillOpacity: .08, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        board.create('text', [C / 2, L + 0.55, '7'], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [-0.55, L / 2, '3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [C / 2, -0.5, '3 × 7 = 21'], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', color: '#0d9488', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      '<b>Multiplier</b>, c\'est <b>répéter une addition</b> : 4 × 7 = 7 + 7 + 7 + 7 = 28.',
+      'Un produit est un <b>rectangle</b> : 3 × 7, c\'est 3 lignes de 7 points.',
+      'L\'<b>ordre ne change rien</b> : 7 × 3 = 3 × 7 = 21, c\'est le même rectangle tourné.',
+      'Dans une table, on passe d\'un résultat au suivant en <b>ajoutant</b> le même nombre : 7, 14, 21, 28…',
+      'Tables faciles : × 1 ne change rien, × 10 ajoute un zéro, × 2 c\'est le double, × 5 la moitié de × 10.',
+      'Les <b>carrés</b> : 4 × 4 = 16, 5 × 5 = 25, 6 × 6 = 36, 7 × 7 = 49, 8 × 8 = 64, 9 × 9 = 81.'
+    ],
+    exemples: [
+      '6 × 8 = 48 et 8 × 6 = 48 : un seul résultat à apprendre pour les deux.',
+      '7 × 6 = 7 × 5 + 7 = 35 + 7 = 42.',
+      'Table de 9 : 9 × 6 = 54, et 5 + 4 = 9. Les chiffres du résultat font toujours 9.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

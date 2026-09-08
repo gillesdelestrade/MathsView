@@ -60,6 +60,60 @@ MathsView.register({
     'deux à deux » : les cases <em>impliquées</em> par ton choix s\'allument toutes seules.</p>',
   board: { boundingbox: [-7.2, 5.6, 7.2, -5.6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les quadrilatères',
+    figures: [{
+      legende: 'Les diagonales racontent la même histoire.',
+      boundingbox: [-0.6, 4.2, 12.4, -1.0],
+      largeur: 62, hauteur: 28,
+      dessine: function (board) {
+        function poly(pts, fill, stroke) {
+          board.create('polygon', pts, {
+            fillColor: fill, fillOpacity: .35, borders: { strokeColor: stroke, strokeWidth: 2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+        }
+        function diag(P, Q) {
+          board.create('segment', [P, Q], { strokeColor: '#64748b', strokeWidth: 1.2, dash: 2, fixed: true, highlight: false });
+        }
+        function t(x, y, s, col) {
+          board.create('text', [x, y, s], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: col,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        // Le parallélogramme ABCD et ses diagonales.
+        var A = [0, 0], B = [4, 0], C = [5.5, 3], D = [1.5, 3];
+        poly([A, B, C, D], '#bfdbfe', '#2563eb');
+        diag(A, C); diag(B, D);
+        board.create('point', [2.75, 1.5], { name: '', size: 2, color: '#2563eb', fixed: true, highlight: false, showInfobox: false });
+        t(2.75, -0.55, 'parallélogramme', '#2563eb');
+        // Le losange et ses diagonales perpendiculaires.
+        var cx = 9.6, cy = 1.5;
+        var E = [cx - 2.4, cy], F = [cx, cy - 1.5], G = [cx + 2.4, cy], H = [cx, cy + 1.5];
+        poly([E, F, G, H], '#fde68a', '#b45309');
+        diag(E, G); diag(F, H);
+        board.create('polygon', [[cx, cy], [cx + 0.3, cy], [cx + 0.3, cy + 0.3], [cx, cy + 0.3]], {
+          fillColor: 'none', fillOpacity: 0, borders: { strokeColor: '#dc2626', strokeWidth: 1 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        t(cx, -0.55, 'losange', '#b45309');
+      }
+    }],
+    points: [
+      'Un <b>quadrilatère</b> a quatre côtés. Selon ses côtés et ses angles, il porte un nom précis.',
+      '<b>Parallélogramme</b> : côtés opposés parallèles deux à deux. Ses diagonales se coupent en leur <b>milieu</b>.',
+      '<b>Rectangle</b> : un parallélogramme avec quatre angles droits. Ses diagonales ont la <b>même longueur</b>.',
+      '<b>Losange</b> : un parallélogramme avec quatre côtés de même longueur. Ses diagonales sont <b>perpendiculaires</b>.',
+      '<b>Carré</b> : à la fois rectangle et losange.',
+      '<b>Trapèze</b> : au moins une paire de côtés parallèles.'
+    ],
+    exemples: [
+      'Un carré est un rectangle particulier et aussi un losange particulier.',
+      'Quatre côtés égaux mais pas d\'angle droit : c\'est un losange, pas un carré.',
+      'Des diagonales de même longueur qui se coupent en leur milieu : c\'est un rectangle.'
+    ]
+  },
+
   setup: function (board, mv) {
     var CENTER = [0, -0.3]; // centre de la figure animée
 

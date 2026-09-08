@@ -76,6 +76,52 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: true, grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Déterminant de deux vecteurs',
+    figures: [{
+      legende: 'u (3 ; 1), v (1 ; 2) : det = 3 × 2 − 1 × 1 = 5 = aire du parallélogramme.',
+      boundingbox: [-0.9, 3.8, 5.2, -0.8],
+      largeur: 56, hauteur: 34,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [0, 0], B = [3, 1], C = [1, 2], D = [4, 3];
+        board.create('polygon', [A, B, D, C], { fillColor: '#bbf7d0', fillOpacity: .55,
+          borders: { strokeColor: '#94a3b8', strokeWidth: 1.2, dash: 2 }, vertices: { visible: false }, fixed: true, highlight: false });
+        fl(A, B, '#2563eb', 3); fl(A, C, '#7c3aed', 3);
+        [A, B, C].forEach(pt);
+        tx(-0.15, -0.1, 'A', '#0f172a', 'right', 'top');
+        tx(1.6, 0.3, 'u (3 ; 1)', '#2563eb', 'middle', 'top');
+        tx(0.2, 1.3, 'v (1 ; 2)', '#7c3aed', 'right', 'bottom');
+        tx(2.1, 1.6, 'aire = 5', '#15803d');
+      }
+    }],
+    points: [
+      'Pour \\( \\vec{u}\\,(x\\,;\\,y) \\) et \\( \\vec{v}\\,(x\'\\,;\\,y\') \\), le <b>déterminant</b> est \\( \\det(\\vec{u},\\vec{v}) = xy\' - yx\' \\).',
+      'On multiplie <b>en croix</b>, puis on soustrait : les colonnes du tableau sont les deux vecteurs.',
+      '\\( |\\det(\\vec{u},\\vec{v})| \\) est l\'<b>aire du parallélogramme</b> construit sur les deux vecteurs.',
+      '<b>Test de colinéarité</b> : \\( \\vec{u} \\) et \\( \\vec{v} \\) colinéaires \\( \\iff \\det(\\vec{u},\\vec{v}) = 0 \\) (parallélogramme aplati).',
+      'Le signe dit le sens de rotation de \\( \\vec{u} \\) vers \\( \\vec{v} \\) ; échanger les deux vecteurs change le signe, pas l\'aire.',
+      'A, B, C <b>alignés</b> \\( \\iff \\det(\\overrightarrow{AB},\\overrightarrow{AC}) = 0 \\). Même test pour (AB) ∥ (CD) avec \\( \\overrightarrow{CD} \\).'
+    ],
+    exemples: [
+      '\\( \\vec{u}\\,(3\\,;\\,1) \\), \\( \\vec{v}\\,(1\\,;\\,2) \\) : \\( \\det = 3 \\times 2 - 1 \\times 1 = 5 \\). Aire du parallélogramme : 5.',
+      '\\( \\vec{u}\\,(3\\,;\\,1) \\), \\( \\vec{w}\\,(6\\,;\\,2) \\) : \\( \\det = 3 \\times 2 - 1 \\times 6 = 0 \\) : colinéaires.',
+      'A(1 ; 1), B(3 ; 2), C(7 ; 4) : \\( \\overrightarrow{AB}\\,(2\\,;\\,1) \\), \\( \\overrightarrow{AC}\\,(6\\,;\\,3) \\), \\( \\det = 6 - 6 = 0 \\) : A, B, C alignés.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

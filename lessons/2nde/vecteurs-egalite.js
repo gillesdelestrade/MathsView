@@ -71,6 +71,51 @@ MathsView.register({
   board: { boundingbox: [-7.5, 5.6, 7.5, -6.4], keepaspectratio: true, axis: true,
            grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Vecteurs : direction, sens, longueur',
+    figures: [{
+      legende: 'AB = CD (ABDC est un parallélogramme) ; EF n\'a pas la même direction.',
+      boundingbox: [-5.4, 3.2, 5.6, -3.4],
+      largeur: 58, hauteur: 32,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [-4, -1], B = [-1, 1], C = [0, -2], D = [3, 0], E = [2, 2], Fp = [4, 1];
+        board.create('polygon', [A, B, D, C], { fillColor: '#e2e8f0', fillOpacity: .5,
+          borders: { strokeColor: '#94a3b8', strokeWidth: 1.2, dash: 2 }, vertices: { visible: false }, fixed: true, highlight: false });
+        fl(A, B, '#2563eb', 3); fl(C, D, '#0d9488', 3); fl(E, Fp, '#ea580c', 3);
+        [A, B, C, D, E, Fp].forEach(pt);
+        tx(-4.25, -1.1, 'A', '#0f172a', 'right'); tx(-1, 1.35, 'B', '#0f172a', 'middle', 'bottom');
+        tx(0, -2.35, 'C', '#0f172a', 'middle', 'top'); tx(3.25, 0, 'D', '#0f172a', 'left');
+        tx(1.75, 2.15, 'E', '#0f172a', 'right'); tx(4.25, 1, 'F', '#0f172a', 'left');
+        tx(-2.9, 0.4, 'u', '#2563eb', 'right'); tx(1.9, -1.4, 'u', '#0d9488', 'left');
+      }
+    }],
+    points: [
+      'Un <b>vecteur</b> est défini par trois choses : sa <b>direction</b>, son <b>sens</b> et sa <b>longueur</b>.',
+      'Sur une direction (des droites parallèles), il y a <b>deux sens</b> : la pointe de la flèche choisit.',
+      'Deux vecteurs sont <b>égaux</b> s\'ils ont même direction, même sens et même longueur, où qu\'on les dessine.',
+      '\\( \\overrightarrow{AB} = \\overrightarrow{CD} \\iff \\) <b>ABDC est un parallélogramme</b> \\( \\iff \\) mêmes coordonnées \\( (x_B - x_A\\,;\\,y_B - y_A) \\).',
+      'Si une seule des trois caractéristiques change, ce n\'est <b>plus le même vecteur</b>.'
+    ],
+    exemples: [
+      'A(−4 ; −1), B(−1 ; 1), C(0 ; −2), D(3 ; 0) : \\( \\overrightarrow{AB}\\,(3\\,;\\,2) \\) et \\( \\overrightarrow{CD}\\,(3\\,;\\,2) \\), donc \\( \\overrightarrow{AB} = \\overrightarrow{CD} \\).',
+      'E(2 ; 2), F(4 ; 1) : \\( \\overrightarrow{EF}\\,(2\\,;\\,-1) \\), autre direction : \\( \\overrightarrow{EF} \\neq \\overrightarrow{AB} \\).',
+      '\\( \\overrightarrow{BA}\\,(-3\\,;\\,-2) \\) : même direction, même longueur, sens opposé : \\( \\overrightarrow{BA} = -\\overrightarrow{AB} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

@@ -86,6 +86,54 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-1.2, 5, 7.9, -1.9], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Distributivité',
+    figures: [{
+      legende: 'Deux façons de calculer la même aire : k(a + b) = ka + kb.',
+      boundingbox: [-1.1, 3.4, 5.9, -1.1],
+      largeur: 58, hauteur: 38,
+      dessine: function (board) {
+        var k = 2, a = 3, b = 1.5;
+        function rect(x0, w, col, txt) {
+          board.create('polygon', [[x0, 0], [x0 + w, 0], [x0 + w, k], [x0, k]], {
+            fillColor: col, fillOpacity: .45, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x0 + w / 2, k / 2, txt], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700',
+            fixed: true, highlight: false
+          });
+        }
+        rect(0, a, '#60a5fa', 'k × a');
+        rect(a, b, '#fbbf24', 'k × b');
+        function cote(x, y, t, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 12,
+            cssStyle: 'font-style:italic', fixed: true, highlight: false });
+        }
+        cote(a / 2, -0.5, 'a'); cote(a + b / 2, -0.5, 'b'); cote(-0.5, k / 2, 'k');
+        // L'accolade du dessus : la longueur totale a + b.
+        board.create('segment', [[0, k + 0.45], [a + b, k + 0.45]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+        board.create('segment', [[0, k + 0.25], [0, k + 0.65]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+        board.create('segment', [[a + b, k + 0.25], [a + b, k + 0.65]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+        cote((a + b) / 2, k + 0.95, 'a + b');
+      }
+    }],
+    points: [
+      '<b>Distributivité :</b> \\( k(a + b) = ka + kb \\) et \\( k(a - b) = ka - kb \\).',
+      'Le facteur k multiplie <b>chacun</b> des termes de la parenthèse, sans en oublier.',
+      'Pourquoi : le grand rectangle de largeur k se coupe en deux rectangles de largeur k, et leurs aires s\'ajoutent.',
+      '<b>Développer</b>, c\'est enlever la parenthèse : \\( 4(x + 3) = 4x + 12 \\).',
+      '<b>Factoriser</b>, c\'est la faire apparaître : \\( 4x + 12 = 4(x + 3) \\). On cherche le facteur <b>commun</b>.',
+      'Piège du signe − : dans \\( k(a - b) \\), k multiplie aussi le terme que l\'on retire.'
+    ],
+    exemples: [
+      '\\( 5(10 - 2) = 50 - 10 = 40 \\), et non \\( 50 - 2 \\).',
+      'Calcul mental : \\( 7 \\times 102 = 7(100 + 2) = 700 + 14 = 714 \\).',
+      '\\( 3 \\times 7 + 3 \\times 5 = 3(7 + 5) = 3 \\times 12 = 36 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette — la couleur d'un terme est celle de la pièce qu'il mesure    */

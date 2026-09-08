@@ -59,6 +59,50 @@ MathsView.register({
     'mais divisible par 2 <em>et</em> par 4 ne donne rien de plus que 4.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Critères de divisibilité',
+    figures: [{
+      legende: 'Ce que chaque critère regarde dans 1 236.',
+      boundingbox: [-0.6, 3.3, 15.8, -3.2],
+      largeur: 60, hauteur: 30,
+      dessine: function (board) {
+        var chiffres = ['1', '2', '3', '6'];
+        chiffres.forEach(function (c, i) {
+          var x = 2 * i;
+          board.create('polygon', [[x, 0], [x + 1.8, 0], [x + 1.8, 2], [x, 2]], {
+            fillColor: '#ffffff', fillOpacity: 1, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x + 0.9, 1, c], { anchorX: 'middle', anchorY: 'middle', fontSize: 18, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        });
+        function accolade(xa, xb, y, col, txt) {
+          board.create('segment', [[xa, y], [xb, y]], { strokeColor: col, strokeWidth: 2.2, fixed: true, highlight: false });
+          board.create('segment', [[xa, y], [xa, y + 0.3]], { strokeColor: col, strokeWidth: 2.2, fixed: true, highlight: false });
+          board.create('segment', [[xb, y], [xb, y + 0.3]], { strokeColor: col, strokeWidth: 2.2, fixed: true, highlight: false });
+          board.create('text', [8.3, y, txt], { anchorX: 'left', anchorY: 'middle', fontSize: 10, cssStyle: 'font-weight:700', color: col, fixed: true, highlight: false });
+        }
+        accolade(6, 7.8, -0.5, '#2563eb', 'unités → par 2, 5, 10');
+        accolade(4, 7.8, -1.5, '#059669', '2 derniers → par 4');
+        accolade(0, 7.8, -2.5, '#ea580c', 'somme → par 3, 9');
+        board.create('text', [3.9, 2.65, '1 + 2 + 3 + 6 = 12'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, cssStyle: 'font-weight:700', color: '#ea580c', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Un <b>critère de divisibilité</b> dit si un nombre est dans une table <b>sans poser la division</b>.',
+      '<b>Par 2</b> : le chiffre des unités est 0, 2, 4, 6 ou 8. <b>Par 5</b> : il est 0 ou 5. <b>Par 10</b> : il est 0.',
+      '<b>Par 4</b> : le nombre formé par les <b>deux derniers chiffres</b> est un multiple de 4.',
+      '<b>Par 3</b> : la <b>somme des chiffres</b> est un multiple de 3. <b>Par 9</b> : elle est un multiple de 9.',
+      'Si la somme est encore grande, on <b>recommence</b> avec elle.',
+      'Divisible par 9, donc par 3. Divisible par 10, donc par 2 et par 5. Divisible par 4, donc par 2.'
+    ],
+    exemples: [
+      '1 236 : finit par 6 → par 2. 36 = 4 × 9 → par 4. 1 + 2 + 3 + 6 = 12 → par 3, pas par 9.',
+      '7 425 : finit par 5 → par 5, pas par 2. 7 + 4 + 2 + 5 = 18 → par 3 et par 9.',
+      '9 999 : 9 + 9 + 9 + 9 = 36, puis 3 + 6 = 9 → par 9.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

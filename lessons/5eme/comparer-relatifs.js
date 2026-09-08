@@ -105,6 +105,62 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Comparer et ranger des relatifs',
+    figures: [{
+      legende: 'Plus à droite, c\'est plus grand.',
+      boundingbox: [-7.9, 2.2, 6.8, -1.6],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 28,
+      dessine: function (board) {
+        function txt(x, y, t, o) {
+          var a = { anchorX: 'middle', anchorY: 'middle', fontSize: 11, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('text', [x, y, t], a);
+        }
+        function seg(p, q, o) {
+          var a = { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('segment', [p, q], a);
+        }
+        function pt(x, y, col) {
+          board.create('point', [x, y], { name: '', size: 3, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+        }
+        // Droite graduée de a à b, un trait par unité, nombres pairs étiquetés.
+        function droite(a, b, y, pas) {
+          board.create('arrow', [[a - 0.4, y], [b + 0.6, y]], { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false });
+          for (var v = a; v <= b; v++) {
+            seg([v, y - 0.15], [v, y + 0.15]);
+            if (v % pas === 0) txt(v, y - 0.55, String(v).replace('-', '−'), { fontSize: 9 });
+          }
+        }
+        droite(-6, 6, 0, 2);
+        pt(-5.9, 0, '#dc2626'); pt(-5.2, 0, '#dc2626'); pt(2.3, 0, '#2563eb'); pt(4.8, 0, '#2563eb');
+        txt(-5.9, 0.75, '−5,9', { fontSize: 9.5, color: '#dc2626', cssStyle: 'font-weight:700', anchorX: 'right' });
+        txt(-5.0, 0.75, '−5,2', { fontSize: 9.5, color: '#dc2626', cssStyle: 'font-weight:700', anchorX: 'left' });
+        txt(2.3, 0.75, '2,3', { fontSize: 9.5, color: '#2563eb', cssStyle: 'font-weight:700' });
+        txt(4.8, 0.75, '4,8', { fontSize: 9.5, color: '#2563eb', cssStyle: 'font-weight:700' });
+        board.create('arrow', [[-5, 1.6], [5, 1.6]], { strokeColor: '#16a34a', strokeWidth: 1.4, fixed: true, highlight: false });
+        txt(0, 1.95, 'ordre croissant', { fontSize: 9, color: '#16a34a', cssStyle: 'font-weight:700' });
+        txt(0, -1.2, '−5,9 < −5,2 < 0 < 2,3 < 4,8', { fontSize: 10, cssStyle: 'font-weight:700' });
+      }
+    }],
+    points: [
+      'Comparer deux relatifs, c\'est chercher lequel est <b>le plus à droite</b> sur la droite graduée : c\'est le plus grand.',
+      'Un <b>négatif</b> est toujours plus petit qu\'un <b>positif</b>, et 0 est entre les deux.',
+      'Deux <b>positifs</b> : le plus grand est celui qui a la plus grande <b>valeur absolue</b>.',
+      'Deux <b>négatifs</b> : le plus grand est celui qui a la plus <b>petite</b> valeur absolue : \\( -5{,}2 > -5{,}9 \\)',
+      'Décimaux : on compare <b>rang par rang</b> en complétant avec des <b>zéros</b> : \\( 7{,}5 = 7{,}50 \\)',
+      'Ordre <b>croissant</b> : on lit la droite de gauche à droite. Décroissant : à l\'envers.'
+    ],
+    exemples: [
+      '\\( 7{,}45 < 7{,}5 \\) car 7,45 et 7,50 : 4 dixièmes contre 5.',
+      '\\( -7{,}45 > -7{,}5 \\) : chez les négatifs, c\'est à l\'envers.',
+      'Ordre croissant : \\( -5{,}9 < -5{,}2 < 0 < 2{,}3 < 4{,}8 \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

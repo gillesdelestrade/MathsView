@@ -41,6 +41,49 @@ MathsView.register({
     'par sa valeur.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Équations du premier degré',
+    figures: [{
+      legende: 'Une équation est une balance : on fait la même chose des deux côtés.',
+      boundingbox: [-5.2, 3.4, 5.2, -1.4],
+      largeur: 60, hauteur: 34,
+      dessine: function (board) {
+        var g = '#334155';
+        // Le socle et le fléau.
+        board.create('polygon', [[-0.6, -1], [0.6, -1], [0, 0.2]], {
+          fillColor: '#cbd5e1', fillOpacity: 1, borders: { strokeColor: g, strokeWidth: 1.2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        board.create('segment', [[-4.2, 0.4], [4.2, 0.4]], { strokeColor: g, strokeWidth: 2.5, fixed: true, highlight: false });
+        // Les deux plateaux, suspendus.
+        [-3, 3].forEach(function (x) {
+          board.create('segment', [[x, 0.4], [x, 1.3]], { strokeColor: g, strokeWidth: 1.2, fixed: true, highlight: false });
+          board.create('polygon', [[x - 1.7, 1.3], [x + 1.7, 1.3], [x + 1.7, 1.6], [x - 1.7, 1.6]], {
+            fillColor: '#e2e8f0', fillOpacity: 1, borders: { strokeColor: g, strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+        });
+        board.create('text', [-3, 2.4, '5x + 12'], { anchorX: 'middle', anchorY: 'middle', fontSize: 14, cssStyle: 'font-weight:700', color: '#e11d48', fixed: true, highlight: false });
+        board.create('text', [3, 2.4, '3x − 3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 14, cssStyle: 'font-weight:700', color: '#e11d48', fixed: true, highlight: false });
+        board.create('text', [0, 1.2, '='], { anchorX: 'middle', anchorY: 'middle', fontSize: 16, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      '<b>Résoudre</b> une équation, c\'est trouver la valeur de x qui rend l\'égalité <b>vraie</b>.',
+      'On a le droit de faire la <b>même opération</b> des deux côtés du « = » : l\'égalité reste vraie.',
+      'Étape 1 : on regroupe les <b>x</b> à gauche. Étape 2 : les <b>nombres</b> à droite.',
+      'Un terme qui <b>change de côté</b> change de signe : + devient −, − devient +.',
+      'Étape 3 : le <b>coefficient</b> de x change de côté en <b>division</b> : × k devient ÷ k.',
+      'On <b>vérifie</b> en remplaçant x par la valeur trouvée dans l\'équation de départ.'
+    ],
+    exemples: [
+      '\\( 5x + 12 = 3x - 3 \\) → \\( 5x - 3x = -3 - 12 \\) → \\( 2x = -15 \\) → \\( x = -\\dfrac{15}{2} = -7{,}5 \\).',
+      '\\( 3x - 7 = 8 \\) → \\( 3x = 8 + 7 = 15 \\) → \\( x = 15 \\div 3 = 5 \\). Vérification : \\( 3 \\times 5 - 7 = 8 \\). ✓',
+      '\\( 4x + 1 = 4x + 5 \\) → \\( 1 = 5 \\) : faux, <b>aucune solution</b>.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();
 

@@ -46,6 +46,46 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-3.2, 5.9, 12.5, -2.4], keepaspectratio: false, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Opérations sur les fractions',
+    figures: [{
+      legende: '2/3 × 3/4 : 2 colonnes sur 3, 3 lignes sur 4, soit 6 cases sur 12.',
+      boundingbox: [-0.9, 4.9, 5.7, -1.3],
+      largeur: 50, hauteur: 46,
+      dessine: function (board) {
+        var C = 3, L = 4, w = 4 / C, h = 4 / L;
+        for (var i = 0; i < C; i++) for (var j = 0; j < L; j++) {
+          var dedans = i < 2 && j < 3;
+          board.create('polygon', [[i * w, j * h], [(i + 1) * w, j * h], [(i + 1) * w, (j + 1) * h], [i * w, (j + 1) * h]], {
+            fillColor: dedans ? '#7c3aed' : '#ffffff', fillOpacity: dedans ? .45 : 1,
+            borders: { strokeColor: '#334155', strokeWidth: 1 }, vertices: { visible: false },
+            highlight: false, fixed: true
+          });
+        }
+        board.create('text', [1.33, 4.45, '2/3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', color: '#2563eb', fixed: true, highlight: false });
+        board.create('segment', [[0, 4.15], [2.67, 4.15]], { strokeColor: '#2563eb', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('text', [4.45, 1.5, '3/4'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', color: '#dc2626', fixed: true, highlight: false });
+        board.create('segment', [[4.15, 0], [4.15, 3]], { strokeColor: '#dc2626', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('text', [2, -0.65, '6/12 = 1/2'], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, cssStyle: 'font-weight:700', color: '#7c3aed', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      '<b>Additionner ou soustraire</b> : il faut des parts de <b>même taille</b>, donc le <b>même dénominateur</b>.',
+      'On <b>n\'additionne jamais les dénominateurs</b> : \\( \\frac{A}{m} + \\frac{C}{m} = \\frac{A + C}{m} \\).',
+      'Pour mettre au même dénominateur, on multiplie haut et bas par le même nombre.',
+      '<b>Multiplier</b> : numérateurs entre eux, dénominateurs entre eux : \\( \\frac{a}{b} \\times \\frac{c}{d} = \\frac{a \\times c}{b \\times d} \\).',
+      'Multiplier deux fractions, c\'est prendre <b>une fraction d\'une fraction</b> : un rectangle dans le carré.',
+      'On <b>simplifie</b> toujours le résultat si c\'est possible.'
+    ],
+    exemples: [
+      '\\( \\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4} \\)',
+      '\\( \\frac{1}{2} + \\frac{1}{3} = \\frac{3}{6} + \\frac{2}{6} = \\frac{5}{6} \\) ; ' +
+        '\\( \\frac{5}{6} - \\frac{1}{3} = \\frac{5}{6} - \\frac{2}{6} = \\frac{3}{6} = \\frac{1}{2} \\)',
+      '\\( \\frac{2}{3} \\times \\frac{3}{4} = \\frac{2 \\times 3}{3 \\times 4} = \\frac{6}{12} = \\frac{1}{2} \\)'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* État                                                                  */

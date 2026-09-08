@@ -93,6 +93,69 @@ MathsView.register({
     axis: true, grid: true, keepaspectratio: false, showNavigation: true
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Fonctions paires et impaires',
+    figures: [{
+      legende: 'Paire : miroir sur l\'axe des ordonnées. Impaire : demi-tour autour de O.',
+      boundingbox: [-6.6, 3.4, 6.9, -3.4],
+      largeur: 62, hauteur: 34,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        function axes(cx, cy, r) {
+          board.create('segment', [[cx - r, cy], [cx + r, cy]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+          board.create('segment', [[cx, cy - r], [cx, cy + r]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+        }
+        // Panneau 1 : f paire (y = x²/2), centre (−3 ; −1,8).
+        var c1 = [-3, -1.8];
+        axes(c1[0], c1[1], 2.7);
+        board.create('curve', [function (t) { return c1[0] + t; }, function (t) { return c1[1] + t * t / 2; }, -2.3, 2.3],
+          { strokeColor: '#2563eb', strokeWidth: 2.2, fixed: true, highlight: false });
+        var xa = 1.7, ya = xa * xa / 2;
+        board.create('segment', [[c1[0] - xa, c1[1] + ya], [c1[0] + xa, c1[1] + ya]], { strokeColor: '#dc2626', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        pt([c1[0] + xa, c1[1] + ya]); pt([c1[0] - xa, c1[1] + ya]);
+        tx(c1[0] + xa + 0.15, c1[1] + ya, 'x', '#334155', 'left'); tx(c1[0] - xa - 0.15, c1[1] + ya, '−x', '#334155', 'right');
+        tx(c1[0], c1[1] + 2.75, 'f(−x) = f(x)', '#dc2626', 'middle', 'bottom');
+        tx(c1[0], c1[1] - 0.45, 'paire', '#2563eb', 'middle', 'top');
+        // Panneau 2 : g impaire (y = x³/4), centre (3,6 ; 0).
+        var c2 = [3.6, 0];
+        axes(c2[0], c2[1], 2.7);
+        board.create('curve', [function (t) { return c2[0] + t; }, function (t) { return c2[1] + t * t * t / 4; }, -2.1, 2.1],
+          { strokeColor: '#0891b2', strokeWidth: 2.2, fixed: true, highlight: false });
+        var xb = 1.8, yb = xb * xb * xb / 4;
+        board.create('segment', [[c2[0] - xb, c2[1] - yb], [c2[0] + xb, c2[1] + yb]], { strokeColor: '#dc2626', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        pt([c2[0] + xb, c2[1] + yb]); pt([c2[0] - xb, c2[1] - yb]);
+        tx(c2[0] + xb + 0.15, c2[1] + yb, 'x', '#334155', 'left'); tx(c2[0] - xb - 0.15, c2[1] - yb, '−x', '#334155', 'right');
+        tx(c2[0], c2[1] + 2.75, 'g(−x) = −g(x)', '#dc2626', 'middle', 'bottom');
+        tx(c2[0] + 0.25, c2[1] - 2.85, 'impaire', '#0891b2', 'left');
+      }
+    }],
+    points: [
+      'f est <b>paire</b> si, pour tout x, \\( f(-x) = f(x) \\) : deux nombres opposés ont la <b>même image</b>.',
+      'Sa courbe est <b>symétrique</b> par rapport à l\'<b>axe des ordonnées</b>.',
+      'f est <b>impaire</b> si, pour tout x, \\( f(-x) = -f(x) \\) : deux nombres opposés ont des images <b>opposées</b>.',
+      'Sa courbe est symétrique par rapport à l\'<b>origine</b> du repère.',
+      'Avant tout, l\'ensemble de définition doit être <b>symétrique par rapport à 0</b>.',
+      'Prouver : un <b>calcul</b> valable pour tout x. Réfuter : <b>un seul contre-exemple</b>. La plupart des fonctions ne sont ni paires ni impaires.'
+    ],
+    exemples: [
+      '\\( f(x) = x^2 \\) : \\( f(-x) = (-x)^2 = x^2 = f(x) \\), donc f est paire.',
+      '\\( g(x) = x^3 \\) : \\( g(-x) = (-x)^3 = -x^3 = -g(x) \\), donc g est impaire.',
+      '\\( h(x) = 2x - 1 \\) : \\( h(-1) = -3 \\) et \\( h(1) = 1 \\), ni égales ni opposées : h n\'est ni paire ni impaire.'
+    ]
+  },
+
   setup: function (board, mv) {
     var POOL = MathsView.fonctions;
     var FN = POOL.liste();

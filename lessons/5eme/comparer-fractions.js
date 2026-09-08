@@ -98,6 +98,54 @@ MathsView.register({
     '<strong>plus petit dénominateur</strong> (les parts sont plus grosses) ; et une fraction ' +
     'est plus petite que 1 quand son numérateur est plus petit que son dénominateur.</p>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Comparer deux fractions',
+    figures: [{
+      legende: 'Parts de même taille, puis on compte : 6 > 5.',
+      boundingbox: [-2.9, 3.3, 9.4, -0.4],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 32,
+      dessine: function (board) {
+        // Une barre = une unité (8 de large), n parts coloriées sur d.
+        function barre(y, n, d, col, txt) {
+          var w = 8 / d;
+          for (var i = 0; i < d; i++) {
+            board.create('polygon', [[i * w, y], [(i + 1) * w, y], [(i + 1) * w, y + 1], [i * w, y + 1]], {
+              fillColor: i < n ? col : '#ffffff', fillOpacity: i < n ? .55 : 1,
+              borders: { strokeColor: '#334155', strokeWidth: 1.2 }, vertices: { visible: false },
+              highlight: false, fixed: true
+            });
+          }
+          board.create('text', [-0.3, y + 0.5, txt], {
+            anchorX: 'right', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false
+          });
+        }
+        barre(1.9, 6, 8, '#2563eb', '3/4 = 6/8');
+        // Les quarts d'origine, en traits épais.
+        for (var k = 0; k <= 4; k++) {
+          board.create('segment', [[k * 2, 1.9], [k * 2, 2.9]], { strokeColor: '#1e3a8a', strokeWidth: 3, fixed: true, highlight: false });
+        }
+        barre(0.3, 5, 8, '#ea580c', '5/8');
+        board.create('segment', [[6, 0.1], [6, 3.1]], { strokeColor: '#dc2626', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[5, 0.1], [5, 1.5]], { strokeColor: '#dc2626', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'On ne compare pas les numérateurs tels quels : \\( \\frac{5}{8} < \\frac{3}{4} \\) bien que 5 > 3.',
+      '<b>1.</b> On écrit les deux fractions avec le <b>même dénominateur</b> : des parts de même taille.',
+      'Pour cela, on multiplie numérateur <b>et</b> dénominateur par un même nombre.',
+      '<b>2.</b> À dénominateur égal, la plus grande fraction est celle qui a le plus grand <b>numérateur</b>.',
+      'Dénominateur commun : l\'un des deux s\'il est multiple de l\'autre, sinon leur <b>produit</b>.',
+      'À <b>numérateurs égaux</b>, la plus grande fraction a le plus <b>petit</b> dénominateur.'
+    ],
+    exemples: [
+      '\\( \\frac{3}{4} = \\frac{6}{8} \\) et \\( 6 > 5 \\), donc \\( \\frac{3}{4} > \\frac{5}{8} \\).',
+      '\\( \\frac{2}{3} = \\frac{8}{12} \\) et \\( \\frac{3}{4} = \\frac{9}{12} \\), donc \\( \\frac{2}{3} < \\frac{3}{4} \\).',
+      '\\( \\frac{4}{5} > \\frac{4}{7} \\) : les cinquièmes sont plus gros que les septièmes.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure JSXGraph
 

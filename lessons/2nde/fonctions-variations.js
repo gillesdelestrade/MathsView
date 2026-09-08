@@ -93,6 +93,78 @@ MathsView.register({
     axis: true, grid: true, keepaspectratio: false, showNavigation: true
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Variations d\'une fonction',
+    figures: [{
+      legende: 'f(x) = x² sur [−2 ; 3] : elle descend, puis elle monte.',
+      boundingbox: [-2.9, 9.8, 3.9, -1.9],
+      keepaspectratio: false,
+      largeur: 56, hauteur: 30,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        board.create('segment', [[-2.7, 0], [3.7, 0]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+        board.create('segment', [[0, -1.5], [0, 9.6]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+        board.create('functiongraph', [function (x) { return x * x; }, -2, 3],
+          { strokeColor: '#2563eb', strokeWidth: 2.4, fixed: true, highlight: false });
+        pt([-2, 4]); pt([0, 0]); pt([3, 9]);
+        tx(-2, -0.4, '−2', '#334155', 'middle', 'top'); tx(3, -0.4, '3', '#334155', 'middle', 'top');
+        tx(-2.15, 4.3, '4', '#334155', 'right'); tx(3, 9.3, '9', '#334155', 'right', 'bottom');
+        tx(0.2, -0.4, 'min = 0', '#dc2626', 'left', 'top');
+        fl([-1.7, 3.6], [-0.7, 1.2], '#dc2626', 2); fl([0.7, 1.2], [1.9, 4.2], '#16a34a', 2);
+      }
+    }, {
+      legende: 'Le tableau de variations de f sur [−2 ; 3].',
+      boundingbox: [0, 2, 10, 0],
+      keepaspectratio: false,
+      largeur: 56, hauteur: 17,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        function trait(P, Q) { board.create('segment', [P, Q], { strokeColor: '#334155', strokeWidth: 1.2, fixed: true, highlight: false }); }
+        trait([0, 1.2], [10, 1.2]); trait([2, 0], [2, 2]);
+        tx(1, 1.6, 'x'); tx(3, 1.6, '−2'); tx(6, 1.6, '0'); tx(9, 1.6, '3');
+        tx(1, 0.6, 'f(x)');
+        tx(3, 0.95, '4'); tx(6, 0.25, '0'); tx(9, 0.95, '9');
+        fl([3.6, 0.85], [5.4, 0.35], '#dc2626', 2); fl([6.6, 0.35], [8.4, 0.85], '#16a34a', 2);
+      }
+    }],
+    points: [
+      'Parcourir la courbe <b>de gauche à droite</b>, c\'est faire grandir x.',
+      'f est <b>croissante</b> sur I si a < b entraîne \\( f(a) \\leqslant f(b) \\) : elle <b>conserve l\'ordre</b>.',
+      'f est <b>décroissante</b> sur I si a < b entraîne \\( f(a) \\geqslant f(b) \\) : elle <b>renverse l\'ordre</b>.',
+      'On précise <b>toujours l\'intervalle</b> : \\( x^2 \\) décroît sur \\( ]-\\infty\\,;0] \\) et croît sur \\( [0\\,;+\\infty[ \\).',
+      'Le <b>tableau de variations</b> : une flèche par morceau, les valeurs aux bouts, une <b>double barre</b> aux valeurs interdites.',
+      'De ↘ à ↗ : un <b>minimum</b> ; de ↗ à ↘ : un <b>maximum</b>. On dit <b>où</b> il est atteint et <b>combien</b> il vaut.'
+    ],
+    exemples: [
+      '\\( f(x) = x^2 \\) sur [−2 ; 3] : décroissante sur [−2 ; 0], croissante sur [0 ; 3]. Minimum 0, atteint en 0.',
+      '\\( g(x) = 2x - 1 \\) est croissante sur ℝ : si a < b, alors 2a − 1 < 2b − 1.',
+      '\\( \\frac{1}{x} \\) décroît sur ]−∞ ; 0[ et sur ]0 ; +∞[, mais pas sur leur réunion : −1 < 1 et pourtant f(−1) < f(1).'
+    ]
+  },
+
   setup: function (board, mv) {
     var POOL = MathsView.fonctions;
     var FN = POOL.liste();

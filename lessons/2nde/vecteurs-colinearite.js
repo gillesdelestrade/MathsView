@@ -60,6 +60,53 @@ MathsView.register({
   board: { boundingbox: [-10, 7.5, 10, -7.5], keepaspectratio: true, axis: true,
            grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Multiplier un vecteur par un nombre',
+    figures: [{
+      legende: 'u, 2u et −u : même direction, les droites sont parallèles.',
+      boundingbox: [-5.6, 2.6, 4.6, -3.6],
+      largeur: 58, hauteur: 36,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [-4.5, -2], B = [-2.5, -1], C = [-1.5, 0], D = [2.5, 2], E = [3, -1.5], G = [1, -2.5];
+        [[A, B], [C, D], [E, G]].forEach(function (s) {
+          board.create('line', s, { strokeColor: '#c7d2fe', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        });
+        fl(A, B, '#2563eb', 3); fl(C, D, '#7c3aed', 3); fl(E, G, '#ea580c', 3);
+        [A, B, C, D, E, G].forEach(pt);
+        tx(-3.6, -1.2, 'u', '#2563eb', 'right', 'bottom');
+        tx(0.3, 1.3, '2u', '#7c3aed', 'right', 'bottom');
+        tx(2.2, -2.3, '−u', '#ea580c', 'left', 'top');
+        tx(-4.6, -2.2, 'A', '#0f172a', 'right', 'top'); tx(-2.35, -0.9, 'B', '#0f172a', 'left', 'top');
+      }
+    }],
+    points: [
+      'Multiplier \\( \\vec{u} \\) par un réel k donne \\( k\\vec{u} \\), de <b>même direction</b> que \\( \\vec{u} \\).',
+      'Même sens si k > 0, sens <b>opposé</b> si k < 0 ; longueur \\( |k| \\times \\|\\vec{u}\\| \\). Et \\( 0\\,\\vec{u} = \\vec{0} \\).',
+      'Coordonnées : si \\( \\vec{u}\\,(x\\,;\\,y) \\), alors \\( k\\vec{u}\\,(kx\\,;\\,ky) \\).',
+      '\\( \\vec{u} \\) et \\( \\vec{v} \\) sont <b>colinéaires</b> s\'il existe un réel k tel que \\( \\vec{v} = k\\vec{u} \\).',
+      '<b>Test</b> : \\( \\vec{u}\\,(x\\,;\\,y) \\) et \\( \\vec{v}\\,(x\'\\,;\\,y\') \\) sont colinéaires \\( \\iff xy\' - yx\' = 0 \\).',
+      'Sert à prouver que A, B, C sont <b>alignés</b> (\\( \\overrightarrow{AB} \\) et \\( \\overrightarrow{AC} \\) colinéaires) ou que (AB) ∥ (CD).'
+    ],
+    exemples: [
+      '\\( \\vec{u}\\,(2\\,;\\,1) \\) : \\( 2\\vec{u}\\,(4\\,;\\,2) \\) et \\( -\\vec{u}\\,(-2\\,;\\,-1) \\).',
+      '\\( \\vec{u}\\,(2\\,;\\,1) \\) et \\( \\vec{v}\\,(6\\,;\\,3) \\) : \\( 2 \\times 3 - 1 \\times 6 = 0 \\), colinéaires (\\( \\vec{v} = 3\\vec{u} \\)).',
+      '\\( \\vec{u}\\,(2\\,;\\,1) \\) et \\( \\vec{w}\\,(3\\,;\\,2) \\) : \\( 2 \\times 2 - 1 \\times 3 = 1 \\neq 0 \\), pas colinéaires.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

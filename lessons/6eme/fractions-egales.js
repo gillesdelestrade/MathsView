@@ -41,6 +41,47 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-3.3, 5.7, 11.3, -1.3], keepaspectratio: false, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Égalités de fractions',
+    figures: [{
+      legende: '3/4, 6/8, 9/12 : la même longueur coloriée.',
+      boundingbox: [-1.6, 4.8, 9.3, -0.4],
+      keepaspectratio: false,
+      largeur: 60, hauteur: 38,
+      dessine: function (board) {
+        function barre(y, n, d, txt) {
+          var w = 8 / d;
+          for (var i = 0; i < d; i++) {
+            board.create('polygon', [[i * w, y], [(i + 1) * w, y], [(i + 1) * w, y + 1], [i * w, y + 1]], {
+              fillColor: i < n ? '#0d9488' : '#ffffff', fillOpacity: i < n ? .55 : 1,
+              borders: { strokeColor: '#334155', strokeWidth: 1.1 }, vertices: { visible: false },
+              highlight: false, fixed: true
+            });
+          }
+          board.create('text', [-0.3, y + 0.5, txt], { anchorX: 'right', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        barre(3.4, 3, 4, '3/4');
+        barre(1.8, 6, 8, '6/8');
+        barre(0.2, 9, 12, '9/12');
+        board.create('segment', [[6, -0.2], [6, 4.6]], { strokeColor: '#dc2626', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Deux fractions différentes peuvent désigner le <b>même nombre</b>.',
+      'Si on <b>multiplie</b> le numérateur <b>et</b> le dénominateur par un <b>même nombre</b>, la fraction ne change pas de valeur.',
+      'Multiplier par 2, c\'est couper chaque part en deux : deux fois plus de parts, deux fois plus petites.',
+      'On peut multiplier par 2, 3, 4… : autant de fractions égales qu\'on veut.',
+      'À l\'inverse, <b>simplifier</b>, c\'est <b>diviser</b> le numérateur et le dénominateur par un même nombre.',
+      'Sur la figure, la ligne pointillée tombe au même endroit : c\'est la preuve que les fractions sont égales.'
+    ],
+    exemples: [
+      '\\( \\dfrac{3}{4} = \\dfrac{3 \\times 2}{4 \\times 2} = \\dfrac{6}{8} = \\dfrac{3 \\times 3}{4 \\times 3} = \\dfrac{9}{12} \\)',
+      '\\( \\dfrac{2}{5} = \\dfrac{2 \\times 4}{5 \\times 4} = \\dfrac{8}{20} \\)',
+      'Simplifier : \\( \\dfrac{10}{15} = \\dfrac{10 \\div 5}{15 \\div 5} = \\dfrac{2}{3} \\)'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* État                                                                  */

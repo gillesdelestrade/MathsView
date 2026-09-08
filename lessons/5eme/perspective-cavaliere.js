@@ -146,6 +146,54 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Perspective cavalière',
+    figures: [{
+      legende: 'Pavé droit : face avant en vraie grandeur, fuyantes à 45° réduites de moitié.',
+      boundingbox: [-0.5, 4.5, 7.6, -1.0],
+      largeur: 60, hauteur: 42,
+      dessine: function (board) {
+        var L = 4, h = 2.5, prof = 3, coef = 0.5, ang = Math.PI / 4;
+        var dx = prof * coef * Math.cos(ang), dy = prof * coef * Math.sin(ang);
+        function seg(P, Q, cache) {
+          board.create('segment', [P, Q], { strokeColor: '#0f172a', strokeWidth: cache ? 1.2 : 2,
+            dash: cache ? 2 : 0, fixed: true, highlight: false });
+        }
+        var A = [0, 0], B = [L, 0], C = [L, h], D = [0, h];
+        var E = [dx, dy], F = [L + dx, dy], G = [L + dx, h + dy], H = [dx, h + dy];
+        // Face avant, en vraie grandeur.
+        board.create('polygon', [A, B, C, D], { fillColor: '#bfdbfe', fillOpacity: .5,
+          borders: { strokeColor: '#0f172a', strokeWidth: 2 }, vertices: { visible: false }, highlight: false, fixed: true });
+        // Fuyantes visibles et arêtes du fond visibles.
+        seg(B, F); seg(C, G); seg(D, H); seg(F, G); seg(G, H);
+        // Les trois arêtes cachées, en pointillés.
+        seg(A, E, true); seg(E, F, true); seg(E, H, true);
+        // L'angle des fuyantes (les points de l'angle restent invisibles).
+        function pt(P) { return board.create('point', P, { visible: false, fixed: true }); }
+        board.create('segment', [B, [L + 1.5, 0]], { strokeColor: '#94a3b8', strokeWidth: 1, dash: 1, fixed: true, highlight: false });
+        board.create('angle', [pt([L + 1.5, 0]), pt(B), pt(F)], { radius: 0.7, fillColor: '#fbbf24', fillOpacity: .5,
+          strokeColor: '#b45309', name: '', fixed: true, highlight: false });
+        board.create('text', [L + 1.0, 0.75, '45°'], { anchorX: 'left', anchorY: 'middle', fontSize: 10, color: '#b45309', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [L / 2, -0.55, 'L = 4 cm, en vraie grandeur'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10, fixed: true, highlight: false });
+        board.create('text', [L + dx + 0.2, h + dy / 2 - 0.1, 'fuyante : 3 × 0,5 = 1,5 cm'], { anchorX: 'left', anchorY: 'middle', fontSize: 10, color: '#b45309', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'La <b>face avant</b> est dessinée en <b>vraie grandeur</b> : ses angles droits restent droits.',
+      'Les <b>fuyantes</b> (arêtes vers l\'arrière) sont <b>parallèles</b> et <b>réduites</b> du même coefficient (souvent 0,5).',
+      'Les arêtes <b>visibles</b> se tracent en trait plein, les arêtes <b>cachées</b> en pointillés.',
+      'Parallélisme et milieux sont conservés ; longueurs des fuyantes et angles de biais ne le sont pas.',
+      '<b>Volume</b> d\'un prisme droit ou d\'un cylindre : \\( V = \\mathcal{B} \\times h \\) (aire d\'une base × hauteur).',
+      'On calcule avec les <b>dimensions réelles</b>, jamais avec celles mesurées sur le dessin. Unité : cm³.'
+    ],
+    exemples: [
+      'Pavé droit 5 × 4 × 3 cm : \\( V = 5 \\times 4 \\times 3 = 60 \\) cm³.',
+      'Cube d\'arête 4 cm : \\( V = 4^3 = 64 \\) cm³.',
+      'Cylindre de rayon 2 cm et de hauteur 10 cm : \\( V = \\pi \\times 2^2 \\times 10 = 40\\pi \\approx 125{,}7 \\) cm³.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

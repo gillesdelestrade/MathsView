@@ -103,6 +103,49 @@ MathsView.register({
     'deux, puisqu\'ensemble elles forment le tout.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Proportion et pourcentage',
+    figures: [{
+      legende: '15 sur 25, c\'est 60 sur 100 : la même proportion, 60 %.',
+      boundingbox: [-0.6, 6.4, 13.2, -0.9],
+      largeur: 60, hauteur: 34,
+      dessine: function (board) {
+        function grille(x0, y0, n, cote, pleines, col) {
+          var k = 0;
+          for (var i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+            var x = x0 + j * cote, y = y0 + (n - 1 - i) * cote;
+            board.create('polygon', [[x, y], [x + cote, y], [x + cote, y + cote], [x, y + cote]], {
+              fillColor: k < pleines ? col : '#ffffff', fillOpacity: k < pleines ? .6 : 1,
+              borders: { strokeColor: '#64748b', strokeWidth: 0.8 }, vertices: { visible: false }, highlight: false, fixed: true
+            });
+            k++;
+          }
+        }
+        grille(0, 0, 5, 1, 15, '#ea580c');
+        grille(7.5, 0, 10, 0.5, 60, '#ea580c');
+        function txt(x, y, t) {
+          board.create('text', [x, y, t], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        txt(2.5, 5.7, '15 sur 25'); txt(10, 5.7, '60 sur 100');
+        txt(6.25, 2.5, '=');
+      }
+    }],
+    points: [
+      'La <b>proportion</b> d\'une partie dans un tout est le quotient \\( \\frac{\\text{partie}}{\\text{tout}} \\). Toujours la partie sur le tout.',
+      'Elle s\'écrit en fraction, en décimal ou en <b>pourcentage</b> : trois écritures du même nombre, entre 0 et 1.',
+      '\\( t\\,\\% \\) signifie \\( \\frac{t}{100} \\) : « t sur cent ».',
+      'Passer sur 100, 1<sup>er</sup> chemin : multiplier haut et bas par le même nombre, quand le dénominateur divise 100.',
+      '2<sup>e</sup> chemin, qui marche toujours : le <b>produit en croix</b> avec \\( \\frac{\\text{partie}}{\\text{tout}} = \\frac{x}{100} \\).',
+      'Un pourcentage sert à <b>comparer</b> des proportions dont les totaux sont différents.'
+    ],
+    exemples: [
+      '15 filles sur 25 élèves : \\( \\dfrac{15}{25} = \\dfrac{3}{5} = \\dfrac{3 \\times 20}{5 \\times 20} = \\dfrac{60}{100} = 60\\,\\% \\).',
+      '3 sur 8 : \\( \\dfrac{3}{8} = \\dfrac{x}{100} \\), donc \\( x = \\dfrac{3 \\times 100}{8} = 37{,}5 \\) : c\'est 37,5 %.',
+      '12 sur 20 et 15 sur 25 : 60 % dans les deux cas, ce sont les mêmes proportions.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();          // leçon sans figure
 

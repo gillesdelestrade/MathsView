@@ -79,6 +79,55 @@ MathsView.register({
     '\\( 10^3 \\times 10^4 = 10^7 \\), \\( 10^{-2} = 0{,}01 \\), et l\'écriture ' +
     'scientifique \\( 3{,}2 \\times 10^{-5} \\) en découle.</p>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Règles de calcul sur les puissances',
+    figures: [{
+      legende: '2³ × 2² : trois facteurs, puis deux, ça fait cinq facteurs.',
+      boundingbox: [-0.5, 3.7, 9.4, -1.1],
+      keepaspectratio: false,
+      largeur: 60, hauteur: 30,
+      dessine: function (board) {
+        function boite(x, col) {
+          board.create('polygon', [[x, 0.6], [x + 1.2, 0.6], [x + 1.2, 2], [x, 2]], {
+            fillColor: col, fillOpacity: .5, borders: { strokeColor: '#334155', strokeWidth: 1.2 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x + 0.6, 1.3, '2'], { anchorX: 'middle', anchorY: 'middle', fontSize: 14, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function T(x, y, t, col, taille) {
+          board.create('text', [x, y, t], { anchorX: 'middle', anchorY: 'middle', fontSize: taille || 12, color: col || '#1e293b', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        var xs = [0, 1.7, 3.4, 5.9, 7.6];
+        xs.forEach(function (x, i) { boite(x, i < 3 ? '#93c5fd' : '#fcd34d'); });
+        T(1.45, 1.3, '×', '#64748b'); T(3.15, 1.3, '×', '#64748b'); T(7.35, 1.3, '×', '#64748b');
+        T(5.25, 1.3, '×', '#1e293b', 18);
+        // Les accolades, en traits : 2³ et 2² au-dessus, 2⁵ dessous.
+        function accolade(x1, x2, t, col) {
+          board.create('curve', [[x1, x1, x2, x2], [2.15, 2.4, 2.4, 2.15]], { strokeColor: col, strokeWidth: 1.4, fixed: true, highlight: false });
+          T((x1 + x2) / 2, 2.95, t, col, 13);
+        }
+        accolade(0, 4.6, '2³ = 8', '#2563eb');
+        accolade(5.9, 8.8, '2² = 4', '#d97706');
+        board.create('curve', [[0, 0, 8.8, 8.8], [0.45, 0.2, 0.2, 0.45]], { strokeColor: '#16a34a', strokeWidth: 1.4, fixed: true, highlight: false });
+        T(4.4, -0.4, '2³⁺² = 2⁵ = 32', '#16a34a', 13);
+      }
+    }],
+    points: [
+      '\\( a^n = a \\times a \\times \\cdots \\times a \\) (n facteurs) : l\'exposant <b>compte les facteurs</b>.',
+      'Même base, <b>produit</b> : \\( a^n \\times a^p = a^{n+p} \\). On <b>additionne</b> les exposants.',
+      'Même base, <b>quotient</b> : \\( \\dfrac{a^n}{a^p} = a^{n-p} \\). On <b>soustrait</b> les exposants.',
+      '\\( a^0 = 1 \\) et \\( a^{-n} = \\dfrac{1}{a^n} \\) : un exposant négatif désigne un <b>inverse</b>, pas un nombre négatif.',
+      '\\( (a^n)^p = a^{n \\times p} \\) et \\( (a \\times b)^n = a^n \\times b^n \\).',
+      'Ces règles portent sur les <b>produits</b>, jamais sur les sommes, et seulement pour une <b>même base</b>.'
+    ],
+    exemples: [
+      '\\( 2^3 \\times 2^2 = 2^5 = 32 \\) (ni \\( 4^5 \\), ni \\( 2^6 \\)) ; \\( \\dfrac{5^7}{5^4} = 5^3 = 125 \\) ; \\( (3^2)^4 = 3^8 \\).',
+      '\\( 2^{-3} = \\dfrac{1}{2^3} = \\dfrac{1}{8} \\) ; \\( 7^0 = 1 \\) ; \\( 10^3 \\times 10^4 = 10^7 \\) ; \\( 10^{-2} = 0{,}01 \\).',
+      'Pièges : \\( 2^3 + 2^2 = 8 + 4 = 12 \\), pas \\( 2^5 \\) ; \\( 2^3 \\times 3^2 \\) ne se simplifie pas (bases différentes).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure
 

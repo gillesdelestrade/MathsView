@@ -98,6 +98,50 @@ MathsView.register({
     'recommence : les barres retombent à peu près au même endroit.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Expérience, issue, événement',
+    figures: [{
+      legende: 'Le dé : 6 issues. L\'événement « pair » en regroupe 3.',
+      boundingbox: [-0.8, 3.6, 12.8, -0.9],
+      largeur: 60, hauteur: 26,
+      dessine: function (board) {
+        for (var i = 1; i <= 6; i++) {
+          var x = (i - 1) * 2.1 + 1, pair = i % 2 === 0;
+          board.create('polygon', [[x - .8, .2], [x + .8, .2], [x + .8, 1.8], [x - .8, 1.8]], {
+            fillColor: pair ? '#059669' : '#ffffff', fillOpacity: pair ? .35 : 1,
+            borders: { strokeColor: pair ? '#059669' : '#334155', strokeWidth: pair ? 2 : 1.4 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x, 1, String(i)], { anchorX: 'middle', anchorY: 'middle', fontSize: 14,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        board.create('text', [6, 2.9, 'issues : 1 · 2 · 3 · 4 · 5 · 6'], { anchorX: 'middle', anchorY: 'middle',
+          fontSize: 10, color: '#334155', fixed: true, highlight: false });
+        board.create('text', [6, -0.45, '« nombre pair » = { 2 ; 4 ; 6 }'], {
+          anchorX: 'middle', anchorY: 'middle', fontSize: 10, color: '#059669', cssStyle: 'font-weight:700',
+          fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Une <b>expérience aléatoire</b> est une action dont on ne peut pas prévoir le résultat, mais dont on connaît ' +
+        '<b>tous</b> les résultats possibles.',
+      'Une <b>issue</b> est un des résultats possibles, et un seul.',
+      'Un <b>événement</b> est une condition qui <b>regroupe</b> des issues. Il est <b>réalisé</b> si l\'issue ' +
+        'obtenue en fait partie.',
+      'L\'événement qui contient toutes les issues est <b>certain</b> ; celui qui n\'en contient aucune est ' +
+        '<b>impossible</b>.',
+      'Sur beaucoup de répétitions, la <b>fréquence</b> de chaque issue se stabilise.',
+      'Les issues ne sont pas toujours aussi probables les unes que les autres : avec la somme de deux dés, ' +
+        '7 sort bien plus souvent que 2.'
+    ],
+    exemples: [
+      'Dé : issues { 1 ; 2 ; 3 ; 4 ; 5 ; 6 }. « Obtenir un nombre pair » regroupe 2, 4 et 6.',
+      'Dé : « obtenir un nombre entre 1 et 6 » est certain ; « obtenir 7 » est impossible.',
+      'Pierre-feuille-ciseaux : 9 issues (les couples de mains) ; « je gagne » est un événement qui en regroupe 3.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();          // leçon sans figure géométrique
 

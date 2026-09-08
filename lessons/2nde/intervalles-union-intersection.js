@@ -94,6 +94,52 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Union et intersection d\'intervalles',
+    figures: [{
+      legende: 'I ∩ J : la partie commune. I ∪ J : tout ce que les deux recouvrent.',
+      boundingbox: [-2.4, 6.2, 12.6, -1.4],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 40,
+      dessine: function (board) {
+        board.create('segment', [[0, 0], [12.3, 0]], { strokeColor: '#334155', strokeWidth: 1.4, lastArrow: true, fixed: true, highlight: false });
+        for (var i = 1; i <= 11; i++) {
+          board.create('segment', [[i, -0.12], [i, 0.12]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+          board.create('text', [i, -0.3, String(i)], { anchorX: 'middle', anchorY: 'top', fontSize: 9, color: '#64748b', fixed: true, highlight: false });
+        }
+        function barre(x1, x2, y, col, nom, formule) {
+          board.create('polygon', [[x1, y - 0.3], [x2, y - 0.3], [x2, y + 0.3], [x1, y + 0.3]], {
+            fillColor: col, fillOpacity: .4, borders: { strokeColor: col, strokeWidth: 1.2 }, vertices: { visible: false }, highlight: false, fixed: true
+          });
+          [x1, x2].forEach(function (x) {
+            board.create('point', [x, y], { name: '', size: 2.4, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+            board.create('segment', [[x, y - 0.3], [x, 0]], { strokeColor: col, strokeWidth: .8, dash: 2, fixed: true, highlight: false });
+          });
+          board.create('text', [-0.3, y, nom], { anchorX: 'right', anchorY: 'middle', fontSize: 11, color: col, cssStyle: 'font-weight:700;white-space:nowrap', fixed: true, highlight: false });
+          board.create('text', [x2 + 0.3, y, formule], { anchorX: 'left', anchorY: 'middle', fontSize: 10, color: col, fixed: true, highlight: false });
+        }
+        barre(3, 6, 5.2, '#2563eb', 'I', '[3 ; 6]');
+        barre(4, 10, 4.0, '#d97706', 'J', '[4 ; 10]');
+        barre(4, 6, 2.5, '#16a34a', 'I ∩ J', '[4 ; 6]');
+        barre(3, 10, 1.2, '#7c3aed', 'I ∪ J', '[3 ; 10]');
+      }
+    }],
+    points: [
+      '<b>Intersection</b> \\( I \\cap J \\) : les nombres qui sont dans I <b>et</b> dans J. <b>Union</b> \\( I \\cup J \\) : dans I <b>ou</b> dans J (au moins l\'un des deux).',
+      'Sur l\'axe, on ne calcule pas, on <b>lit</b> : l\'intersection est la partie <b>commune</b>, l\'union est tout ce que les deux barres <b>recouvrent</b>.',
+      'Intersection : la <b>plus grande</b> des bornes gauches et la <b>plus petite</b> des bornes droites.',
+      'Union (si les intervalles se chevauchent) : la plus petite borne gauche et la plus grande borne droite.',
+      'À une borne partagée : \\( \\cap \\) est fermée seulement si <b>les deux</b> le sont ; \\( \\cup \\) dès que <b>l\'un</b> l\'est.',
+      'Sans chevauchement, \\( I \\cap J = \\varnothing \\) et l\'union reste en <b>deux morceaux</b> : on garde le symbole \\( \\cup \\).'
+    ],
+    exemples: [
+      '\\( [3\\,;6] \\cap [4\\,;10] = [4\\,;6] \\) et \\( [3\\,;6] \\cup [4\\,;10] = [3\\,;10] \\) ; \\( [3\\,;6[ \\;\\cap\\; [4\\,;6] = [4\\,;6[ \\).',
+      '\\( [3\\,;6] \\cap [6\\,;10] = \\{6\\} \\) mais \\( [3\\,;6[ \\;\\cap\\; [6\\,;10] = \\varnothing \\).',
+      '\\( [3\\,;5] \\cup [7\\,;9] \\) reste en deux morceaux (il manque ]5 ; 7[) ; \\( \\mathbb{R}^* = \\;]-\\infty\\,;0[ \\;\\cup\\; ]0\\,;+\\infty[ \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette et géométrie                                                 */

@@ -45,6 +45,61 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-1.5, 8.5, 12.5, -2], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les aires',
+    figures: [{
+      legende: 'On compte les carreaux ; le triangle vaut la moitié.',
+      boundingbox: [-0.5, 4.3, 12.0, -1.4],
+      largeur: 62, hauteur: 32,
+      dessine: function (board) {
+        function t(x, y, s, col, opt) {
+          board.create('text', [x, y, s], Object.assign({ anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            color: col || '#1e293b', cssStyle: 'font-weight:700', fixed: true, highlight: false }, opt || {}));
+        }
+        // Le rectangle quadrillé.
+        for (var i = 0; i < 5; i++) for (var j = 0; j < 3; j++) {
+          board.create('polygon', [[i, j], [i + 1, j], [i + 1, j + 1], [i, j + 1]], {
+            fillColor: '#bfdbfe', fillOpacity: .5, borders: { strokeColor: '#94a3b8', strokeWidth: 1 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+        }
+        board.create('polygon', [[0, 0], [5, 0], [5, 3], [0, 3]], {
+          fillColor: 'none', fillOpacity: 0, borders: { strokeColor: '#2563eb', strokeWidth: 2.5 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        t(2.5, -0.6, 'L = 5', '#2563eb'); t(5.35, 1.5, 'ℓ = 3', '#2563eb', { anchorX: 'left' });
+        t(2.5, 3.6, '15 carreaux', '#1e40af', { fontSize: 11 });
+        // Le triangle, sa base et sa hauteur en pointillés.
+        var b0 = 7, b = 4, h = 3, xh = 8.5;
+        board.create('polygon', [[b0, 0], [b0 + b, 0], [xh, h]], {
+          fillColor: '#fde68a', fillOpacity: .6, borders: { strokeColor: '#b45309', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        board.create('segment', [[xh, 0], [xh, h]], { strokeColor: '#dc2626', strokeWidth: 1.5, dash: 2, fixed: true, highlight: false });
+        board.create('polygon', [[xh, 0], [xh + 0.3, 0], [xh + 0.3, 0.3], [xh, 0.3]], {
+          fillColor: 'none', fillOpacity: 0, borders: { strokeColor: '#dc2626', strokeWidth: 1 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        t(b0 + b / 2, -0.6, 'b = 4', '#b45309'); t(xh + 0.45, h / 2, 'h = 3', '#dc2626', { anchorX: 'left' });
+        t(b0 + b / 2, 3.6, 'A = 4 × 3 ÷ 2 = 6', '#92400e', { fontSize: 11 });
+      }
+    }],
+    points: [
+      'L\'<b>aire</b> d\'une figure est la taille de la <b>surface</b> qu\'elle occupe.',
+      'On la mesure en <b>unités d\'aire</b> : un carreau de 1 cm de côté vaut 1 cm².',
+      'Carré de côté c : \\( \\mathcal{A} = c \\times c = c^2 \\). Rectangle : \\( \\mathcal{A} = L \\times \\ell \\).',
+      'Triangle de base b et de hauteur h : \\( \\mathcal{A} = \\dfrac{b \\times h}{2} \\).',
+      'La <b>hauteur</b> est perpendiculaire à la base : on la trace en pointillés.',
+      'Disque de rayon r : \\( \\mathcal{A} = \\pi \\times r^2 \\), avec π ≈ 3,14. Le résultat n\'est presque jamais rond : on écrit ≈.'
+    ],
+    exemples: [
+      'Rectangle de 5 cm sur 3 cm : A = 5 × 3 = 15 cm² (15 carreaux).',
+      'Triangle de base 4 cm et de hauteur 3 cm : A = 4 × 3 ÷ 2 = 6 cm².',
+      'Disque de rayon 2 cm : A = π × 2² = π × 4 ≈ 12,6 cm².'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ---- État ----------------------------------------------------------- */
     var shape = 'carre';       // 'carre' | 'rectangle' | 'triangle' | 'disque'

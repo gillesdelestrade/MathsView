@@ -76,6 +76,56 @@ MathsView.register({
     '(180 − lecture). La mesure, elle, ne change pas.</p>',
   board: { boundingbox: [-5.9, 5.7, 5.9, -1.9], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Mesurer un angle au rapporteur',
+    figures: [{
+      legende: 'Centre sur le sommet O, 0 sur un côté : l\'autre côté passe sur 50.',
+      boundingbox: [-4.4, 4.4, 4.4, -0.9],
+      largeur: 58, hauteur: 36,
+      dessine: function (board) {
+        var R = 3.3, ang = 50, D = Math.PI / 180;
+        var cache = { visible: false, name: '', withLabel: false, fixed: true, showInfobox: false };
+        function arc(C, P1, P2, attr) {
+          return board.create('arc', [board.create('point', C, cache), board.create('point', P1, cache), board.create('point', P2, cache)], attr);
+        }
+        // Le rapporteur : demi-disque, graduations tous les 10°, nombres tous les 30°.
+        arc([0, 0], [R, 0], [-R, 0], { strokeColor: '#64748b', strokeWidth: 1.5, fixed: true, highlight: false });
+        board.create('segment', [[-R, 0], [R, 0]], { strokeColor: '#64748b', strokeWidth: 1.5, fixed: true, highlight: false });
+        for (var a = 0; a <= 180; a += 10) {
+          var c = Math.cos(a * D), s = Math.sin(a * D), r0 = a % 30 === 0 ? R - 0.45 : R - 0.25;
+          board.create('segment', [[r0 * c, r0 * s], [R * c, R * s]], { strokeColor: '#64748b', strokeWidth: 1, fixed: true, highlight: false });
+          if (a % 30 === 0) board.create('text', [(R + 0.4) * c, (R + 0.4) * s, String(a)], {
+            anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: '#2563eb', cssStyle: 'font-weight:700', fixed: true, highlight: false
+          });
+        }
+        // L'angle : sommet O, base à droite, deuxième côté à 50°.
+        var L = 4;
+        board.create('segment', [[0, 0], [L, 0]], { strokeColor: '#0f172a', strokeWidth: 2.5, fixed: true, highlight: false });
+        board.create('segment', [[0, 0], [L * Math.cos(ang * D), L * Math.sin(ang * D)]], { strokeColor: '#0f172a', strokeWidth: 2.5, fixed: true, highlight: false });
+        arc([0, 0], [1, 0], [Math.cos(ang * D), Math.sin(ang * D)], { strokeColor: '#f59e0b', strokeWidth: 2.5, fixed: true, highlight: false });
+        board.create('point', [0, 0], { name: '', size: 2.5, color: '#0f172a', fixed: true, highlight: false, showInfobox: false });
+        board.create('text', [-0.35, -0.4, 'O'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [1.75 * Math.cos(25 * D), 1.75 * Math.sin(25 * D), '50°'], {
+          anchorX: 'middle', anchorY: 'middle', fontSize: 12, color: '#b45309', cssStyle: 'font-weight:700', fixed: true, highlight: false
+        });
+      }
+    }],
+    points: [
+      'Le <b>rapporteur</b> mesure les angles en <b>degrés</b> (°).',
+      '1. Pose le <b>centre</b> du rapporteur sur le <b>sommet</b> de l\'angle.',
+      '2. Tourne-le pour aligner le <b>0</b> sur un des deux côtés.',
+      '3. Lis la graduation là où passe l\'<b>autre côté</b>.',
+      'Angle <b>aigu</b> : moins de 90°. Angle <b>droit</b> : 90°. Angle <b>obtus</b> : entre 90° et 180°.',
+      'Deux graduations ? Angle aigu → on prend le <b>plus petit</b> nombre ; angle obtus → le <b>plus grand</b>.'
+    ],
+    exemples: [
+      'Le côté passe entre 50 et 130. L\'angle est bien fermé (aigu) : il mesure 50°.',
+      'Le côté passe entre 110 et 70. L\'angle est bien ouvert (obtus) : il mesure 110°.',
+      'Un angle de 90° est droit : c\'est le coin de l\'équerre.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette + dimensions                                                 */

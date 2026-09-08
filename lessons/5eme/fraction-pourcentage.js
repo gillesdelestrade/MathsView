@@ -88,6 +88,46 @@ MathsView.register({
     'un nombre d\'élèves, lui, est forcément entier — c\'est un bon moyen de vérifier qu\'on ne ' +
     's\'est pas trompé.</p>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Fraction et pourcentage d\'une quantité',
+    figures: [{
+      legende: '2/5 de 30 : cinq parts de 6, on en prend deux.',
+      boundingbox: [-0.5, 2.6, 10.5, -1.2],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 26,
+      dessine: function (board) {
+        for (var i = 0; i < 5; i++) {
+          board.create('polygon', [[i * 2, 0], [(i + 1) * 2, 0], [(i + 1) * 2, 1.2], [i * 2, 1.2]], {
+            fillColor: i < 2 ? '#0d9488' : '#ffffff', fillOpacity: i < 2 ? .55 : 1,
+            borders: { strokeColor: '#334155', strokeWidth: 1.2 }, vertices: { visible: false },
+            highlight: false, fixed: true
+          });
+          board.create('text', [i * 2 + 1, 0.6, '6'], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        board.create('segment', [[0, 1.55], [10, 1.55]], { strokeColor: '#334155', strokeWidth: 1.2, fixed: true, highlight: false });
+        board.create('segment', [[0, 1.4], [0, 1.7]], { strokeColor: '#334155', strokeWidth: 1.2, fixed: true, highlight: false });
+        board.create('segment', [[10, 1.4], [10, 1.7]], { strokeColor: '#334155', strokeWidth: 1.2, fixed: true, highlight: false });
+        board.create('text', [5, 2.1, '30 élèves = 5 parts de 6'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10, fixed: true, highlight: false });
+        board.create('segment', [[0, -0.35], [4, -0.35]], { strokeColor: '#0d9488', strokeWidth: 2, fixed: true, highlight: false });
+        board.create('text', [2, -0.8, '2/5 de 30 = 12'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10, color: '#0d9488', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Prendre \\( \\frac{a}{b} \\) de N : on partage N en b parts <b>égales</b>, puis on en prend a.',
+      '\\( \\frac{a}{b} \\) de N \\( = (N \\div b) \\times a \\) : on cherche d\'abord la valeur d\'<b>une</b> part.',
+      'Ou bien \\( (N \\times a) \\div b \\) : même résultat.',
+      'Un <b>pourcentage</b> est une fraction de dénominateur 100 : \\( 30\\,\\% = \\frac{30}{100} \\). Même méthode.',
+      'À connaître : 50 % = la moitié, 25 % = le quart, 75 % = les trois quarts, 10 % = diviser par 10.',
+      'Un nombre d\'élèves est forcément entier : c\'est un bon moyen de vérifier.'
+    ],
+    exemples: [
+      '\\( \\frac{2}{5} \\) de 30 élèves : \\( 30 \\div 5 = 6 \\), puis \\( 6 \\times 2 = 12 \\) élèves.',
+      '30 % de 48 € : \\( 48 \\div 100 \\times 30 = 14{,}4 \\), soit 14,40 €.',
+      '25 % de 80 : le quart de 80, c\'est 20.'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();   // leçon sans figure JSXGraph
 

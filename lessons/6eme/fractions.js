@@ -59,6 +59,45 @@ MathsView.register({
     'écrit « ≈ » et non « = ».</p>',
   board: { boundingbox: [-1, 6.5, 11, -2.5], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Les fractions',
+    figures: [{
+      legende: '3/4 : l\'unité coupée en 4 parts égales, on en prend 3.',
+      boundingbox: [-2.2, 3.4, 9.6, -1.6],
+      keepaspectratio: false,
+      largeur: 60, hauteur: 34,
+      dessine: function (board) {
+        var d = 4, n = 3, w = 8 / d;
+        for (var i = 0; i < d; i++) {
+          board.create('polygon', [[i * w, 0], [(i + 1) * w, 0], [(i + 1) * w, 1.4], [i * w, 1.4]], {
+            fillColor: i < n ? '#0d9488' : '#ffffff', fillOpacity: i < n ? .55 : 1,
+            borders: { strokeColor: '#334155', strokeWidth: 1.2 }, vertices: { visible: false },
+            highlight: false, fixed: true
+          });
+        }
+        board.create('text', [4, 2.4, '1 unité'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: '#64748b', fixed: true, highlight: false });
+        board.create('segment', [[0, 1.9], [8, 1.9]], { strokeColor: '#64748b', strokeWidth: 1, firstArrow: true, lastArrow: true, fixed: true, highlight: false });
+        board.create('text', [-1.2, 0.7, '3/4'], { anchorX: 'middle', anchorY: 'middle', fontSize: 15, cssStyle: 'font-weight:700', color: '#0d9488', fixed: true, highlight: false });
+        board.create('text', [3, -0.55, '3 parts prises : numérateur'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10, color: '#0d9488', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        board.create('text', [4, -1.15, '4 parts en tout : dénominateur'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10, color: '#334155', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Une <b>fraction</b> \\( \\dfrac{a}{b} \\) se lit « a sur b ».',
+      'Le <b>dénominateur</b> b dit en combien de <b>parts égales</b> on coupe l\'unité.',
+      'Le <b>numérateur</b> a dit combien de parts on <b>prend</b>.',
+      'Si a < b, la fraction est <b>plus petite que 1</b>. Si a = b, elle <b>vaut 1</b>.',
+      'Si a > b, elle est <b>plus grande que 1</b> : on peut l\'écrire « entier + reste ».',
+      'Deux fractions différentes peuvent désigner le <b>même nombre</b>.'
+    ],
+    exemples: [
+      '\\( \\dfrac{3}{4} < 1 \\) : trois quarts, il manque un quart pour faire l\'unité.',
+      '\\( \\dfrac{4}{4} = 1 \\) et \\( \\dfrac{7}{4} = 1 + \\dfrac{3}{4} \\) : une unité entière, plus trois quarts.',
+      '\\( \\dfrac{6}{4} = \\dfrac{3}{2} \\) : c\'est le même nombre, 1,5.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ---- État réglé par les curseurs ----------------------------------- */
     var a = 3, b = 4, mode = 'barre';

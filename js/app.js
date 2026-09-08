@@ -365,6 +365,11 @@
       console.error('Erreur dans le cours « ' + lesson.id + ' » :', e);
     }
 
+    // La fiche bristol à recopier (js/fiches.js), si la leçon en déclare une.
+    // Après freeCurrentBoard() : ses tableaux s'inscrivent dans les nettoyages
+    // de CETTE leçon, et typeset() ci-dessous rend aussi ses formules.
+    if (global.MathsFiches) global.MathsFiches.monte(lesson, ctx);
+
     typeset();
     highlightMenu();
     window.scrollTo(0, 0);
@@ -605,6 +610,9 @@
   }
 
   /* --------------------------------------------------------------------- */
-  global.MathsView = { register, start };
+  // `categories` et `niveaux` sont exposés en lecture pour les modules qui
+  // s'adossent au moteur (la fiche bristol lit l'ordre des domaines pour
+  // placer son intercalaire) : on ne les modifie pas de l'extérieur.
+  global.MathsView = { register, start, categories: CATEGORIES, niveaux: LEVELS };
 
 })(window);

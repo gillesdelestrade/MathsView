@@ -115,6 +115,54 @@ MathsView.register({
     'passe vraiment.</li>' +
     '</ul>',
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Probabilités et équiprobabilité',
+    figures: [{
+      legende: 'La certitude (1) partagée en 6 parts égales : 1/6 chacune.',
+      boundingbox: [-0.6, 3.4, 12.6, -1.3],
+      largeur: 60, hauteur: 26,
+      dessine: function (board) {
+        for (var i = 1; i <= 6; i++) {
+          var x0 = (i - 1) * 2, pair = i % 2 === 0;
+          board.create('polygon', [[x0, 0], [x0 + 2, 0], [x0 + 2, 1.6], [x0, 1.6]], {
+            fillColor: pair ? '#059669' : '#ffffff', fillOpacity: pair ? .35 : 1,
+            borders: { strokeColor: '#334155', strokeWidth: 1.4 },
+            vertices: { visible: false }, highlight: false, fixed: true
+          });
+          board.create('text', [x0 + 1, 1.05, String(i)], { anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+          board.create('text', [x0 + 1, 0.45, '1/6'], { anchorX: 'middle', anchorY: 'middle', fontSize: 10,
+            color: '#334155', fixed: true, highlight: false });
+        }
+        board.create('segment', [[0, 2.3], [12, 2.3]], { strokeColor: '#334155', strokeWidth: 1.2, fixed: true, highlight: false,
+          firstArrow: { type: 2, size: 4 }, lastArrow: { type: 2, size: 4 } });
+        board.create('text', [6, 2.9, 'certitude = 1'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11,
+          cssStyle: 'font-weight:700', color: '#334155', fixed: true, highlight: false });
+        board.create('text', [6, -0.7, 'P(pair) = 3/6 = 1/2'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11,
+          color: '#059669', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'La <b>probabilité</b> d\'une issue est un nombre entre <b>0</b> et <b>1</b>. La somme des probabilités de ' +
+        'toutes les issues vaut <b>1</b>.',
+      'Quand rien ne distingue les issues (dé équilibré, pièce, secteurs de même angle), elles sont ' +
+        '<b>équiprobables</b>.',
+      'Avec n issues équiprobables, chacune a pour probabilité \\( \\frac{1}{n} \\).',
+      'Probabilité d\'un événement A, cas équiprobable : ' +
+        '\\( P(A) = \\dfrac{\\text{nombre d\'issues favorables}}{\\text{nombre d\'issues possibles}} \\).',
+      'Événement <b>impossible</b> : P = 0. Événement <b>certain</b> : P = 1.',
+      'La formule ne vaut que si les issues sont équiprobables : la somme de deux dés a 11 issues, mais ce sont ' +
+        'les <b>36 couples</b> qui se valent.'
+    ],
+    exemples: [
+      'Dé : \\( P(6) = \\frac{1}{6} \\) ; \\( P(\\text{pair}) = \\frac{3}{6} = \\frac{1}{2} \\) ; ' +
+        '\\( P(\\text{au plus } 4) = \\frac{4}{6} = \\frac{2}{3} \\).',
+      'Roue à 8 secteurs égaux : \\( P(\\text{un secteur}) = \\frac{1}{8} = 12{,}5\\,\\% \\).',
+      'Deux dés : \\( P(\\text{somme} = 7) = \\frac{6}{36} = \\frac{1}{6} \\) et \\( P(\\text{somme} = 2) = \\frac{1}{36} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     if (mv.hideBoard) mv.hideBoard();          // leçon sans figure géométrique
 

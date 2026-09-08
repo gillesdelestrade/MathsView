@@ -86,6 +86,61 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-3.4, 7.6, 12.6, -3.4], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Construire un triangle',
+    figures: [{
+      legende: 'Trois longueurs : le grand côté, puis deux arcs de compas.',
+      boundingbox: [-1.6, 4.6, 8.6, -1.2],
+      largeur: 58, hauteur: 36,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [0, 0], Object.assign({ name: 'A', label: { offset: [-14, -2] } }, PT));
+        var B = board.create('point', [7, 0], Object.assign({ name: 'B', label: { offset: [6, -2] } }, PT));
+        var C = board.create('point', [58 / 14, 2.8], Object.assign({ name: 'C', label: { offset: [-3, 10] } }, PT));
+        board.create('segment', [A, B], { strokeColor: '#334155', strokeWidth: 2.2, fixed: true, highlight: false });
+        board.create('segment', [A, C], { strokeColor: '#334155', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [B, C], { strokeColor: '#334155', strokeWidth: 1.4, dash: 2, fixed: true, highlight: false });
+        function arc(centre, r, deg1, deg2, col) {
+          var d = Math.PI / 180;
+          var p1 = board.create('point', [centre[0] + r * Math.cos(deg1 * d), centre[1] + r * Math.sin(deg1 * d)], { visible: false });
+          var p2 = board.create('point', [centre[0] + r * Math.cos(deg2 * d), centre[1] + r * Math.sin(deg2 * d)], { visible: false });
+          var o = board.create('point', centre, { visible: false });
+          board.create('arc', [o, p1, p2], { strokeColor: col, strokeWidth: 2, fixed: true, highlight: false });
+        }
+        arc([0, 0], 5, 18, 50, '#dc2626');       // depuis A, rayon 5
+        arc([7, 0], 4, 118, 152, '#059669');     // depuis B, rayon 4
+        function txt(x, y, t, col) {
+          board.create('text', [x, y, t], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: col,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        txt(3.5, -0.6, '7 cm', '#334155');
+        txt(1.6, 1.85, '5 cm', '#dc2626');
+        txt(6.1, 1.85, '4 cm', '#059669');
+      }
+    }],
+    points: [
+      'Trois données bien choisies suffisent. On commence toujours par une <b>figure à main levée</b> ' +
+        'où l\'on reporte les données.',
+      '<b>Trois longueurs</b> : on trace le plus grand côté, puis un <b>arc de compas</b> depuis chaque extrémité ; ' +
+        'leur croisement donne le troisième sommet.',
+      'Le triangle n\'existe que si chaque côté est <b>plus court que la somme</b> des deux autres ' +
+        '(<b>inégalité triangulaire</b>).',
+      '<b>Deux longueurs et l\'angle compris</b> : on ouvre l\'angle au <b>rapporteur</b>, puis on reporte la ' +
+        'deuxième longueur au compas.',
+      '<b>Une longueur et deux angles adjacents</b> : un angle à chaque extrémité ; leur somme doit être ' +
+        'inférieure à 180°.',
+      'Trois angles ne suffisent pas : ils fixent la forme, pas la taille.'
+    ],
+    exemples: [
+      'AB = 7 cm, AC = 5 cm, BC = 4 cm : 7 < 5 + 4, le triangle existe (figure).',
+      'AB = 8 cm, AC = 3 cm, BC = 4 cm : 8 > 3 + 4, les arcs ne se croisent pas, pas de triangle.',
+      'AB = 6 cm, \\( \\widehat{A} = 100° \\) et \\( \\widehat{B} = 80° \\) : 100 + 80 = 180, ' +
+        'les demi-droites ne se coupent pas.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

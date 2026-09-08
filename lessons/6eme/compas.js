@@ -61,6 +61,80 @@ MathsView.register({
     'C\'est cette égalité qui garantit la construction.</p>',
   board: { boundingbox: [-7, 6, 7, -6], keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Constructions au compas',
+    figures: [{
+      legende: 'Médiatrice de [AB] : deux arcs de même rayon.',
+      boundingbox: [-5.4, 2.7, 5.4, -2.7],
+      largeur: 54, hauteur: 28,
+      dessine: function (board) {
+        var A = [-2, 0], B = [2, 0], r = 2.5, D = Math.PI / 180;
+        var cache = { visible: false, name: '', withLabel: false, fixed: true, showInfobox: false };
+        function arc(C, P1, P2, attr) {
+          return board.create('arc', [board.create('point', C, cache), board.create('point', P1, cache), board.create('point', P2, cache)], attr);
+        }
+        function pt(P, nom, dx, dy, col) {
+          board.create('point', P, { name: '', size: 2.5, color: col, fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: col, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        board.create('segment', [A, B], { strokeColor: '#0f172a', strokeWidth: 2, fixed: true, highlight: false });
+        // Arc centré en A (vers la droite) et arc centré en B (vers la gauche).
+        arc(A, [A[0] + r * Math.cos(-62 * D), r * Math.sin(-62 * D)], [A[0] + r * Math.cos(62 * D), r * Math.sin(62 * D)],
+          { strokeColor: '#2563eb', strokeWidth: 1.5, fixed: true, highlight: false });
+        arc(B, [B[0] + r * Math.cos(118 * D), r * Math.sin(118 * D)], [B[0] + r * Math.cos(242 * D), r * Math.sin(242 * D)],
+          { strokeColor: '#2563eb', strokeWidth: 1.5, fixed: true, highlight: false });
+        var h = Math.sqrt(r * r - 4);
+        board.create('line', [board.create('point', [0, h], cache), board.create('point', [0, -h], cache)], { strokeColor: '#059669', strokeWidth: 2, fixed: true, highlight: false });
+        board.create('polygon', [[0, 0], [0.3, 0], [0.3, 0.3], [0, 0.3]], {
+          fillColor: 'none', fillOpacity: 0, borders: { strokeColor: '#059669', strokeWidth: 1 }, vertices: { visible: false }, highlight: false, fixed: true
+        });
+        pt(A, 'A', -0.35, -0.4, '#0f172a'); pt(B, 'B', 0.35, -0.4, '#0f172a');
+        pt([0, h], 'M', 0.45, 0.05, '#059669'); pt([0, -h], 'N', 0.45, -0.05, '#059669');
+      }
+    }, {
+      legende: 'Bissectrice : un arc en O, puis deux arcs égaux depuis I et J.',
+      boundingbox: [-0.6, 3.4, 5.2, -0.9],
+      largeur: 54, hauteur: 28,
+      dessine: function (board) {
+        var D = Math.PI / 180, a = 70, r = 2, r2 = 1.8;
+        var I = [r, 0], J = [r * Math.cos(a * D), r * Math.sin(a * D)];
+        var t = 3.026, K = [t * Math.cos(35 * D), t * Math.sin(35 * D)];
+        var cache = { visible: false, name: '', withLabel: false, fixed: true, showInfobox: false };
+        function pt(P, nom, dx, dy, col) {
+          board.create('point', P, { name: '', size: 2.5, color: col, fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: col, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function arc(C, r, a1, a2, col) {
+          board.create('arc', [board.create('point', C, cache), board.create('point', [C[0] + r * Math.cos(a1 * D), C[1] + r * Math.sin(a1 * D)], cache), board.create('point', [C[0] + r * Math.cos(a2 * D), C[1] + r * Math.sin(a2 * D)], cache)],
+            { strokeColor: col, strokeWidth: 1.5, fixed: true, highlight: false });
+        }
+        board.create('segment', [[0, 0], [4.8, 0]], { strokeColor: '#0f172a', strokeWidth: 2, fixed: true, highlight: false });
+        board.create('segment', [[0, 0], [4.8 * Math.cos(a * D), 4.8 * Math.sin(a * D)]], { strokeColor: '#0f172a', strokeWidth: 2, fixed: true, highlight: false });
+        arc([0, 0], r, -12, 82, '#2563eb');
+        arc(I, r2, 50, 100, '#2563eb');
+        arc(J, r2, -30, 20, '#2563eb');
+        board.create('line', [board.create('point', [0, 0], cache), board.create('point', K, cache)], { straightFirst: false, strokeColor: '#059669', strokeWidth: 2, fixed: true, highlight: false });
+        pt([0, 0], 'O', -0.3, -0.3, '#0f172a');
+        pt(I, 'I', 0.35, 0.3, '#2563eb'); pt(J, 'J', -0.35, 0.1, '#2563eb');
+        pt(K, 'K', 0.35, -0.3, '#059669');
+      }
+    }],
+    points: [
+      'Au compas, on ne mesure pas : on <b>reporte des longueurs égales</b>. C\'est ce qui garantit la construction.',
+      '<b>Médiatrice</b> de [AB] : deux arcs de <b>même rayon</b>, centrés en A puis en B, se coupent en M et N.',
+      'La droite (MN) coupe [AB] en son <b>milieu</b>, <b>perpendiculairement</b>. Le rayon doit dépasser la moitié de AB.',
+      '<b>Bissectrice</b> d\'un angle de sommet O : un arc centré en O coupe les côtés en I et J.',
+      'Depuis I et J, deux arcs de <b>même écartement</b> se coupent en K.',
+      'La demi-droite [OK) partage l\'angle en deux angles <b>égaux</b>.'
+    ],
+    exemples: [
+      'AB = 6 cm : on prend un écartement de 4 cm (plus que 3 cm) pour tracer les deux arcs.',
+      'Tout point de la médiatrice est à égale distance de A et de B : MA = MB.',
+      'Angle de 70° : sa bissectrice le partage en deux angles de 35°.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

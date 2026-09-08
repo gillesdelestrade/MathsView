@@ -68,6 +68,58 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: true, grid: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Coordonnées d\'un vecteur',
+    figures: [{
+      legende: 'De A à B : 4 vers la droite, puis 3 vers le haut.',
+      boundingbox: [-4.4, 3.2, 2.8, -2.4],
+      largeur: 56, hauteur: 36,
+      dessine: function (board) {
+        function tx(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11,
+            color: col || '#0f172a', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        function fl(P, Q, col, w, dash) {
+          board.create('arrow', [P, Q], { strokeColor: col, strokeWidth: w || 2.5, dash: dash || 0,
+            lastArrow: { type: 2, size: 6 }, fixed: true, highlight: false });
+        }
+        function pt(P) {
+          board.create('point', P, { name: '', size: 2, strokeColor: '#0f172a', fillColor: '#0f172a',
+            fixed: true, highlight: false, showInfobox: false });
+        }
+        var A = [-3, -1], B = [1, 2];
+        board.create('segment', [[-4.2, 0], [2.6, 0]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+        board.create('segment', [[0, -2.2], [0, 3]], { strokeColor: '#94a3b8', strokeWidth: 1, lastArrow: { type: 1, size: 4 }, fixed: true, highlight: false });
+        for (var i = -4; i <= 2; i++) if (i) board.create('segment', [[i, -0.12], [i, 0.12]], { strokeColor: '#94a3b8', strokeWidth: 1, fixed: true, highlight: false });
+        for (var j = -2; j <= 2; j++) if (j) board.create('segment', [[-0.12, j], [0.12, j]], { strokeColor: '#94a3b8', strokeWidth: 1, fixed: true, highlight: false });
+        tx(-0.2, -0.15, 'O', '#94a3b8', 'right', 'top'); tx(1, 0.15, '1', '#94a3b8', 'middle', 'bottom'); tx(-0.2, 1, '1', '#94a3b8', 'right');
+        board.create('segment', [A, [1, -1]], { strokeColor: '#dc2626', strokeWidth: 1.8, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[1, -1], B], { strokeColor: '#16a34a', strokeWidth: 1.8, dash: 2, fixed: true, highlight: false });
+        fl(A, B, '#2563eb', 3);
+        pt(A); pt(B);
+        tx(-3.15, -1.2, 'A (−3 ; −1)', '#0f172a', 'left', 'top');
+        tx(1.15, 2.1, 'B (1 ; 2)', '#0f172a', 'left', 'bottom');
+        tx(-1, -0.85, '+4', '#dc2626', 'middle', 'bottom');
+        tx(1.15, 0.5, '+3', '#16a34a', 'left');
+        tx(-1.6, 0.9, 'AB (4 ; 3)', '#2563eb', 'right', 'bottom');
+      }
+    }],
+    points: [
+      'Les <b>coordonnées</b> de \\( \\overrightarrow{AB} \\) sont les deux déplacements pour aller de A à B : horizontal, puis vertical.',
+      'On calcule <b>arrivée moins départ</b> : \\( \\overrightarrow{AB}\\,(x_B - x_A\\,;\\,y_B - y_A) \\).',
+      'Attention à l\'ordre : \\( \\overrightarrow{BA} = -\\overrightarrow{AB} \\).',
+      'Un point est <b>quelque part</b>, un vecteur est un <b>déplacement</b> : deux flèches égales ont les mêmes coordonnées.',
+      '<b>Somme</b> : on additionne les coordonnées une à une : \\( \\vec{u} + \\vec{v}\\,(x + x\'\\,;\\,y + y\') \\).',
+      'Deux vecteurs sont <b>égaux</b> si et seulement s\'ils ont les <b>mêmes coordonnées</b>.'
+    ],
+    exemples: [
+      'A(−3 ; −1), B(1 ; 2) : \\( \\overrightarrow{AB}\\,(1 - (-3)\\,;\\,2 - (-1)) = (4\\,;\\,3) \\).',
+      '\\( \\vec{u}\\,(4\\,;\\,3) \\) et \\( \\vec{v}\\,(-1\\,;\\,2) \\) : \\( \\vec{u} + \\vec{v}\\,(3\\,;\\,5) \\).',
+      'Chasles en coordonnées : \\( (x_B - x_A) + (x_C - x_B) = x_C - x_A \\), donc \\( \\overrightarrow{AB} + \\overrightarrow{BC} = \\overrightarrow{AC} \\).'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

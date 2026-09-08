@@ -43,6 +43,56 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-6, 4.5, 5.5, -5], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Cosinus, sinus, tangente',
+    figures: [{
+      legende: 'Triangle rectangle en B : les côtés vus depuis l\'angle Â.',
+      boundingbox: [-0.9, 3.6, 5.9, -1.1],
+      largeur: 58, hauteur: 40,
+      dessine: function (board) {
+        var A = [0, 0], B = [4.4, 0], C = [4.4, 2.6];
+        board.create('polygon', [A, B, C], {
+          fillColor: '#eef2f7', fillOpacity: .7, borders: { strokeColor: '#334155', strokeWidth: 1 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        board.create('segment', [A, B], { strokeColor: '#2563eb', strokeWidth: 4, fixed: true, highlight: false });
+        board.create('segment', [B, C], { strokeColor: '#0d9488', strokeWidth: 4, fixed: true, highlight: false });
+        board.create('segment', [A, C], { strokeColor: '#f59e0b', strokeWidth: 4, fixed: true, highlight: false });
+        board.create('polygon', [[4.4, 0], [4.05, 0], [4.05, 0.35], [4.4, 0.35]], {
+          fillColor: '#ffffff', fillOpacity: 0, borders: { strokeColor: '#334155', strokeWidth: 1 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        var ang = Math.atan2(2.6, 4.4), inv = { visible: false, fixed: true, withLabel: false };
+        board.create('arc', [board.create('point', A, inv), board.create('point', [0.8, 0], inv),
+                             board.create('point', [0.8 * Math.cos(ang), 0.8 * Math.sin(ang)], inv)], {
+          strokeColor: '#7c3aed', strokeWidth: 2, fixed: true, highlight: false
+        });
+        function txt(x, y, t, col, ax, ay) {
+          board.create('text', [x, y, t], { anchorX: ax || 'middle', anchorY: ay || 'middle', fontSize: 11, color: col, cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        txt(-0.35, -0.3, 'A', '#334155'); txt(4.75, -0.3, 'B', '#334155'); txt(4.75, 2.85, 'C', '#334155');
+        txt(1.0, 0.42, 'Â', '#7c3aed', 'left', 'bottom');
+        txt(2.2, -0.45, 'adjacent', '#2563eb');
+        txt(4.6, 1.3, 'opposé', '#0d9488', 'left');
+        txt(1.9, 1.55, 'hypoténuse', '#f59e0b', 'middle', 'bottom');
+      }
+    }],
+    points: [
+      'Dans un triangle <b>rectangle</b>, on regarde un angle aigu Â. L\'<b>hypoténuse</b> est en face de l\'angle droit.',
+      'Le côté <b>adjacent</b> touche Â ; le côté <b>opposé</b> est en face de Â.',
+      '<b>cos Â</b> = adjacent ÷ hypoténuse ; <b>sin Â</b> = opposé ÷ hypoténuse ; <b>tan Â</b> = opposé ÷ adjacent.',
+      'Moyen mnémotechnique : <b>SOH · CAH · TOA</b>.',
+      'Ces rapports ne dépendent que de l\'<b>angle</b>, pas de la taille du triangle. cos et sin sont entre 0 et 1.',
+      'Pour retrouver l\'angle : touche <b>cos⁻¹</b>, <b>sin⁻¹</b> ou <b>tan⁻¹</b> de la calculatrice.'
+    ],
+    exemples: [
+      'AC = 10 cm et Â = 35° : \\( AB = AC \\times \\cos 35^\\circ \\approx 10 \\times 0{,}819 \\approx 8{,}2 \\) cm.',
+      'AB = 6 cm et BC = 4 cm : \\( \\tan \\hat{A} = \\dfrac{4}{6} \\), donc \\( \\hat{A} = \\tan^{-1}\\!\\left(\\dfrac{4}{6}\\right) \\approx 33{,}7^\\circ \\).',
+      'BC = 3 cm et Â = 30° : \\( AC = \\dfrac{BC}{\\sin 30^\\circ} = \\dfrac{3}{0{,}5} = 6 \\) cm.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

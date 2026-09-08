@@ -67,6 +67,50 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Symétrie centrale',
+    figures: [{
+      legende: 'O est le milieu de [AA\'], de [BB\'] et de [CC\'].',
+      boundingbox: [-5.2, 3.6, 5.2, -3.6],
+      largeur: 58, hauteur: 40,
+      dessine: function (board) {
+        var O = [0, 0];
+        var A = [-4.2, 1.2], B = [-1.6, 2.6], C = [-1.2, 0.6];
+        function sym(P) { return [-P[0], -P[1]]; }
+        var A2 = sym(A), B2 = sym(B), C2 = sym(C);
+        board.create('polygon', [A, B, C], { fillColor: '#60a5fa', fillOpacity: .35,
+          borders: { strokeColor: '#1d4ed8', strokeWidth: 2 }, vertices: { visible: false }, highlight: false, fixed: true });
+        board.create('polygon', [A2, B2, C2], { fillColor: '#f87171', fillOpacity: .35,
+          borders: { strokeColor: '#b91c1c', strokeWidth: 2 }, vertices: { visible: false }, highlight: false, fixed: true });
+        [[A, A2], [B, B2], [C, C2]].forEach(function (p) {
+          board.create('segment', p, { strokeColor: '#64748b', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        });
+        board.create('point', O, { name: '', size: 3, fillColor: '#0f172a', strokeColor: '#0f172a', fixed: true, highlight: false, showInfobox: false });
+        function nom(P, t, dx, dy) {
+          board.create('text', [P[0] + dx, P[1] + dy, t], { anchorX: 'middle', anchorY: 'middle', fontSize: 12,
+            cssStyle: 'font-weight:700', fixed: true, highlight: false });
+        }
+        nom(O, 'O', 0.35, -0.4);
+        nom(A, 'A', -0.4, 0); nom(B, 'B', 0, 0.45); nom(C, 'C', 0.15, -0.45);
+        nom(A2, 'A\'', 0.45, 0); nom(B2, 'B\'', 0, -0.45); nom(C2, 'C\'', -0.15, 0.45);
+      }
+    }],
+    points: [
+      'Le <b>symétrique</b> de M par rapport au centre O est le point M\' tel que O soit le <b>milieu</b> de [MM\'].',
+      'Donc M, O et M\' sont <b>alignés</b>, et \\( OM = OM\' \\).',
+      'La symétrie centrale est un <b>demi-tour</b> : une rotation de 180° autour de O.',
+      'Elle <b>conserve</b> les longueurs, les angles et les aires : la figure et son image sont superposables.',
+      'À la différence de la symétrie axiale, la figure n\'est pas retournée : elle garde son sens de lecture.',
+      'Le seul point qui ne bouge pas est le centre O.'
+    ],
+    exemples: [
+      'Construire A\' : tracer la droite (AO), puis reporter au compas la longueur OA de l\'autre côté de O.',
+      'Si O est le milieu de [AB], alors B est le symétrique de A par rapport à O.',
+      'L\'image du segment [AB] est le segment [A\'B\'], de même longueur et <b>parallèle</b> à [AB].'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

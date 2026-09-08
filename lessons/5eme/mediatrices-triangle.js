@@ -103,6 +103,55 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-8, 6, 8, -6], keepaspectratio: true, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Médiatrices et cercle circonscrit',
+    figures: [{
+      legende: 'Les trois médiatrices se coupent en O : OA = OB = OC.',
+      boundingbox: [-4.6, 5.6, 5.8, -2.6],
+      largeur: 56, hauteur: 46,
+      dessine: function (board) {
+        var PT = { size: 2, strokeColor: '#2563eb', fillColor: '#2563eb', fixed: true, highlight: false,
+                   showInfobox: false, label: { fontSize: 12, cssStyle: 'font-weight:700', strokeColor: '#2563eb' } };
+        var A = board.create('point', [1, 4], Object.assign({ name: 'A', label: { offset: [-4, 10] } }, PT));
+        var B = board.create('point', [-3, 0], Object.assign({ name: 'B', label: { offset: [-14, -4] } }, PT));
+        var C = board.create('point', [4, 0], Object.assign({ name: 'C', label: { offset: [6, -4] } }, PT));
+        board.create('polygon', [A, B, C], {
+          fillColor: '#2563eb', fillOpacity: .06, borders: { strokeColor: '#334155', strokeWidth: 2 },
+          vertices: { visible: false }, highlight: false, fixed: true
+        });
+        [[B, C], [A, C], [A, B]].forEach(function (s) {
+          var seg = board.create('segment', s, { visible: false });
+          var m = board.create('midpoint', s, { size: 2, strokeColor: '#ea580c', fillColor: '#ea580c',
+            fixed: true, highlight: false, showInfobox: false, name: '', withLabel: false });
+          board.create('perpendicular', [seg, m], { strokeColor: '#7c3aed', strokeWidth: 1.6, dash: 3,
+            fixed: true, highlight: false });
+        });
+        board.create('circumcircle', [A, B, C], { strokeColor: '#dc2626', strokeWidth: 2, fixed: true, highlight: false,
+          center: { visible: false } });
+        board.create('circumcenter', [A, B, C], { name: 'O', size: 2.5, strokeColor: '#dc2626', fillColor: '#dc2626',
+          fixed: true, highlight: false, showInfobox: false,
+          label: { fontSize: 12, offset: [7, -4], strokeColor: '#dc2626', cssStyle: 'font-weight:700' } });
+      }
+    }],
+    points: [
+      'La <b>médiatrice</b> d\'un segment est la droite <b>perpendiculaire</b> à ce segment qui passe par son <b>milieu</b>.',
+      'Un point est sur la médiatrice de [AB] si et seulement s\'il est à <b>égale distance</b> de A et de B.',
+      'Les trois médiatrices des côtés d\'un triangle sont <b>concourantes</b> en un point O.',
+      'O est à égale distance des trois sommets : OA = OB = OC. C\'est le centre du <b>cercle circonscrit</b>, ' +
+        'qui passe par A, B et C.',
+      'O est <b>dedans</b> si les trois angles sont aigus, au <b>milieu de l\'hypoténuse</b> si le triangle est ' +
+        'rectangle, <b>dehors</b> s\'il a un angle obtus.',
+      'Une médiatrice concerne un <b>côté</b> ; une hauteur ou une médiane part d\'un <b>sommet</b>.'
+    ],
+    exemples: [
+      'Construire le cercle circonscrit : tracer <b>deux</b> médiatrices, leur point commun est O, ' +
+        'le rayon est OA.',
+      'Triangle rectangle en C avec AB = 10 cm : O est le milieu de [AB], le rayon du cercle vaut 5 cm.',
+      'M est sur la médiatrice de [AB] et MA = 3,5 cm, donc MB = 3,5 cm.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette (celle des deux leçons sœurs)                                 */

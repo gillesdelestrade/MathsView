@@ -23,6 +23,7 @@
   --cat-algebre: #e11d48;     --cat-algebre-soft: #ffe4e6;
   --cat-geometrie: #059669;   --cat-geometrie-soft: #d1fae5;
   --cat-analyse: #0284c7;     --cat-analyse-soft: #e0f2fe;
+  --cat-donnees: #ca8a04;     --cat-donnees-soft: #fef9c3;
   --cat-autres: #64748b;      --cat-autres-soft: #e2e8f0;
   --border: #e2e8f0;
   --radius: 14px;
@@ -96,6 +97,7 @@ body {
 .filters button.algebre::before { background: var(--cat-algebre); }
 .filters button.geometrie::before { background: var(--cat-geometrie); }
 .filters button.analyse::before { background: var(--cat-analyse); }
+.filters button.donnees::before { background: var(--cat-donnees); }
 
 /* ---------- Mise en page ---------- */
 .layout { display: flex; align-items: flex-start; }
@@ -173,6 +175,7 @@ body {
 .cat-dot.algebre { background: var(--cat-algebre); }
 .cat-dot.geometrie { background: var(--cat-geometrie); }
 .cat-dot.analyse { background: var(--cat-analyse); }
+.cat-dot.donnees { background: var(--cat-donnees); }
 
 .content { flex: 1; padding: 1.6rem 2rem; min-width: 0; }
 
@@ -260,6 +263,7 @@ body {
 .cat-chip.algebre { color: var(--cat-algebre); background: var(--cat-algebre-soft); }
 .cat-chip.geometrie { color: var(--cat-geometrie); background: var(--cat-geometrie-soft); }
 .cat-chip.analyse { color: var(--cat-analyse); background: var(--cat-analyse-soft); }
+.cat-chip.donnees { color: var(--cat-donnees); background: var(--cat-donnees-soft); }
 /* Sur une carte, la pastille est un bloc en tête, pas un élément en ligne. */
 .card .cat-chip { display: inline-block; margin-bottom: .15rem; }
 
@@ -2118,4 +2122,153 @@ body {
   margin: .5rem 0; padding: .55rem .8rem; border-left: 3px solid #7c3aed;
   background: #f5f3ff; border-radius: 0 var(--radius) var(--radius) 0;
   font-size: .97rem; line-height: 1.6;
+}
+
+/* ===================================================================== */
+/* La fiche bristol à recopier (js/fiches.js)                             */
+/*                                                                       */
+/* Le modèle est dessiné à sa TAILLE RÉELLE, en millimètres : posé à côté */
+/* d'une vraie fiche bristol 200 × 125, il fait la même taille, à l'écran */
+/* comme à l'impression. Les couleurs viennent du domaine (--fc) : onglet */
+/* de l'intercalaire, liseré du haut, titre, puces et fond des exemples.  */
+/* ===================================================================== */
+.lesson-fiche { margin-top: 2rem; }
+.fiche-entete { max-width: 70ch; }
+.fiche-entete h3 { margin: 0 0 .3rem; font-size: 1.15rem; }
+.fiche-entete p { margin: 0 0 .7rem; color: var(--ink-soft); font-size: .92rem; }
+.fiche-imprimer {
+  border: 1px solid var(--border); background: #fff; padding: .4rem .8rem;
+  border-radius: 8px; cursor: pointer; font-size: .88rem;
+}
+.fiche-imprimer:hover { background: #f8fafc; }
+
+/* Le modèle déborde sur un écran étroit : on le fait défiler, on ne le
+   rétrécit pas (il doit rester à l'échelle). */
+.fiche-zone { overflow-x: auto; padding: .8rem 0 1.2rem; }
+
+.fiche {
+  --fiche-l: 200mm;
+  --fiche-h: 125mm;
+  --onglet-h: 8mm;
+  --fc: var(--cat-autres);
+  --fc-soft: var(--cat-autres-soft);
+  width: var(--fiche-l);
+  flex-shrink: 0;
+  font-size: 10pt;
+  line-height: 1.35;
+  color: #1e293b;
+}
+.fiche.calcul    { --fc: var(--cat-calcul);    --fc-soft: var(--cat-calcul-soft); }
+.fiche.algebre   { --fc: var(--cat-algebre);   --fc-soft: var(--cat-algebre-soft); }
+.fiche.geometrie { --fc: var(--cat-geometrie); --fc-soft: var(--cat-geometrie-soft); }
+.fiche.analyse   { --fc: var(--cat-analyse);   --fc-soft: var(--cat-analyse-soft); }
+.fiche.donnees   { --fc: var(--cat-donnees);   --fc-soft: var(--cat-donnees-soft); }
+
+/* Les intercalaires : un emplacement par domaine, l'onglet plein pour le
+   domaine de la fiche, les autres en pointillé (« à ne pas découper »). */
+.fiche-onglets { position: relative; height: var(--onglet-h); }
+.fiche-onglet {
+  position: absolute; bottom: 0; height: var(--onglet-h);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 1.5mm; box-sizing: border-box;
+  border-radius: 2.5mm 2.5mm 0 0;
+  border: 1px dashed #cbd5e1; border-bottom: none;
+  color: #94a3b8; font-size: 7pt; letter-spacing: .02em;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fiche-onglet.actif {
+  background: var(--fc); border-color: var(--fc); color: #fff;
+  font-weight: 700; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .06em;
+}
+
+/* La carte : fond bristol, quadrillage 5 mm très pâle, liseré du domaine. */
+.fiche-carte {
+  position: relative;
+  min-height: var(--fiche-h);
+  padding: 4mm 6mm 5mm;
+  background-color: #fffdf8;
+  background-image:
+    linear-gradient(#e8eef8 1px, transparent 1px),
+    linear-gradient(90deg, #e8eef8 1px, transparent 1px);
+  background-size: 5mm 5mm;
+  background-position: 0 0;
+  border: 1px solid #cbd5e1;
+  border-top: 1.2mm solid var(--fc);
+  border-radius: 0 0 2mm 2mm;
+  box-shadow: 0 2px 6px rgba(15,23,42,.10), 0 10px 24px rgba(15,23,42,.08);
+  display: flex; flex-direction: column; gap: 3mm;
+}
+.fiche-titre {
+  display: flex; align-items: baseline; gap: 3mm;
+  padding-bottom: 1.5mm; border-bottom: .4mm solid var(--fc);
+}
+.fiche-titre h4 { margin: 0; font-size: 15pt; color: var(--fc); letter-spacing: .01em; }
+.fiche-sous { color: var(--ink-soft); font-size: 9pt; font-weight: 600; }
+.fiche-titre .badge { margin-left: auto; align-self: center; font-size: 7.5pt; }
+
+/* Le corps : les figures à gauche, l'essentiel à droite. */
+.fiche-corps { display: flex; gap: 5mm; align-items: flex-start; }
+.fiche-figures { display: flex; flex-direction: column; gap: 2.5mm; flex-shrink: 0; }
+/* La colonne des figures a la largeur de la figure, pas de sa légende : une
+   légende longue se replie sous le dessin au lieu d'écraser les phrases. */
+.fiche-figure { margin: 0; width: min-content; }
+.fiche-board {
+  background: #fff;
+  border: 1px solid #dbe3ee;
+  border-radius: 1.5mm;
+  overflow: hidden;
+}
+/* Rien ne se manipule sur une figure de fiche : pas de main, pas de croix. */
+.fiche-board, .fiche-board * { cursor: default !important; }
+.fiche-figure figcaption {
+  font-size: 8pt; color: var(--ink-soft); text-align: center; margin-top: 1mm;
+  font-style: italic;
+}
+.fiche-points { margin: 0; padding: 0 0 0 4.5mm; flex: 1; min-width: 0; }
+.fiche-points li { margin: 0 0 1.6mm; padding-left: .5mm; }
+.fiche-points li::marker { color: var(--fc); font-weight: 700; }
+.fiche-points b, .fiche-points strong { color: var(--fc); }
+
+/* Les exemples, dans un cadre pâle du domaine. */
+.fiche-exemples {
+  margin-top: auto;
+  background: var(--fc-soft);
+  border-left: 1mm solid var(--fc);
+  border-radius: 0 1.5mm 1.5mm 0;
+  padding: 2mm 3.5mm 2.5mm;
+}
+.fiche-exemples-titre {
+  font-size: 8pt; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--fc); margin-bottom: 1mm;
+}
+.fiche-exemples ol { margin: 0; padding-left: 4.5mm; }
+.fiche-exemples li { margin: 0 0 1mm; }
+.fiche-exemples li::marker { color: var(--fc); font-weight: 700; }
+
+/* Seule la fiche, à l'échelle : à l'impression (classe posée par le bouton le
+   temps du dialogue) et dans la vue de contrôle index.html?fiche=seule#id,
+   où un trait pointillé marque le bas de la carte (125 mm) — tout ce qui
+   dépasse ne tiendra pas sur la vraie fiche. */
+body.fiche-impression, body.fiche-seule { background: #fff; }
+body.fiche-impression .topbar,     body.fiche-seule .topbar,
+body.fiche-impression .sidebar,    body.fiche-seule .sidebar,
+body.fiche-impression #home,       body.fiche-seule #home,
+body.fiche-impression .lesson > :not(.lesson-fiche),
+body.fiche-seule .lesson > :not(.lesson-fiche),
+body.fiche-impression .fiche-entete, body.fiche-seule .fiche-entete { display: none !important; }
+body.fiche-impression .content,      body.fiche-seule .content { padding: 0; }
+body.fiche-impression .lesson-fiche, body.fiche-seule .lesson-fiche { margin: 0; }
+body.fiche-impression .fiche-zone,   body.fiche-seule .fiche-zone { overflow: visible; padding: 0; }
+body.fiche-impression .fiche-carte,  body.fiche-seule .fiche-carte { box-shadow: none; }
+body.fiche-impression .fiche-onglet:not(.actif),
+body.fiche-seule .fiche-onglet:not(.actif) { color: #b6c0cf; }
+body.fiche-seule .content { padding: 4mm; }
+body.fiche-seule .fiche-carte::after {
+  content: '125 mm';
+  position: absolute; left: 0; right: 0; top: calc(var(--fiche-h) - 1px);
+  border-top: 1px dashed #ef4444; pointer-events: none;
+  font-size: 7pt; color: #ef4444; text-align: right; padding-right: 1mm;
+}
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
 }

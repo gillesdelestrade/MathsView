@@ -90,6 +90,64 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-11, 1.9, 11, -1.5], keepaspectratio: false, axis: false },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Nombres relatifs sur une droite',
+    figures: [{
+      legende: '3 et −3 : opposés, même distance à 0.',
+      boundingbox: [-6.6, 2.4, 6.8, -1.3],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 30,
+      dessine: function (board) {
+        function txt(x, y, t, o) {
+          var a = { anchorX: 'middle', anchorY: 'middle', fontSize: 11, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('text', [x, y, t], a);
+        }
+        function seg(p, q, o) {
+          var a = { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false };
+          for (var k in o) a[k] = o[k];
+          board.create('segment', [p, q], a);
+        }
+        function pt(x, y, col) {
+          board.create('point', [x, y], { name: '', size: 3, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+        }
+        // Droite graduée de a à b, un trait par unité, nombres pairs étiquetés.
+        function droite(a, b, y, pas) {
+          board.create('arrow', [[a - 0.4, y], [b + 0.6, y]], { strokeColor: '#334155', strokeWidth: 1.4, fixed: true, highlight: false });
+          for (var v = a; v <= b; v++) {
+            seg([v, y - 0.15], [v, y + 0.15]);
+            if (v % pas === 0) txt(v, y - 0.55, String(v).replace('-', '−'), { fontSize: 9 });
+          }
+        }
+        droite(-6, 6, 0, 2);
+        pt(-3, 0, '#dc2626'); pt(3, 0, '#2563eb'); pt(0, 0, '#334155');
+        txt(-3, 0.5, '−3', { fontSize: 12, color: '#dc2626', cssStyle: 'font-weight:700' });
+        txt(3, 0.5, '3', { fontSize: 12, color: '#2563eb', cssStyle: 'font-weight:700' });
+        // Les deux distances à 0, en accolade plate.
+        seg([-3, 1.2], [0, 1.2], { strokeColor: '#dc2626', strokeWidth: 1.6 });
+        seg([0, 1.2], [3, 1.2], { strokeColor: '#2563eb', strokeWidth: 1.6 });
+        seg([-3, 1.0], [-3, 1.4], { strokeColor: '#dc2626' }); seg([0, 1.0], [0, 1.4]); seg([3, 1.0], [3, 1.4], { strokeColor: '#2563eb' });
+        txt(-1.5, 1.75, '|−3| = 3', { fontSize: 10, color: '#dc2626' });
+        txt(1.5, 1.75, '|3| = 3', { fontSize: 10, color: '#2563eb' });
+        txt(0, -1.05, 'opposés : de part et d\'autre de 0', { fontSize: 9, color: '#64748b', cssStyle: 'font-style:italic' });
+      }
+    }],
+    points: [
+      'Un nombre relatif est un <b>point</b> sur une droite graduée ; calculer, c\'est <b>se déplacer</b> dessus.',
+      'L\'<b>opposé</b> de a est de l\'autre côté de 0, à la même distance : l\'opposé de 3 est −3, et \\( 3 + (-3) = 0 \\).',
+      'La <b>valeur absolue</b> de a est sa <b>distance à 0</b> : \\( |-7| = 7 \\) et \\( |7| = 7 \\). Elle n\'est jamais négative.',
+      '<b>Ajouter</b> un positif : on va vers la <b>droite</b>. Ajouter un négatif : vers la <b>gauche</b>.',
+      '<b>Soustraire un nombre, c\'est ajouter son opposé</b> : \\( 2 - (-5) = 2 + 5 = 7 \\).',
+      'Plus à droite, c\'est plus grand : \\( -3 > -8 \\).'
+    ],
+    exemples: [
+      '\\( 4 + (-6) = -2 \\) : depuis 4, six crans vers la gauche.',
+      '\\( -3 - 4 = -7 \\) : depuis −3, quatre crans vers la gauche.',
+      '\\( -1 - (-5) = -1 + 5 = 4 \\) : soustraire −5, c\'est ajouter 5.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette                                                              */

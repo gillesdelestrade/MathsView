@@ -20,6 +20,45 @@ MathsView.register({
     '</ul>',
   board: { boundingbox: [-2, 8, 12, -2], keepaspectratio: true },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Théorème de Thalès',
+    figures: [{
+      legende: '(DE) ∥ (BC) : les trois rapports sont égaux.',
+      boundingbox: [-0.2, 8.2, 10.6, 0],
+      largeur: 58, hauteur: 44,
+      dessine: function (board) {
+        var A = [1, 1], B = [9, 2], C = [6, 7], D = [5, 1.5], E = [3.5, 4];
+        board.create('segment', [A, B], { strokeColor: '#64748b', strokeWidth: 1.5, fixed: true, highlight: false });
+        board.create('segment', [A, C], { strokeColor: '#64748b', strokeWidth: 1.5, fixed: true, highlight: false });
+        board.create('segment', [B, C], { strokeColor: '#2563eb', strokeWidth: 2.5, fixed: true, highlight: false });
+        board.create('segment', [D, E], { strokeColor: '#7c3aed', strokeWidth: 2.5, fixed: true, highlight: false });
+        function pt(P, nom, dx, dy, col) {
+          board.create('point', P, { name: '', size: 2.5, strokeColor: col, fillColor: col, fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [P[0] + dx, P[1] + dy, nom], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, cssStyle: 'font-weight:700', color: col, fixed: true, highlight: false });
+        }
+        pt(A, 'A', -0.5, -0.1, '#334155');
+        pt(B, 'B', 0.5, -0.1, '#2563eb');
+        pt(C, 'C', 0.2, 0.55, '#2563eb');
+        pt(D, 'D', 0.1, -0.6, '#7c3aed');
+        pt(E, 'E', -0.55, 0.15, '#7c3aed');
+      }
+    }],
+    points: [
+      '<b>Configuration :</b> deux droites qui se coupent en A ; D sur (AB), E sur (AC), et <b>(DE) ∥ (BC)</b>.',
+      '<b>Théorème de Thalès :</b> alors \\( \\dfrac{AD}{AB} = \\dfrac{AE}{AC} = \\dfrac{DE}{BC} \\).',
+      'Les longueurs du petit triangle ADE et du grand triangle ABC sont <b>proportionnelles</b>.',
+      'Il sert à <b>calculer une longueur</b> manquante, par un produit en croix.',
+      'Ne pas oublier de <b>vérifier</b> le parallélisme avant de l\'appliquer, et de partir toujours du point A.',
+      '<b>Réciproque :</b> si \\( \\dfrac{AD}{AB} = \\dfrac{AE}{AC} \\) (points dans le même ordre), alors (DE) ∥ (BC).'
+    ],
+    exemples: [
+      'AD = 4, AB = 8, AC = 6 : \\( \\dfrac{4}{8} = \\dfrac{AE}{6} \\), donc \\( AE = \\dfrac{4 \\times 6}{8} = 3 \\).',
+      'AD = 4, AB = 8, BC = 5 : \\( DE = \\dfrac{4 \\times 5}{8} = 2{,}5 \\).',
+      'AD = 3, AB = 9, AE = 2, AC = 6 : \\( \\dfrac{3}{9} = \\dfrac{2}{6} = \\dfrac{1}{3} \\), donc (DE) ∥ (BC).'
+    ]
+  },
+
   setup: function (board) {
     var A = board.create('point', [1, 1], { name: 'A', fixed: true, size: 3, color: '#334155' });
     var B = board.create('point', [9, 2], { name: 'B', size: 4, color: '#2563eb' });

@@ -102,6 +102,65 @@ MathsView.register({
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
 
+  /* La fiche bristol à recopier (voir js/fiches.js). */
+  fiche: {
+    titre: 'Encadrement décimal d\'un réel',
+    figures: [{
+      legende: 'Chaque zoom ×10 gagne un chiffre après la virgule.',
+      boundingbox: [-1.2, 5.2, 11.6, -0.8],
+      keepaspectratio: false,
+      largeur: 62, hauteur: 38,
+      dessine: function (board) {
+        var PI = Math.PI;
+        // Une ligne graduée de 10 parts entre deux décimaux ; la zone qui
+        // contient π est en violet, π est le point rouge.
+        function ligne(y, deb, pas, nDec) {
+          board.create('segment', [[0, y], [10, y]], { strokeColor: '#334155', strokeWidth: 1.5, fixed: true, highlight: false });
+          for (var i = 0; i <= 10; i++) {
+            board.create('segment', [[i, y - 0.18], [i, y + 0.18]], { strokeColor: '#334155', strokeWidth: 1, fixed: true, highlight: false });
+          }
+          var k = Math.floor((PI - deb) / pas);          // la part qui contient π
+          board.create('polygon', [[k, y - 0.32], [k + 1, y - 0.32], [k + 1, y + 0.32], [k, y + 0.32]], {
+            fillColor: '#a78bfa', fillOpacity: .45, borders: { visible: false }, vertices: { visible: false }, highlight: false, fixed: true
+          });
+          var etiq = function (i, t, ancre, col) {
+            board.create('text', [i, y - 0.55, t], { anchorX: ancre, anchorY: 'top', fontSize: 10, color: col || '#334155',
+              cssStyle: col ? 'font-weight:700' : '', fixed: true, highlight: false });
+          };
+          // Les bornes de la zone, écrites de part et d'autre pour ne pas se
+          // chevaucher ; les extrémités seulement si elles ne gênent pas.
+          if (k >= 3) etiq(0, deb.toFixed(nDec).replace('.', ','), 'middle');
+          etiq(k - 0.08, (deb + k * pas).toFixed(nDec + 1).replace('.', ','), 'right', '#7c3aed');
+          etiq(k + 1.08, (deb + (k + 1) * pas).toFixed(nDec + 1).replace('.', ','), 'left', '#7c3aed');
+          if (k <= 6) etiq(10, (deb + 10 * pas).toFixed(nDec).replace('.', ','), 'middle');
+          var xp = (PI - deb) / pas;
+          board.create('point', [xp, y], { name: '', size: 2.5, strokeColor: '#dc2626', fillColor: '#dc2626', fixed: true, highlight: false, showInfobox: false });
+          board.create('text', [xp, y + 0.5, 'π'], { anchorX: 'middle', anchorY: 'bottom', fontSize: 12, color: '#dc2626', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+          return k;
+        }
+        var k1 = ligne(4, 3.1, 0.01, 1);              // 3,1 → 3,2 : π entre 3,14 et 3,15
+        var k2 = ligne(1.2, 3.14, 0.001, 2);          // 3,14 → 3,15 : π entre 3,141 et 3,142
+        // Le zoom : de la part violette du haut vers toute la ligne du bas.
+        board.create('segment', [[k1, 4 - 0.32], [0, 1.2 + 0.32]], { strokeColor: '#7c3aed', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        board.create('segment', [[k1 + 1, 4 - 0.32], [10, 1.2 + 0.32]], { strokeColor: '#7c3aed', strokeWidth: 1, dash: 2, fixed: true, highlight: false });
+        board.create('text', [10.6, 2.6, '×10'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: '#7c3aed', cssStyle: 'font-weight:700', fixed: true, highlight: false });
+      }
+    }],
+    points: [
+      'Un nombre <b>décimal</b> a un nombre <b>fini</b> de chiffres après la virgule : \\( x = \\dfrac{a}{10^n} \\). Ils forment l\'ensemble \\( \\mathbb{D} \\).',
+      'π et \\( \\dfrac{1}{3} \\) ne sont <b>pas</b> décimaux : leurs décimales ne s\'arrêtent jamais.',
+      'La <b>troncature</b> au rang n : on coupe après la n-ième décimale, sans rien changer aux chiffres gardés.',
+      '<b>Encadrement à \\( 10^{-n} \\) près</b> : \\( a \\leqslant x < a + 10^{-n} \\), avec a la troncature. Les deux bornes sont décimales, l\'amplitude vaut \\( 10^{-n} \\).',
+      'a est la valeur approchée <b>par défaut</b>, \\( a + 10^{-n} \\) la valeur <b>par excès</b>. L\'<b>arrondi</b> est la plus proche des deux.',
+      'En zoomant ×10 à chaque fois, on approche un réel d\'aussi près qu\'on veut par un décimal, sans jamais l\'atteindre.'
+    ],
+    exemples: [
+      'À \\( 10^{-2} \\) près : \\( 3{,}14 < \\pi < 3{,}15 \\). À \\( 10^{-3} \\) près : \\( 3{,}141 < \\pi < 3{,}142 \\), troncature 3,141, arrondi 3,142.',
+      '\\( \\dfrac{1}{3} = 0{,}333\\ldots \\) : \\( 0{,}33 \\leqslant \\dfrac{1}{3} < 0{,}34 \\) (amplitude 0,01).',
+      '\\( 2{,}45 = \\dfrac{245}{100} \\in \\mathbb{D} \\) ; \\( -7 = \\dfrac{-7}{10^0} \\in \\mathbb{D} \\) ; la calculatrice affiche 3,141592654 : un décimal, pas π.'
+    ]
+  },
+
   setup: function (board, mv) {
     /* ==================================================================== */
     /* Palette — deux couleurs, deux natures de nombres                     */
