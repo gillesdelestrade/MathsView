@@ -62,7 +62,7 @@
   /* ===================================================================== */
   function admin() {
     var a = MathsProfils.lire('mv.admin', null) || {};
-    if (a.budgetMensuel === undefined) a.budgetMensuel = 15;
+    if (a.budgetMensuel === undefined) a.budgetMensuel = 25;
     if (a.tauxPieces === undefined) a.tauxPieces = 100;   // pièces pour 1 €
     if (!a.boutique || !a.boutique.length) {
       a.boutique = DEFAUT.slice();

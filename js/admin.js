@@ -81,7 +81,7 @@
   /* ===================================================================== */
   function admin() {
     return MathsProfils.lire('mv.admin', {
-      code: null, budgetMensuel: 15, tauxPieces: 100,
+      code: null, budgetMensuel: 25, tauxPieces: 100,
       boutique: [], defis: [], depenses: []
     });
   }

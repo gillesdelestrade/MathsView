@@ -592,7 +592,7 @@ retirer sans le voir revenir.
 
 ### 8.3 Budget plafonné
 
-Le parent fixe un **plafond mensuel en euros** (défaut suggéré : 15 €). La
+Le parent fixe un **plafond mensuel en euros** (défaut suggéré : 25 €, de quoi couvrir une carte cadeau de 20 €). La
 boutique affiche le budget restant du mois et refuse tout achat de type `argent`
 ou `bon` qui le dépasserait — sans jamais bloquer les `privilege`, qui restent
 toujours accessibles. `depenses` est remis à zéro au 1er de chaque mois

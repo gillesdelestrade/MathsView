@@ -330,7 +330,7 @@ Un achat n'est **jamais une transaction** : c'est une **demande**. Les pièces p
 réserve, la demande remonte à l'admin avec un badge, et le parent valide ou refuse — sur
 un refus, les pièces reviennent avec un mot d'explication.
 
-Le **budget mensuel est plafonné en euros** (15 € par défaut, 100 pièces = 1 €) et ne
+Le **budget mensuel est plafonné en euros** (25 € par défaut, 100 pièces = 1 €) et ne
 bloque que l'argent et les bons : **les privilèges restent toujours accessibles**. « Tu
 choisis le film du samedi » coûte zéro euro et se négocie très cher.
 
