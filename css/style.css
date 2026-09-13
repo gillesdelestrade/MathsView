@@ -2272,3 +2272,27 @@ body.fiche-seule .fiche-carte::after {
 @media print {
   @page { size: A4 landscape; margin: 12mm; }
 }
+
+/* ---------- Racine carrée : la fonction carré retournée ---------- */
+/* Trois tableaux empilés : x², sa copie qui bascule, puis √x nettoyé. */
+.rc-tables { display: flex; flex-direction: column; gap: .5rem; margin-top: .6rem; perspective: 700px; }
+.rc-tables .fx-tablewrap { margin: 0; }
+.rc-copy { transform-origin: 50% 50%; transform-style: preserve-3d; will-change: transform, opacity; }
+.rc-copy:empty, .rc-t3:empty { display: none; }
+.rc-table td { cursor: default; }
+.rc-table td.is-ghost { background: #ffedd5; color: #c2410c; }
+.rc-table td.is-rejete { text-decoration: line-through; opacity: .45; }
+.rc-cap { font-size: .82rem; font-weight: 700; margin: .25rem 0 0 .1rem; }
+.rc-recit { margin: .2rem 0 .5rem; font-size: .95rem; }
+.rc-chain {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  margin: .2rem 0 .4rem; font-size: 1.1rem; font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.rc-in, .rc-mid, .rc-out { padding: .15rem .6rem; border-radius: 8px; background: #f1f5f9; }
+.rc-in { color: #dc2626; }
+.rc-mid { color: #0284c7; }
+.rc-out { background: #d1fae5; color: #047857; }
+.rc-arrow { color: var(--ink-soft); font-weight: 400; }
+.rc-abs { margin: 0 0 .3rem; font-size: .92rem; }
+.rc-note { margin: .2rem 0 0; font-size: .95rem; }
