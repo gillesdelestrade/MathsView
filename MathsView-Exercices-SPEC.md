@@ -581,7 +581,14 @@ Types :
 
 **Argent de poche** : 100 pièces = 1 €, par paliers de 200 pièces (2 €).
 
-**Bons cadeaux** : à configurer par le parent, enseignes libres.
+**Bons cadeaux** : trois cartes de 20 € par défaut (Sephora, Zara,
+Stradivarius), 2000 pièces chacune ; le parent peut en retirer ou en ajouter,
+enseignes libres.
+
+Le catalogue est enregistré chez le parent dès sa première lecture. Un article
+ajouté aux valeurs par défaut après coup est **fusionné une seule fois** dans le
+catalogue enregistré (numéro de version du catalogue) : le parent peut ensuite le
+retirer sans le voir revenir.
 
 ### 8.3 Budget plafonné
 

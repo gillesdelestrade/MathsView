@@ -42,10 +42,20 @@
     /* --- argent de poche : 100 pièces = 1 €, par paliers de 200 --------- */
     { id: 'argent2',  nom: '2 € d\'argent de poche',  cout: 200,  type: 'argent', euros: 2 },
     { id: 'argent4',  nom: '4 € d\'argent de poche',  cout: 400,  type: 'argent', euros: 4 },
-    { id: 'argent10', nom: '10 € d\'argent de poche', cout: 1000, type: 'argent', euros: 10 }
-    /* Les bons cadeaux sont à configurer par le parent : les enseignes
-       dépendent de la famille, il n'y a pas de valeur par défaut sensée. */
+    { id: 'argent10', nom: '10 € d\'argent de poche', cout: 1000, type: 'argent', euros: 10 },
+
+    /* --- bons cadeaux : 20 € chacun, même taux que l'argent de poche ----- */
+    { id: 'bonSephora',      nom: 'Carte cadeau Sephora 20 €',      cout: 2000, type: 'bon', euros: 20 },
+    { id: 'bonZara',         nom: 'Carte cadeau Zara 20 €',         cout: 2000, type: 'bon', euros: 20 },
+    { id: 'bonStradivarius', nom: 'Carte cadeau Stradivarius 20 €', cout: 2000, type: 'bon', euros: 20 }
   ];
+
+  /* Le catalogue est enregistré chez le parent dès sa première lecture : un
+     article ajouté ici après coup ne le rejoindrait jamais. Chaque ajout
+     incrémente donc cette version, et admin() complète le catalogue enregistré
+     avec les articles par défaut qui lui manquent — une seule fois, pour que
+     le parent puisse ensuite les retirer sans les voir revenir. */
+  var VERSION_CATALOGUE = 2;
 
   /* ===================================================================== */
   /* Réglages et catalogue                                                 */
@@ -54,7 +64,16 @@
     var a = MathsProfils.lire('mv.admin', null) || {};
     if (a.budgetMensuel === undefined) a.budgetMensuel = 15;
     if (a.tauxPieces === undefined) a.tauxPieces = 100;   // pièces pour 1 €
-    if (!a.boutique || !a.boutique.length) a.boutique = DEFAUT.slice();
+    if (!a.boutique || !a.boutique.length) {
+      a.boutique = DEFAUT.slice();
+      a.versionCatalogue = VERSION_CATALOGUE;
+    } else if ((a.versionCatalogue || 1) < VERSION_CATALOGUE) {
+      DEFAUT.forEach(function (d) {
+        if (!a.boutique.some(function (x) { return x.id === d.id; })) a.boutique.push(d);
+      });
+      a.versionCatalogue = VERSION_CATALOGUE;
+      MathsProfils.ecrire('mv.admin', a);
+    }
     if (!a.depenses) a.depenses = [];
     return a;
   }
