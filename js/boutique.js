@@ -50,31 +50,41 @@
     { id: 'bonStradivarius', nom: 'Carte cadeau Stradivarius 20 €', cout: 2000, type: 'bon', euros: 20 }
   ];
 
-  /* Le catalogue est enregistré chez le parent dès sa première lecture : un
-     article ajouté ici après coup ne le rejoindrait jamais. Chaque ajout
-     incrémente donc cette version, et admin() complète le catalogue enregistré
-     avec les articles par défaut qui lui manquent — une seule fois, pour que
-     le parent puisse ensuite les retirer sans les voir revenir. */
-  var VERSION_CATALOGUE = 2;
+  /* Le catalogue et les réglages sont enregistrés chez le parent dès leur
+     première lecture : une valeur par défaut changée ici après coup ne les
+     rejoindrait jamais. Chaque changement incrémente donc cette version, et
+     admin() rattrape ce qui est enregistré — une seule fois, pour que le parent
+     garde ensuite la main (retirer un article, baisser le budget).
+
+       2 : trois cartes cadeaux de 20 € ajoutées au catalogue ;
+       3 : budget mensuel par défaut passé de 15 à 25 € — un budget enregistré
+           en dessous est relevé à 25 (un budget plus généreux est conservé). */
+  var VERSION_REGLAGES = 3;
+  var BUDGET_DEFAUT = 25;
 
   /* ===================================================================== */
   /* Réglages et catalogue                                                 */
   /* ===================================================================== */
   function admin() {
     var a = MathsProfils.lire('mv.admin', null) || {};
-    if (a.budgetMensuel === undefined) a.budgetMensuel = 25;
+    var neuf = !a.boutique || !a.boutique.length;
+    if (a.budgetMensuel === undefined) a.budgetMensuel = BUDGET_DEFAUT;
     if (a.tauxPieces === undefined) a.tauxPieces = 100;   // pièces pour 1 €
-    if (!a.boutique || !a.boutique.length) {
-      a.boutique = DEFAUT.slice();
-      a.versionCatalogue = VERSION_CATALOGUE;
-    } else if ((a.versionCatalogue || 1) < VERSION_CATALOGUE) {
-      DEFAUT.forEach(function (d) {
-        if (!a.boutique.some(function (x) { return x.id === d.id; })) a.boutique.push(d);
-      });
-      a.versionCatalogue = VERSION_CATALOGUE;
+    if (neuf) a.boutique = DEFAUT.slice();
+    if (!a.depenses) a.depenses = [];
+    var version = a.versionCatalogue || 1;
+    if (neuf) {
+      a.versionCatalogue = VERSION_REGLAGES;
+    } else if (version < VERSION_REGLAGES) {
+      if (version < 2) {
+        DEFAUT.forEach(function (d) {
+          if (!a.boutique.some(function (x) { return x.id === d.id; })) a.boutique.push(d);
+        });
+      }
+      if (version < 3 && a.budgetMensuel < BUDGET_DEFAUT) a.budgetMensuel = BUDGET_DEFAUT;
+      a.versionCatalogue = VERSION_REGLAGES;
       MathsProfils.ecrire('mv.admin', a);
     }
-    if (!a.depenses) a.depenses = [];
     return a;
   }
   function setAdmin(a) { MathsProfils.ecrire('mv.admin', a); }

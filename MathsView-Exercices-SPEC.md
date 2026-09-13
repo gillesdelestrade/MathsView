@@ -585,10 +585,12 @@ Types :
 Stradivarius), 2000 pièces chacune ; le parent peut en retirer ou en ajouter,
 enseignes libres.
 
-Le catalogue est enregistré chez le parent dès sa première lecture. Un article
-ajouté aux valeurs par défaut après coup est **fusionné une seule fois** dans le
-catalogue enregistré (numéro de version du catalogue) : le parent peut ensuite le
-retirer sans le voir revenir.
+Le catalogue et les réglages sont enregistrés chez le parent dès leur première
+lecture. Une valeur par défaut changée après coup est **rattrapée une seule
+fois** dans ce qui est enregistré, grâce à un numéro de version : un article
+ajouté est fusionné, un budget par défaut relevé remonte le budget enregistré
+s'il est en dessous. Le parent garde ensuite la main : il peut retirer l'article
+ou rebaisser le budget sans les voir revenir.
 
 ### 8.3 Budget plafonné
 

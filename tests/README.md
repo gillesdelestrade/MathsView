@@ -38,7 +38,7 @@ décrivent ce qu'ils ont vérifié, puis concluent.
 | `site-jardin` | Le jardin et la révision : une compétence d'un niveau supérieur n'apparaît jamais, mais ce qui a déjà été travaillé reste visible. |
 | `site-tableau-de-bord` | L'espace parent : autant de colonnes dans l'en-tête que dans chaque ligne, et les totaux affichés sont ceux du niveau du profil. |
 | `site-bandeau-profil` | Le bandeau de profil sur toutes les pages, et son menu. |
-| `site-boutique` | Le catalogue par défaut propose bien les trois cartes cadeaux de 20 €, et un catalogue déjà enregistré chez le parent les reçoit **une seule fois** : une carte retirée ne revient pas à la lecture suivante. |
+| `site-boutique` | Le catalogue par défaut propose bien les trois cartes cadeaux de 20 € et un budget de 25 €, et des réglages déjà enregistrés chez le parent les rattrapent **une seule fois** : une carte retirée ou un budget rebaissé ne reviennent pas à la lecture suivante. |
 | `site-pas-a-pas` | Le mode pas-à-pas rejoue les étapes précédentes après une remise à zéro : rien ne doit se dupliquer. |
 
 ## Le mini-Python

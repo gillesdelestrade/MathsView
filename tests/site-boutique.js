@@ -75,6 +75,31 @@ var n = MathsBoutique.articles().length;
 if (MathsBoutique.articles().length !== n) ko('le catalogue grossit à chaque lecture');
 
 /* ------------------------------------------------------------------ */
+/* 2 bis. Un budget enregistré à l'ancien défaut est relevé à 25 €      */
+/* ------------------------------------------------------------------ */
+STOCK = {};
+MathsProfils.ecrire('mv.admin', { budgetMensuel: 15, tauxPieces: 100,
+                                  boutique: ancien, depenses: [] });
+if (MathsBoutique.reglages().budgetMensuel !== 25)
+  ko('budget enregistré à 15 € : ' + MathsBoutique.reglages().budgetMensuel + ' € après migration, 25 attendus');
+if (MathsProfils.lire('mv.admin').budgetMensuel !== 25) ko('le budget relevé n\'est pas enregistré');
+/* le parent peut ensuite le rebaisser : il ne remonte pas à la lecture suivante */
+MathsBoutique.setReglages({ budgetMensuel: 10 });
+if (MathsBoutique.reglages().budgetMensuel !== 10) ko('un budget rebaissé par le parent remonte tout seul');
+/* un catalogue déjà à la version 2 (cartes reçues) reçoit quand même le budget */
+STOCK = {};
+MathsProfils.ecrire('mv.admin', { budgetMensuel: 15, tauxPieces: 100,
+                                  boutique: MathsBoutique.defaut(), depenses: [],
+                                  versionCatalogue: 2 });
+if (MathsBoutique.reglages().budgetMensuel !== 25) ko('version 2 : le budget n\'est pas relevé');
+if (MathsBoutique.articles().length !== MathsBoutique.defaut().length) ko('version 2 : le catalogue a changé');
+/* un budget plus généreux est conservé */
+STOCK = {};
+MathsProfils.ecrire('mv.admin', { budgetMensuel: 40, tauxPieces: 100,
+                                  boutique: ancien, depenses: [] });
+if (MathsBoutique.reglages().budgetMensuel !== 40) ko('un budget de 40 € a été touché par la migration');
+
+/* ------------------------------------------------------------------ */
 /* 3. Un catalogue tout neuf porte déjà la version courante             */
 /* ------------------------------------------------------------------ */
 STOCK = {};
@@ -83,6 +108,7 @@ MathsBoutique.setReglages({ budgetMensuel: 25 });
 var adm = MathsProfils.lire('mv.admin');
 if (bons(adm.boutique).length !== 3) ko('catalogue neuf : ' + bons(adm.boutique).length + ' bon(s)');
 if (!adm.versionCatalogue) ko('catalogue neuf : pas de version enregistrée');
+if (adm.budgetMensuel !== 25) ko('catalogue neuf : budget ' + adm.budgetMensuel + ' € au lieu de 25');
 
 /* ------------------------------------------------------------------ */
 /* 4. Une carte se demande comme les autres articles                    */
@@ -105,6 +131,6 @@ if (err.length) {
   print('ÉCHEC — ' + err.length + ' problème(s) :');
   err.forEach(function (m) { print('  · ' + m); });
 } else {
-  print('boutique : 3 cartes cadeaux de 20 € par défaut, fusionnées une seule ' +
-        'fois dans un catalogue déjà enregistré');
+  print('boutique : 3 cartes cadeaux de 20 € et budget de 25 € par défaut, ' +
+        'rattrapés une seule fois dans les réglages déjà enregistrés');
 }
