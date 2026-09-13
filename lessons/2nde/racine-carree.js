@@ -43,6 +43,7 @@ MathsView.register({
   level: '2nde',
   category: 'calcul',
   subcategory: 'Racines carrées',
+  exercices: ['racines'],
   theme: 'Nombres — √x n\'existe que pour x ⩾ 0, et √(a²) = |a|',
   description:
     'La <strong>racine carrée</strong> d\'un nombre positif \\( x \\) est le nombre ' +

@@ -33,6 +33,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: ['ensembles'] },
   { code: 'val-abs',      libelle: 'Valeur absolue et distance', niveau: '2nde',
     chapitre: 'nombres', prerequis: ['intervalles'] },
+  { code: 'racines',      libelle: 'Racines carrées',           niveau: '2nde',
+    chapitre: 'nombres', prerequis: [] },
 
   /* --- Vecteurs (2nde), une compétence par leçon du chapitre ------------- */
   { code: 'vec-egalite',  libelle: 'Direction, sens, longueur', niveau: '2nde',

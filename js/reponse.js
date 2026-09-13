@@ -53,7 +53,7 @@
   /* --------------------------------------------------------------------- */
   /* Les nombres                                                           */
   /*                                                                       */
-  /* On accepte : 12   −2,5   3/4   −3/4   √5   −√5   √5/2   2π   +∞        */
+  /* On accepte : 12   −2,5   3/4   −3/4   √5   −√5   2√3   √5/2   2π   +∞   */
   /* --------------------------------------------------------------------- */
   var INFINI = /^[+-]?(∞|inf(ini|inity)?)$/i;
 
@@ -62,6 +62,8 @@
     if (/^\d+(\.\d+)?$/.test(t)) return parseFloat(t);
     var m = /^√(\d+(\.\d+)?)$/.exec(t);              // √5
     if (m) return Math.sqrt(parseFloat(m[1]));
+    m = /^(\d+(\.\d+)?)√(\d+(\.\d+)?)$/.exec(t);    // 2√3
+    if (m) return parseFloat(m[1]) * Math.sqrt(parseFloat(m[3]));
     m = /^∛(\d+(\.\d+)?)$/.exec(t);                  // ∛5
     if (m) return Math.cbrt(parseFloat(m[1]));
     if (/^(π|pi)$/i.test(t)) return Math.PI;
