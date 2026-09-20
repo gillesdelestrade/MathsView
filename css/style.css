@@ -555,6 +555,7 @@ body {
 .sg-table tr.off { opacity: .22; }
 .sg-trait { display: inline-block; width: 2px; height: 1.1rem; background: var(--ink); vertical-align: middle; }
 .sg-table td.sg-interdit { color: #dc2626; }
+.eq-ou { font-size: .85em; font-weight: 700; color: var(--ink-soft); padding: 0 .4rem; }
 .sg-table td.sg-interdit .sg-trait { background: #dc2626; margin: 0 1px; }
 
 .conv-read { display: flex; flex-wrap: wrap; gap: .3rem .6rem; }
