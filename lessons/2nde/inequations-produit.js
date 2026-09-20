@@ -38,6 +38,7 @@ MathsView.register({
   title: 'Inéquations produit',
   level: '2nde',
   category: 'algebre',
+  exercices: ['ineq-produit'],
   theme: 'Algèbre — le tableau de signes de (ax + b)(cx + d)',
   description:
     'Dans un produit, on ne peut pas « isoler x ». Mais le <strong>signe d\'un produit</strong> ' +
