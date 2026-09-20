@@ -33,6 +33,7 @@ MathsView.register({
   title: 'Équations produit nul',
   level: '2nde',
   category: 'algebre',
+  exercices: ['eq-produit-nul'],
   theme: 'Algèbre — (ax + b)(cx + d) = 0 : un produit nul a un facteur nul',
   description:
     'Pour résoudre \\((2x-4)(-x+3)=0\\), inutile de développer : un <strong>produit est ' +

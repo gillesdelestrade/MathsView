@@ -37,6 +37,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: [] },
 
   /* --- Algèbre (2nde) ------------------------------------------------------ */
+  { code: 'eq-produit-nul', libelle: 'Équations produit nul',    niveau: '2nde',
+    chapitre: 'algebre', prerequis: [] },
   { code: 'inequations',  libelle: 'Inéquations du 1er degré',  niveau: '2nde',
     chapitre: 'algebre', prerequis: ['intervalles'] },
   { code: 'ineq-produit', libelle: 'Inéquations produit',       niveau: '2nde',
