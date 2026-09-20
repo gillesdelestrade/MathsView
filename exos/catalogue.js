@@ -41,6 +41,8 @@ MathsExos.catalogue = [
     chapitre: 'algebre', prerequis: ['intervalles'] },
   { code: 'ineq-produit', libelle: 'Inéquations produit',       niveau: '2nde',
     chapitre: 'algebre', prerequis: ['inequations'] },
+  { code: 'ineq-quotient', libelle: 'Inéquations quotient',     niveau: '2nde',
+    chapitre: 'algebre', prerequis: ['ineq-produit'] },
 
   /* --- Vecteurs (2nde), une compétence par leçon du chapitre ------------- */
   { code: 'vec-egalite',  libelle: 'Direction, sens, longueur', niveau: '2nde',
