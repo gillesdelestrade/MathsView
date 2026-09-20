@@ -186,30 +186,31 @@ if (JSON.stringify(e1.maitrises) + '|' + e1.xp !== empreinte)
   ko('une séance flash a modifié la maîtrise, les ceintures ou l\'XP — c\'est ' +
      'précisément ce qu\'elle ne doit pas faire');
 if (!e1.flash || !e1.flash.derniere) ko('la séance ne laisse pas de date');
-if (e1.pieces !== 2) ko('pièces : ' + e1.pieces + ' au lieu de 2 (33 points ÷ 12)');
+/* 33 points : 2 pièces de base (÷ 15) + 2 de bonus (÷ 12), première séance du jour. */
+if (e1.pieces !== 4) ko('pièces : ' + e1.pieces + ' au lieu de 4 (33 ÷ 15 = 2, plus le bonus 33 ÷ 12 = 2)');
 if (JOURNAL.length !== 1 || JOURNAL[0].type !== 'flash')
   ko('la séance ne laisse pas de trace « flash » dans le journal');
-/* Seule la PREMIÈRE séance du jour paie : la séance se relance à volonté, et
-   l'enchaîner ne doit rien rapporter. */
+/* Le bonus ne va qu'à la PREMIÈRE séance du jour : la séance se relance à
+   volonté, et l'enchaîner ne rapporte plus que le barème de base. */
 var r2 = F.finSeance('p1', { n: 20, justes: 20, points: 60, ms: 60000 });
-if (r2.pieces !== 0 || r2.premiere) ko('une seconde séance le même jour rapporte ' + r2.pieces + ' pièce(s)');
-if (MathsProfils.etat('p1').pieces !== 2) ko('les pièces ont bougé sur une seconde séance du jour');
+if (r2.pieces !== 4 || r2.bonus !== 0 || r2.premiere) ko('une seconde séance parfaite le même jour rapporte ' + r2.pieces + ' pièce(s) au lieu de 4, sans bonus');
+if (MathsProfils.etat('p1').pieces !== 8) ko('total après deux séances : ' + MathsProfils.etat('p1').pieces + ' au lieu de 8');
 if (!F.dejaJoueeAujourdhui('p1')) ko('dejaJoueeAujourdhui devrait dire oui');
-/* Le lendemain, une séance parfaite vaut cinq pièces, pas plus — et pas
-   moins : 60 points ÷ 12. L'ordre de grandeur compte plus que la formule : une
-   ceinture verte en vaut 20, la régularité hebdomadaire 15. */
+/* Le lendemain, une séance parfaite vaut 4 + 5 = 9 pièces ; 59 points, 3 + 4 = 7.
+   L'ordre de grandeur compte plus que la formule : une ceinture verte en vaut
+   20, la régularité hebdomadaire 15. */
 var horlogeVraie = Date.now;
 var demain = horlogeVraie() + 24 * 3600 * 1000;
 Date.now = function () { return demain; };
 if (F.dejaJoueeAujourdhui('p1')) ko('le lendemain, la séance du jour n\'est pas encore faite');
 var r3 = F.finSeance('p1', { n: 20, justes: 20, points: 60, ms: 60000 });
-if (r3.pieces !== 5 || !r3.premiere) ko('une séance parfaite le lendemain rapporte ' + r3.pieces + ' pièce(s) au lieu de 5');
-if (F.finSeance('p1', { n: 20, justes: 20, points: 59, ms: 60000 }).pieces !== 0) ko('la même journée, encore payée');
+if (r3.pieces !== 9 || r3.bonus !== 5 || !r3.premiere) ko('une séance parfaite le lendemain rapporte ' + r3.pieces + ' pièce(s) au lieu de 9 (4 + bonus 5)');
+if (F.finSeance('p1', { n: 20, justes: 20, points: 59, ms: 60000 }).pieces !== 3) ko('la même journée, 59 points doivent valoir 3 pièces, sans bonus');
 Date.now = function () { return demain + 24 * 3600 * 1000; };
-if (F.finSeance('p1', { n: 20, justes: 20, points: 59, ms: 60000 }).pieces !== 4) ko('59 points doivent valoir 4 pièces');
+if (F.finSeance('p1', { n: 20, justes: 20, points: 59, ms: 60000 }).pieces !== 7) ko('59 points en première séance doivent valoir 3 + 4 = 7 pièces');
 Date.now = function () { return demain + 48 * 3600 * 1000; };
 if (F.finSeance('p1', { n: 20, justes: 4, points: 11, ms: 60000 }).pieces !== 0) ko('11 points ne valent aucune pièce');
-if (MathsProfils.etat('p1').pieces !== 2 + 5 + 4) ko('total des pièces : ' + MathsProfils.etat('p1').pieces + ' au lieu de 11');
+if (MathsProfils.etat('p1').pieces !== 8 + 9 + 3 + 7) ko('total des pièces : ' + MathsProfils.etat('p1').pieces + ' au lieu de 27');
 Date.now = horlogeVraie;
 
 /* ------------------------------------------------------------------ */

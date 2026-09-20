@@ -50,9 +50,10 @@
  * ---------------------------------------------------------------------------
  * Rien de la progression habituelle. Les points de rapidité alimentent une
  * jauge d'AUTOMATISME qui leur est propre, jamais la maîtrise ni les ceintures.
- * Seule la PREMIÈRE séance de la journée rapporte des pièces — une tous les
- * douze points, cinq au plus pour une séance parfaite ; la refaire dans la
- * journée entraîne, mais n'enrichit pas.
+ * Chaque séance rapporte une pièce tous les quinze points ; la PREMIÈRE séance
+ * de la journée ajoute par-dessus un bonus d'une pièce tous les douze points,
+ * cinq au plus — une séance parfaite en vaut donc neuf, les suivantes du jour
+ * quatre au mieux.
  * Une élève lente mais juste ne perd rien ailleurs, et une ceinture continue de
  * vouloir dire la même chose sur tout le site. Les deux mesures répondent à
  * deux questions différentes — « est-ce que je comprends » et « est-ce que je
@@ -66,8 +67,9 @@
   var SEUILS = [3000, 6000];        // millisecondes, sur la PREMIÈRE frappe
   var POINTS = [3, 2, 1];
   var NB = 20;                      // questions d'une séance
-  var PIECES_PAR = 12;              // une pièce tous les douze points…
-  var PIECES_MAX = 5;               // …cinq au plus, et seulement la première séance du jour
+  var PIECES_PAR = 15;              // une pièce tous les quinze points, à chaque séance
+  var BONUS_PAR = 12;               // et, la première séance du jour, un bonus d'une pièce
+  var BONUS_MAX = 5;                // tous les douze points — cinq au plus
   var MAX_FAITS = 400;              // garde-fou de taille pour le stockage
 
   /* ===================================================================== */
@@ -252,15 +254,17 @@
   function finSeance(id, bilan) {
     var e = etat(id);
     var maintenant = Date.now();
-    /* Une pièce tous les douze points, cinq au plus — et seulement pour la
-       PREMIÈRE séance de la journée : la séance se relance à volonté depuis
-       l'accueil, et sans cette borne il suffirait de l'enchaîner pour vider la
-       boutique de son sens. Le barème avait déjà été resserré une fois (une
-       pièce pour trois points faisait une ceinture noire tous les deux jours).
-       L'ordre de grandeur visé reste celui du bonus de régularité (15 pièces
-       par semaine) : la séance flash récompense, elle n'enrichit pas. */
+    /* Une pièce tous les quinze points, à chaque séance : une séance parfaite
+       en vaut quatre. Le barème avait été resserré (une pièce pour trois
+       points faisait une ceinture noire tous les deux jours) : la séance
+       flash récompense, elle n'enrichit pas. La PREMIÈRE séance de la journée
+       ajoute un bonus, une pièce tous les douze points et cinq au plus — c'est
+       elle qu'on veut voir faite chaque jour, et la relancer ensuite ne
+       rapporte plus que le barème de base. */
     var premiere = !memeJour(e.flash.derniere, maintenant);
-    var pieces = premiere ? Math.min(PIECES_MAX, Math.floor((bilan.points || 0) / PIECES_PAR)) : 0;
+    var base = Math.floor((bilan.points || 0) / PIECES_PAR);
+    var bonus = premiere ? Math.min(BONUS_MAX, Math.floor((bilan.points || 0) / BONUS_PAR)) : 0;
+    var pieces = base + bonus;
     e.flash.derniere = maintenant;
     e.pieces = (e.pieces || 0) + pieces;
     MathsProfils.setEtat(id, e);
@@ -268,7 +272,7 @@
       t: e.flash.derniere, type: 'flash', n: bilan.n || 0, justes: bilan.justes || 0,
       points: bilan.points || 0, duree: Math.round((bilan.ms || 0) / 1000), pieces: pieces
     });
-    return { pieces: pieces, premiere: premiere };
+    return { pieces: pieces, bonus: bonus, premiere: premiere };
   }
 
   /* ===================================================================== */
@@ -389,8 +393,9 @@
       carte.appendChild(el('div', 'fl-bilan',
         justes + ' bonne' + (justes > 1 ? 's' : '') + ' réponse' + (justes > 1 ? 's' : '') +
         ' sur ' + file.length +
-        (r.pieces ? ' — <b>' + r.pieces + ' pièce' + (r.pieces > 1 ? 's' : '') + '</b>'
-                  : r.premiere ? '' : ' — <span class="fl-deja">déjà récompensée aujourd\'hui</span>')));
+        (r.pieces ? ' — <b>' + r.pieces + ' pièce' + (r.pieces > 1 ? 's' : '') + '</b>' +
+                    (r.bonus ? ' <span class="fl-deja">dont ' + r.bonus + ' de bonus, première séance du jour</span>' : '')
+                  : '')));
 
       /* Ce qu'il faut revoir : les fausses d'abord, puis les plus lentes. Trois
          au plus — une liste de vingt lignes ne se lit pas. */
@@ -448,7 +453,7 @@
     doitProposer: doitProposer,
     joursDepuis: joursDepuis,
     dejaJoueeAujourdhui: dejaJoueeAujourdhui,
-    PIECES_PAR: PIECES_PAR, PIECES_MAX: PIECES_MAX,
+    PIECES_PAR: PIECES_PAR, BONUS_PAR: BONUS_PAR, BONUS_MAX: BONUS_MAX,
     finSeance: finSeance,
     sources: sources,
     SEUILS: SEUILS, POINTS: POINTS, NB: NB
