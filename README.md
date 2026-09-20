@@ -24,8 +24,10 @@ Deux compétences échappent à ce régime : les **tables de multiplication** et
 `js/flash.js` leur réserve une séance chronométrée de 20 questions, proposée
 d'office tous les deux jours. Le chronomètre s'y arrête à la **première frappe**,
 pas à la validation : c'est la latence de rappel qu'on veut voir descendre, pas
-la vitesse de frappe. Les points de rapidité alimentent une jauge d'automatisme
-qui leur est propre et ne touchent ni la maîtrise, ni les ceintures.
+la vitesse de frappe — et effacer (⌫ ou Suppr) le relance, pour qu'une touche
+tapée au hasard ne fige pas le temps. Les points de rapidité alimentent une jauge
+d'automatisme qui leur est propre et ne touchent ni la maîtrise, ni les ceintures ;
+seule la première séance du jour rapporte des pièces (une tous les 12 points, 5 au plus).
 
 ## Vérifier
 

@@ -22,6 +22,12 @@
  * dépasse trois secondes même quand on sait sa table par cœur. La latence de
  * rappel, elle, est exactement ce qu'on veut voir descendre.
  *
+ * Le revers : n'importe quel caractère arrête le chronomètre, y compris une
+ * touche tapée au hasard pour se donner le temps de calculer. On garde la
+ * mesure à la première frappe, mais RELÂCHER Retour arrière ou Suppr relance
+ * le chronomètre : effacer ce qu'on a tapé, c'est admettre que ce n'était pas
+ * la réponse, et le temps repart de l'affichage de la question — pas de zéro.
+ *
  *     moins de 3 s   3 points   « tu la sais »
  *     de 3 à 6 s     2 points   « tu la retrouves »
  *     au-delà        1 point    « tu la calcules »
@@ -44,6 +50,9 @@
  * ---------------------------------------------------------------------------
  * Rien de la progression habituelle. Les points de rapidité alimentent une
  * jauge d'AUTOMATISME qui leur est propre, jamais la maîtrise ni les ceintures.
+ * Seule la PREMIÈRE séance de la journée rapporte des pièces — une tous les
+ * douze points, cinq au plus pour une séance parfaite ; la refaire dans la
+ * journée entraîne, mais n'enrichit pas.
  * Une élève lente mais juste ne perd rien ailleurs, et une ceinture continue de
  * vouloir dire la même chose sur tout le site. Les deux mesures répondent à
  * deux questions différentes — « est-ce que je comprends » et « est-ce que je
@@ -57,6 +66,8 @@
   var SEUILS = [3000, 6000];        // millisecondes, sur la PREMIÈRE frappe
   var POINTS = [3, 2, 1];
   var NB = 20;                      // questions d'une séance
+  var PIECES_PAR = 12;              // une pièce tous les douze points…
+  var PIECES_MAX = 5;               // …cinq au plus, et seulement la première séance du jour
   var MAX_FAITS = 400;              // garde-fou de taille pour le stockage
 
   /* ===================================================================== */
@@ -227,25 +238,37 @@
     var d = etat(id).flash.derniere || 0;
     return d ? Math.floor((Date.now() - d) / JOUR) : null;
   }
+  // Le même jour civil (heure locale), pas « moins de 24 h » : une séance à
+  // 23 h puis une à 8 h sont deux journées, et la seconde compte.
+  function memeJour(a, b) {
+    if (!a || !b) return false;
+    var da = new Date(a), db = new Date(b);
+    return da.getFullYear() === db.getFullYear() && da.getMonth() === db.getMonth() &&
+           da.getDate() === db.getDate();
+  }
+  function dejaJoueeAujourdhui(id) { return memeJour(etat(id).flash.derniere, Date.now()); }
 
   /* Fin de séance : on horodate, on récompense, et on laisse une trace. */
   function finSeance(id, bilan) {
     var e = etat(id);
-    e.flash.derniere = Date.now();
-    /* Une pièce tous les quinze points : une séance parfaite en vaut quatre.
-       Le barème a été resserré après coup — à une pièce pour trois points, une
-       séance rapportait vingt pièces, soit une ceinture noire tous les deux
-       jours, et la boutique n'aurait plus rien valu. L'ordre de grandeur visé
-       est celui du bonus de régularité (15 pièces par semaine) : la séance
-       flash récompense, elle n'enrichit pas. */
-    var pieces = Math.floor((bilan.points || 0) / 15);
+    var maintenant = Date.now();
+    /* Une pièce tous les douze points, cinq au plus — et seulement pour la
+       PREMIÈRE séance de la journée : la séance se relance à volonté depuis
+       l'accueil, et sans cette borne il suffirait de l'enchaîner pour vider la
+       boutique de son sens. Le barème avait déjà été resserré une fois (une
+       pièce pour trois points faisait une ceinture noire tous les deux jours).
+       L'ordre de grandeur visé reste celui du bonus de régularité (15 pièces
+       par semaine) : la séance flash récompense, elle n'enrichit pas. */
+    var premiere = !memeJour(e.flash.derniere, maintenant);
+    var pieces = premiere ? Math.min(PIECES_MAX, Math.floor((bilan.points || 0) / PIECES_PAR)) : 0;
+    e.flash.derniere = maintenant;
     e.pieces = (e.pieces || 0) + pieces;
     MathsProfils.setEtat(id, e);
     MathsProfils.ajouteJournal(id, {
       t: e.flash.derniere, type: 'flash', n: bilan.n || 0, justes: bilan.justes || 0,
       points: bilan.points || 0, duree: Math.round((bilan.ms || 0) / 1000), pieces: pieces
     });
-    return { pieces: pieces };
+    return { pieces: pieces, premiere: premiere };
   }
 
   /* ===================================================================== */
@@ -312,6 +335,13 @@
       champ.addEventListener('keydown', function (ev) {
         if (ev.key === 'Enter') { ev.preventDefault(); valide(f, champ); }
       });
+      /* Effacer relance le chronomètre : la frappe notée n'était pas la
+         réponse. Le temps repart de l'affichage de la question, et sera pris
+         à la prochaine frappe — au relâchement de la touche, pour qu'une
+         touche maintenue ne compte pas comme une frappe. */
+      champ.addEventListener('keyup', function (ev) {
+        if (ev.key === 'Backspace' || ev.key === 'Delete') latence = 0;
+      });
     }
 
     function valide(f, champ) {
@@ -359,7 +389,8 @@
       carte.appendChild(el('div', 'fl-bilan',
         justes + ' bonne' + (justes > 1 ? 's' : '') + ' réponse' + (justes > 1 ? 's' : '') +
         ' sur ' + file.length +
-        (r.pieces ? ' — <b>' + r.pieces + ' pièce' + (r.pieces > 1 ? 's' : '') + '</b>' : '')));
+        (r.pieces ? ' — <b>' + r.pieces + ' pièce' + (r.pieces > 1 ? 's' : '') + '</b>'
+                  : r.premiere ? '' : ' — <span class="fl-deja">déjà récompensée aujourd\'hui</span>')));
 
       /* Ce qu'il faut revoir : les fausses d'abord, puis les plus lentes. Trois
          au plus — une liste de vingt lignes ne se lit pas. */
@@ -416,6 +447,8 @@
     resume: resume,
     doitProposer: doitProposer,
     joursDepuis: joursDepuis,
+    dejaJoueeAujourdhui: dejaJoueeAujourdhui,
+    PIECES_PAR: PIECES_PAR, PIECES_MAX: PIECES_MAX,
     finSeance: finSeance,
     sources: sources,
     SEUILS: SEUILS, POINTS: POINTS, NB: NB

@@ -1896,6 +1896,7 @@ body {
 .fl-score { font-size: 2.6rem; font-weight: 800; }
 .fl-score span { font-size: 1.1rem; font-weight: 600; color: var(--doux); }
 .fl-bilan { margin-top: .3rem; color: var(--doux); }
+.fl-deja { font-style: italic; }
 .fl-revoir {
   margin: 1rem auto 1.2rem; max-width: 22rem; padding: .7rem .9rem;
   border-radius: var(--radius); background: #f8fafc; text-align: left;

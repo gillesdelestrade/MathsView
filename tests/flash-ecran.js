@@ -92,6 +92,8 @@ var LATENCES = [900, 1200, 2999, 3000, 4500, 5999, 6000, 8000, 1500, 2000,
                 700, 3500, 6500, 1100, 4000, 2500, 900, 7000, 1800, 2200];
 var FAUSSES = [3, 9, 14];          // ces questions-là, on répond à côté
 var VIDES = [17];                  // et celle-là, on ne répond rien
+var BROUILLON = [5, 12];           // là, on tape n'importe quoi, on efface, puis on répond
+var MAINTENUE = [6];               // là, on relâche une touche ordinaire avant de répondre
 
 var attendu = FILE.map(function (f, i) {
   var vide = VIDES.indexOf(i) >= 0;
@@ -112,7 +114,33 @@ document.createElement = function (tag) {
   if (tag !== 'input') return e;
   var i = n++;
   e.focus = function () {
-    HORLOGE += LATENCES[i];                  // le temps de retrouver le résultat
+    if (BROUILLON.indexOf(i) >= 0) {
+      /* LE BIAIS : une touche au hasard arrête le chronomètre. On la tape
+         après 400 ms, on efface (relâchement de Retour arrière ou Suppr), et
+         on répond bien plus tard : le temps relu doit être celui de la VRAIE
+         réponse, compté depuis l'affichage de la question. */
+      HORLOGE += 400;
+      e.value = 'a';
+      if (e._h.input) e._h.input();
+      HORLOGE += 200;
+      e.value = '';
+      if (e._h.keyup) e._h.keyup({ key: i === 5 ? 'Backspace' : 'Delete' });
+      HORLOGE += LATENCES[i] - 600;
+    } else if (MAINTENUE.indexOf(i) >= 0) {
+      /* Relâcher une touche ordinaire ne relance rien : sinon taper « 5 »
+         puis « 6 » remettrait le chronomètre à chaque chiffre. */
+      HORLOGE += LATENCES[i];
+      e.value = attendu[i].saisie;
+      if (e._h.input) e._h.input();
+      if (e._h.keyup) e._h.keyup({ key: attendu[i].saisie.charAt(0) });
+      HORLOGE += 3000;
+      if (e._h.keyup) e._h.keyup({ key: 'ArrowLeft' });
+      HORLOGE += 7000;
+      if (e._h.keydown) e._h.keydown({ key: 'Enter', preventDefault: function () {} });
+      return;
+    } else {
+      HORLOGE += LATENCES[i];                // le temps de retrouver le résultat
+    }
     e.value = attendu[i].saisie;
     if (e._h.input) e._h.input();            // la première frappe : c'est ici qu'on note
     HORLOGE += 10000;                        // dix secondes de flânerie

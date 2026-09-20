@@ -867,8 +867,12 @@
           '<h2>⚡ Flash — les fondamentaux</h2>' +
           '<p class="adm-note">' + MathsFlash.NB + ' questions. Le chronomètre s\'arrête ' +
           'à ta <b>première frappe</b> : <b>3 points</b> sous 3 secondes, <b>2 points</b> ' +
-          'jusqu\'à 6, <b>1 point</b> au-delà. Ce score ne touche ni tes ceintures ni ton ' +
-          'jardin — il mesure autre chose.</p>'));
+          'jusqu\'à 6, <b>1 point</b> au-delà. Effacer (⌫) relance le chronomètre. ' +
+          'Ce score ne touche ni tes ceintures ni ton jardin — il mesure autre chose.' +
+          (MathsFlash.dejaJoueeAujourdhui(MathsProfils.courant())
+            ? ' Tu as déjà fait ta séance du jour : celle-ci entraîne, sans pièces.'
+            : ' La première séance du jour rapporte une pièce tous les ' + MathsFlash.PIECES_PAR +
+              ' points, ' + MathsFlash.PIECES_MAX + ' au plus.') + '</p>'));
         var boiteFl = el('div');
         session.appendChild(boiteFl);
         MathsFlash.monte(boiteFl, {
