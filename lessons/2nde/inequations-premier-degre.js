@@ -38,6 +38,7 @@ MathsView.register({
   title: 'Inéquations du premier degré',
   level: '2nde',
   category: 'algebre',
+  exercices: ['inequations'],
   theme: 'Algèbre — comme une équation, sauf quand on divise par un négatif',
   description:
     'Une inéquation se résout <strong>comme une équation</strong> : on regroupe les ' +

@@ -36,6 +36,10 @@ MathsExos.catalogue = [
   { code: 'racines',      libelle: 'Racines carrées',           niveau: '2nde',
     chapitre: 'nombres', prerequis: [] },
 
+  /* --- Algèbre (2nde) ------------------------------------------------------ */
+  { code: 'inequations',  libelle: 'Inéquations du 1er degré',  niveau: '2nde',
+    chapitre: 'algebre', prerequis: ['intervalles'] },
+
   /* --- Vecteurs (2nde), une compétence par leçon du chapitre ------------- */
   { code: 'vec-egalite',  libelle: 'Direction, sens, longueur', niveau: '2nde',
     chapitre: 'vecteurs', prerequis: [] },
