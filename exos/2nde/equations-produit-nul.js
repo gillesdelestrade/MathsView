@@ -216,10 +216,10 @@
     // facteur commun : (x − r)(ax + b) + (x − r)(cx + d) = 0  →  (x − r)((a + c)x + (b + d)) = 0
     var r = rnd.entier(-4, 4), A = rnd.choix([1, 2, 3]), B = rnd.entierNonNul(-5, 5), C = rnd.choix([1, 2, -1]), D = rnd.entierNonNul(-5, 5);
     if (A + C === 0) C = 1;
-    if (B + D === 0) D += 1;
+    while (B + D === 0 || D === 0) D = rnd.entierNonNul(-5, 5);   // ni crochet sans terme constant, ni D nul
     var S3 = solutions(1, -r, A + C, B + D);
     return {
-      enonce: CONSIGNE, tex: wrap(1, -r, true) + wrap(A, B, true) + ' + ' + wrap(1, -r, true) + wrap(C, D, true) + ' = 0',
+      enonce: CONSIGNE, tex: produitTex(1, -r, A, B, true) + ' + ' + produitTex(1, -r, C, D, true) + ' = 0',
       type: 'intervalle', reponse: S3.txt, morceaux: S3.morceaux,
       etapes: [
         'Le facteur \\(' + facteur(1, -r, true) + '\\) est <b>commun</b> aux deux termes : on <b>factorise</b> par ce facteur. \\(' +
