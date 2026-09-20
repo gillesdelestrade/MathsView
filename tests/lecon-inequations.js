@@ -59,11 +59,11 @@ var marques = textes.filter(function (o) { return o.parents[1] === 0.75; });
 var gradus = textes.filter(function (o) { return o.parents[1] === -0.58; });
 var labP = textes.filter(function (o) { return o.parents[1] === 1.45; })[0];
 var titre = textes.filter(function (o) { return o.parents[1] === 3.95; })[0];
-var moities = objets.filter(function (o) { return o.type === 'polygon'; });
+var moities = objets.filter(function (o) { return o.type === 'polygon'; });   // par moitié : neutre, vert, rouge
 var PX = objets.filter(function (o) { return o.type === 'point' && o.attrs.fixed === false; })[0];
 var sols = objets.filter(function (o) { return o.type === 'segment' && o.attrs.strokeWidth === 7; });
 if (marques.length !== 15 || gradus.length !== 15) ko('15 graduations et 15 marques attendues');
-if (moities.length !== 2) ko('deux moitiés attendues');
+if (moities.length !== 6) ko('deux moitiés de trois polygones attendues');
 if (!PX || !labP || !titre || sols.length !== 2) ko('objets de la figure introuvables');
 
 var inA = parClasse('eq-a')[0], inB = parClasse('eq-b')[0], inC = parClasse('eq-c')[0], inD = parClasse('eq-d')[0];
@@ -164,8 +164,11 @@ function verifier(nom, orig, kNeg, kNul, aFraction) {
     if ((mt === '✓') !== orig(x)) ko(pre + 'marque ' + mt + ' en x = ' + x + ' alors que l\'inéquation dit ' + orig(x));
     if (m.attrs.color !== (orig(x) ? '#16a34a' : '#dc2626')) ko(pre + 'couleur de la marque en x = ' + x);
   });
-  if (moities[0].attrs.fillColor !== (orig(x0 - 0.5) ? '#16a34a' : '#dc2626')) ko(pre + 'la moitié gauche n\'a pas la couleur de son verdict');
-  if (moities[1].attrs.fillColor !== (orig(x0 + 0.5) ? '#16a34a' : '#dc2626')) ko(pre + 'la moitié droite n\'a pas la couleur de son verdict');
+  [[0, orig(x0 - 0.5), 'gauche'], [3, orig(x0 + 0.5), 'droite']].forEach(function (mo) {
+    var vus = moities.slice(mo[0], mo[0] + 3).map(visible);
+    var attendu = mo[1] ? [false, true, false] : [false, false, true];
+    if (vus.join() !== attendu.join()) ko(pre + 'la moitié ' + mo[2] + ' n\'affiche pas la couleur de son verdict : ' + vus.join());
+  });
   if (visible(sols[0]) !== gauche || visible(sols[1]) !== !gauche) ko(pre + 'le trait des solutions n\'est pas du bon côté');
   // Le point de test à la souris : l'étiquette et le panneau disent vrai.
   [XL + 1, XL + 4.5, XL + 11].forEach(function (x) {

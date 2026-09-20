@@ -539,6 +539,22 @@ body {
 .ineq-rel { display: inline-block; padding: 0 .35rem; color: var(--ink-soft); }
 .ineq-rel.hot { color: #dc2626; }
 
+/* ---------- Inéquations produit : le tableau de signes ---------- */
+.sg-wrap { overflow-x: auto; margin: .4rem 0 .2rem; }
+.sg-table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.sg-table th, .sg-table td {
+  border: 1px solid var(--border); padding: .35rem .7rem; text-align: center; font-weight: 800;
+  font-size: 1.05rem; white-space: nowrap;
+}
+.sg-table th { text-align: left; background: #f8fafc; }
+.sg-table tr:first-child td { color: var(--ink-soft); font-weight: 700; }
+.sg-table td.sg-bar { padding: .35rem .3rem; min-width: 1.6rem; }
+.sg-table td.sg-plus { color: #16a34a; }
+.sg-table td.sg-moins { color: #dc2626; }
+.sg-table td.is-sol { background: #dcfce7; }
+.sg-table tr.off { opacity: .22; }
+.sg-trait { display: inline-block; width: 2px; height: 1.1rem; background: var(--ink); vertical-align: middle; }
+
 .conv-read { display: flex; flex-wrap: wrap; gap: .3rem .6rem; }
 .conv-read-line {
   display: flex; align-items: baseline; gap: .3rem; padding: .25rem .5rem;

@@ -452,16 +452,28 @@ MathsView.register({
 
     var Y = 0, YH = 2.5, YB = -1.1;    // l'axe, et la bande coupée en deux
 
-    // Les deux moitiés de la droite (et du plan), de part et d'autre de la frontière.
+    // Les deux moitiés de la droite (et du plan), de part et d'autre de la
+    // frontière. JSXGraph 1.11 ne redessine pas un polygone dont fillColor
+    // change après coup : chaque moitié est donc trois polygones — neutre,
+    // vert, rouge — et on montre celui de son verdict.
     function moitie(s) {
       var e = function () { return s < 0 ? XL - 0.9 : XR + 0.9; };
-      return board.create('polygon', [pt(e, function () { return YB; }), pt(x0, function () { return YB; }),
-                                      pt(x0, function () { return YH; }), pt(e, function () { return YH; })], {
-        fillColor: SOFT, fillOpacity: 0.13, borders: { visible: false }, vertices: { visible: false },
-        highlight: false, fixed: true, layer: 1, visible: false
+      var out = {};
+      [['soft', SOFT], ['ok', C_OK], ['no', C_NO]].forEach(function (c) {
+        out[c[0]] = board.create('polygon', [pt(e, function () { return YB; }), pt(x0, function () { return YB; }),
+                                             pt(x0, function () { return YH; }), pt(e, function () { return YH; })], {
+          fillColor: c[1], fillOpacity: 0.13, borders: { visible: false }, vertices: { visible: false },
+          highlight: false, fixed: true, layer: 1, visible: false
+        });
       });
+      return out;
     }
     var moitieL = moitie(-1), moitieR = moitie(1);
+    function montreMoitie(m, vu, verdict) {   // verdict : null (neutre), true (vert), false (rouge)
+      show(m.soft, vu && verdict === null);
+      show(m.ok, vu && verdict === true);
+      show(m.no, vu && verdict === false);
+    }
 
     // La droite graduée.
     board.create('segment', [pt(function () { return XL - 0.9; }, function () { return Y; }),
@@ -592,9 +604,8 @@ MathsView.register({
       var k0 = red.k === 0;
       var g = !k0 && okSide(-1), dr = !k0 && okSide(1);
 
-      show(moitieL, !k0 && vis.front > 0); show(moitieR, !k0 && vis.front > 0);
-      attr(moitieL, 'fillColor', vis.testL > 0 ? (g ? C_OK : C_NO) : SOFT);
-      attr(moitieR, 'fillColor', vis.testR > 0.25 ? (dr ? C_OK : C_NO) : SOFT);
+      montreMoitie(moitieL, !k0 && vis.front > 0, vis.testL > 0 ? g : null);
+      montreMoitie(moitieR, !k0 && vis.front > 0, vis.testR > 0.25 ? dr : null);
 
       show(frontiere, !k0 && vis.front > 0);
       show(ptF, !k0 && vis.front > 0.3);
