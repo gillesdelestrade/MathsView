@@ -1,18 +1,22 @@
 /*
  * Inéquations du premier degré (2nde) — résoudre a·x + b ⋈ c·x + d.
  *
- * Le message : une inéquation se résout EXACTEMENT comme une équation — les x
- * d'un côté, les nombres de l'autre, un terme qui traverse le signe change de
- * signe — jusqu'à la dernière ligne. Là, pour une équation, 2x = 4 donne x = 2
- * et −2x = 4 donne x = −2, sans état d'âme. Pour une inéquation, diviser par
- * un nombre NÉGATIF retourne le sens : −2x > 4 donne x < −2.
+ * Le message, en deux temps :
+ *
+ *   1. On calcule EXACTEMENT comme pour une équation — les x à gauche, les
+ *      nombres à droite, un terme qui traverse le signe change de signe — et
+ *      on GARDE le symbole (<, >, ⩽, ⩾) tel quel, sans y penser, jusqu'à
+ *      n'avoir plus qu'UN terme en x à gauche et UN nombre à droite : k·x ⋈ R.
+ *   2. Là, et là seulement, on regarde k, le nombre qui multiplie x. S'il est
+ *      positif, on garde le symbole ; s'il est négatif, on le retourne. Puis on
+ *      divise : −3x > 1 donne x < −1/3, et 2x ⩽ 8 donne x ⩽ 4.
  *
  * Deux moitiés, qui doivent dire la même chose :
  *
  *   • le panneau, où la résolution s'écrit ligne à ligne comme au tableau —
- *     un terme « vole » par-dessus le signe et change en cours de route, et,
- *     au moment de diviser par un négatif, le symbole d'inégalité se RETOURNE
- *     sous les yeux (< devient >) ;
+ *     un terme « vole » par-dessus le signe et change en cours de route, le
+ *     symbole ne bouge pas, et, une fois arrivé à k·x ⋈ R avec k négatif, le
+ *     symbole d'inégalité se RETOURNE sous les yeux (< devient >) ;
  *   • la droite graduée, qui JUSTIFIE ce retournement sans rien admettre : on
  *     arrive à −3x > 1, l'équation associée −3x = 1 donne une frontière qui
  *     coupe la droite en deux, et on teste un nombre de chaque côté. À gauche
@@ -24,9 +28,10 @@
  *
  * Deux exemples préréglés : 6 > 3x + 7 (les x sont à droite, on les ramène à
  * gauche : −3x > 1) et (4 − 5x)/2 + 7 > 13 (on isole la fraction, on multiplie
- * par 2 — positif, le sens ne bouge pas — puis −5x > 8). Le contraste est
- * voulu : multiplier ou diviser par un positif garde le sens, par un négatif
- * le retourne, et la figure le montre à chaque fois.
+ * par le dénominateur 2 — il est positif, le symbole reste — puis −5x > 8).
+ * Dans les deux cas, le nombre devant x est négatif à l'arrivée ; le préréglage
+ * 2x − 3 ⩽ 5 donne le contraste avec un nombre positif, où le symbole est
+ * gardé. La figure le montre à chaque fois.
  *
  * Les étapes règlent un état ABSOLU (panneau : nombre de lignes écrites ;
  * figure : avancement de la frontière, des deux tests, du trait solution) pour
@@ -39,15 +44,17 @@ MathsView.register({
   level: '2nde',
   category: 'algebre',
   exercices: ['inequations'],
-  theme: 'Algèbre — comme une équation, sauf quand on divise par un négatif',
+  theme: 'Algèbre — comme une équation ; à la fin, on regarde le nombre devant x',
   description:
     'Une inéquation se résout <strong>comme une équation</strong> : on regroupe les ' +
-    '<strong>x</strong> d\'un côté, les <strong>nombres</strong> de l\'autre, et un terme ' +
-    'qui change de côté change de signe.' +
-    '<br>La seule différence arrive à la dernière ligne. Pour une équation, ' +
-    '\\(2x=4\\) donne \\(x=2\\) et \\(-2x=4\\) donne \\(x=-2\\). Pour une inéquation, ' +
-    'diviser par un nombre <strong>négatif</strong> <strong>retourne le sens</strong> : ' +
-    '\\(-2x>4\\) donne \\(x<-2\\).' +
+    '<strong>x</strong> à gauche, les <strong>nombres</strong> à droite, un terme qui change ' +
+    'de côté change de signe — et on <strong>garde le symbole</strong> (&lt;, &gt;, ⩽, ⩾) ' +
+    'tel quel pendant tout le calcul.' +
+    '<br>On s\'arrête quand il ne reste qu\'<strong>un terme en \\(x\\) à gauche</strong> et ' +
+    '<strong>un nombre à droite</strong>, comme \\(-2x>4\\). Là, on regarde le nombre qui ' +
+    'multiplie \\(x\\) : s\'il est <strong>positif</strong>, on <strong>garde</strong> le symbole ; ' +
+    's\'il est <strong>négatif</strong>, on le <strong>retourne</strong>. Ici \\(-2\\) est ' +
+    'négatif : \\(-2x>4\\) donne \\(x<-2\\).' +
     '<br>La droite graduée le <strong>justifie</strong> : la frontière \\(-2x=4\\) coupe ' +
     'la droite en deux, et on teste un nombre de chaque côté — \\(x=-3\\) donne \\(6>4\\), ' +
     'vrai ; \\(x=0\\) donne \\(0>4\\), faux. Les solutions sont à gauche.' +
@@ -56,23 +63,30 @@ MathsView.register({
     '<strong>Déplace le point</strong> sur la droite pour tester d\'autres valeurs.',
   notes:
     '<ul>' +
-    '<li><strong>Même méthode qu\'une équation.</strong> On a le droit d\'ajouter ou de ' +
+    '<li><strong>Premier temps : comme une équation.</strong> On a le droit d\'ajouter ou de ' +
     'retrancher le même nombre aux deux membres : l\'ordre est conservé. C\'est ce qui ' +
-    'permet de « faire passer » un terme de l\'autre côté en changeant son signe.</li>' +
-    '<li><strong>Multiplier ou diviser par un nombre positif</strong> conserve aussi ' +
-    'l\'ordre : \\(2x\\leqslant 8\\) donne \\(x\\leqslant 4\\).</li>' +
-    '<li><strong>Multiplier ou diviser par un nombre négatif retourne l\'ordre.</strong> ' +
+    'permet de « faire passer » un terme de l\'autre côté en changeant son signe, en ' +
+    '<strong>gardant le symbole</strong> d\'inégalité tel quel. On continue jusqu\'à n\'avoir ' +
+    'plus qu\'<strong>un terme en \\(x\\) à gauche</strong> et <strong>un nombre à droite</strong> : ' +
+    '\\(-3x>1\\), \\(2x\\leqslant 8\\)…</li>' +
+    '<li><strong>Second temps : on regarde le nombre qui multiplie \\(x\\).</strong> ' +
+    'S\'il est <strong>positif</strong>, on <strong>garde</strong> le symbole : ' +
+    '\\(2x\\leqslant 8\\) donne \\(x\\leqslant 4\\). S\'il est <strong>négatif</strong>, on le ' +
+    '<strong>retourne</strong> : ' +
+    '$$-3x>1\\iff x<-\\dfrac{1}{3}\\qquad\\text{et}\\qquad -2x\\leqslant 4\\iff x\\geqslant -2.$$ ' +
+    'Puis on divise, comme pour une équation.</li>' +
+    '<li><strong>Pourquoi le symbole se retourne.</strong> ' +
     'Si \\(-x>5\\), les nombres qui conviennent sont \\(-6\\), \\(-10\\), \\(-100\\)… ' +
-    'tous plus petits que \\(-5\\) : donc \\(x<-5\\). En général : ' +
-    '$$-3x>1\\iff x<-\\dfrac{1}{3}\\qquad\\text{et}\\qquad -2x\\leqslant 4\\iff x\\geqslant -2.$$</li>' +
+    'tous plus petits que \\(-5\\) : donc \\(x<-5\\). Multiplier ou diviser par un nombre ' +
+    'négatif retourne l\'ordre ; par un nombre positif, il le conserve.</li>' +
     '<li><strong>Pourquoi la figure le confirme.</strong> L\'équation associée ' +
     '\\(-3x=1\\) donne la <strong>frontière</strong> \\(x=-\\frac13\\), qui coupe la droite ' +
     'en deux. De chaque côté, l\'inéquation est ou bien toujours vraie, ou bien toujours ' +
     'fausse : il suffit de <strong>tester un nombre de chaque côté</strong>.</li>' +
-    '<li><strong>Pour éviter le négatif.</strong> Dans \\(6>3x+7\\), on peut aussi ' +
-    'laisser les \\(x\\) à droite : \\(6-7>3x\\), soit \\(-1>3x\\), et diviser par 3 : ' +
-    '\\(-\\frac13>x\\), c\'est-à-dire \\(x<-\\frac13\\). Même réponse — il faut juste ' +
-    'savoir lire une inégalité dans les deux sens.</li>' +
+    '<li><strong>Et s\'il y a une fraction ?</strong> Dans \\(\\frac{4-5x}{2}+7>13\\), on ' +
+    'isole la fraction, puis on multiplie par le dénominateur \\(2\\) : il est positif, le ' +
+    'symbole reste. On arrive à \\(-5x>8\\), et c\'est seulement là qu\'on regarde le ' +
+    '\\(-5\\) : négatif, on retourne, \\(x<-1{,}6\\).</li>' +
     '<li><strong>La réponse est un intervalle.</strong> \\(x<-\\frac13\\) s\'écrit ' +
     '\\(S=\\left]-\\infty\\,;-\\frac13\\right[\\). Inégalité stricte : crochet ' +
     '<strong>ouvert</strong> ; inégalité large (\\(\\leqslant\\), \\(\\geqslant\\)) : ' +
@@ -117,17 +131,17 @@ MathsView.register({
       }
     }],
     points: [
-      'Une inéquation se résout <b>comme une équation</b> : les x d\'un côté, les nombres de l\'autre. Un terme qui change de côté change de signe.',
-      'Ajouter, retrancher un nombre, multiplier ou diviser par un nombre <b>positif</b> : le sens de l\'inégalité <b>ne change pas</b>.',
-      'Multiplier ou diviser par un nombre <b>négatif</b> : le sens <b>change</b>. < devient >, ⩽ devient ⩾.',
+      'Une inéquation se résout <b>comme une équation</b> : les x à gauche, les nombres à droite, un terme qui change de côté change de signe.',
+      'Pendant tout ce calcul, on <b>garde le symbole</b> (<, >, ⩽, ⩾) tel quel, jusqu\'à n\'avoir qu\'<b>un terme en x à gauche</b> et <b>un nombre à droite</b>.',
+      'Là, on regarde le <b>nombre qui multiplie x</b>. <b>Positif</b> : on garde le symbole. <b>Négatif</b> : on le <b>retourne</b> (< devient >, ⩽ devient ⩾). Puis on divise.',
       'Pourquoi : −x > 5 est vrai pour −6, −10, −100… tous plus petits que −5. Donc x < −5.',
       'Vérifier : la frontière est la solution de l\'équation associée ; on teste un nombre de chaque côté.',
       'La réponse s\'écrit en intervalle : x < −5 ⟺ x ∈ ]−∞ ; −5[. Stricte : crochet ouvert ; large : fermé.'
     ],
     exemples: [
-      '\\( 6 > 3x + 7 \\) → \\( -3x + 6 > 7 \\) → \\( -3x > 1 \\) → ÷ (−3), le sens change : \\( x < -\\tfrac{1}{3} \\), \\( S = \\;]-\\infty\\,;-\\tfrac{1}{3}[ \\).',
-      '\\( \\tfrac{4 - 5x}{2} + 7 > 13 \\) → \\( \\tfrac{4 - 5x}{2} > 6 \\) → \\( 4 - 5x > 12 \\) → \\( -5x > 8 \\) → \\( x < -1{,}6 \\).',
-      '\\( 2x - 3 \\leqslant 5 \\) → \\( 2x \\leqslant 8 \\) → on divise par 2, positif : \\( x \\leqslant 4 \\), \\( S = \\;]-\\infty\\,;4] \\).'
+      '\\( 6 > 3x + 7 \\) → \\( -3x + 6 > 7 \\) → \\( -3x > 1 \\) → devant x : −3, négatif, on retourne : \\( x < -\\tfrac{1}{3} \\), \\( S = \\;]-\\infty\\,;-\\tfrac{1}{3}[ \\).',
+      '\\( \\tfrac{4 - 5x}{2} + 7 > 13 \\) → \\( \\tfrac{4 - 5x}{2} > 6 \\) → \\( 4 - 5x > 12 \\) → \\( -5x > 8 \\) → −5 négatif, on retourne : \\( x < -1{,}6 \\).',
+      '\\( 2x - 3 \\leqslant 5 \\) → \\( 2x \\leqslant 8 \\) → devant x : 2, positif, on garde : \\( x \\leqslant 4 \\), \\( S = \\;]-\\infty\\,;4] \\).'
     ]
   },
 
@@ -290,15 +304,15 @@ MathsView.register({
           states.push({
             eqn: eqn(fracSide(p, q, n, 0, 'l'), side([{ k: k1, x: 0 }], 'r', true), rel),
             note: 'On isole la fraction : <b class="hot">' + signExpl(r) + '</b> traverse le signe et devient ' +
-                  '<b class="hot">' + signExpl(-r) + '</b> — comme pour une équation. On réduit : ' +
+                  '<b class="hot">' + signExpl(-r) + '</b> — comme pour une équation, en gardant le signe ' + RELH[rel] + '. On réduit : ' +
                   fmt(k0) + (r < 0 ? ' + ' : ' − ') + Math.abs(r) + ' = ' + fmt(k1) + '.',
             move: { side: 'l', role: 'const', start: signExpl(r), end: signExpl(-r), kind: 'add' }, rel: rel
           });
         }
         states.push({
           eqn: eqn(side([{ k: p, x: 0 }, { k: q, x: 1 }], 'l', true), side([{ k: n * k1, x: 0 }], 'r', true), rel),
-          note: 'Le <b class="hot">÷ ' + n + '</b> traverse le signe et devient <b class="hot">× ' + n + '</b>. ' +
-                'On multiplie par ' + n + ', un nombre <b>positif</b> : le sens de l\'inégalité <b>ne change pas</b>. ' +
+          note: 'Le <b class="hot">÷ ' + n + '</b> traverse le signe et devient <b class="hot">× ' + n + '</b> — comme pour une équation. ' +
+                'Le dénominateur ' + n + ' est <b>positif</b> : on garde le signe ' + RELH[rel] + '. ' +
                 n + ' × ' + paren(k1) + ' = ' + fmt(n * k1) + '.',
           move: { side: 'l', role: 'den', start: '÷ ' + n, end: '× ' + n, kind: 'mul' }, rel: rel
         });
@@ -314,7 +328,7 @@ MathsView.register({
         states.push({
           eqn: eqn(side([{ k: k, x: 1 }, { k: lc, x: 0 }], 'l', true), side([{ k: rc, x: 0 }], 'r', true), rel),
           note: 'Les <b>x</b> vont à gauche : <b class="hot">' + signExpl(rx, true) + '</b> traverse le signe et devient ' +
-                '<b class="hot">' + signExpl(-rx, true) + '</b> — exactement comme pour une équation.' +
+                '<b class="hot">' + signExpl(-rx, true) + '</b> — exactement comme pour une équation, en gardant le signe ' + RELH[rel] + '.' +
                 (lx !== 0 ? ' On réduit : ' + absX(lx) + (rx < 0 ? ' + ' : ' − ') + absX(rx) + ' = ' + absX(k) + '.' : ''),
           move: { side: 'r', role: 'x', start: signExpl(rx, true), end: signExpl(-rx, true), kind: 'add' }, rel: rel
         });
@@ -324,7 +338,8 @@ MathsView.register({
         states.push({
           eqn: eqn(side([{ k: k, x: 1 }], 'l', true), side([{ k: R, x: 0 }], 'r', true), rel),
           note: 'Les <b>nombres</b> vont à droite : <b class="hot">' + signExpl(lc) + '</b> traverse le signe et devient ' +
-                '<b class="hot">' + signExpl(-lc) + '</b>. On réduit : ' + fmt(rc) + (lc < 0 ? ' + ' : ' − ') + Math.abs(lc) + ' = ' + fmt(R) + '.',
+                '<b class="hot">' + signExpl(-lc) + '</b>, toujours en gardant le signe ' + RELH[rel] + '. On réduit : ' +
+                fmt(rc) + (lc < 0 ? ' + ' : ' − ') + Math.abs(lc) + ' = ' + fmt(R) + '.',
           move: { side: 'l', role: 'const', start: signExpl(lc), end: signExpl(-lc), kind: 'add' }, rel: rel
         });
       }
@@ -359,13 +374,14 @@ MathsView.register({
         var gauche = cmp(relSol, red.x0 - 1, red.x0);
         states.push({
           eqn: eqn(lhsX, valHtml(n0, d0), relSol, k < 0),
-          note: 'x n\'est pas seul : <b class="hot">× ' + kParen(k) + '</b> traverse le signe et devient <b class="hot">÷ ' + kParen(k) + '</b>. ' +
+          note: 'Il ne reste qu\'<b>un terme en x</b> à gauche et <b>un nombre</b> à droite : on regarde le nombre qui multiplie x. ' +
                 (k < 0
-                  ? 'On divise par un nombre <b class="hot">négatif</b> : le sens de l\'inégalité <b class="hot">change</b>, ' +
-                    RELH[rel] + ' devient ' + RELH[relSol] + '. La figure le confirme : les solutions sont ' +
-                    (gauche ? 'à gauche' : 'à droite') + ' de la frontière.'
-                  : 'On divise par un nombre <b>positif</b> : le sens <b>ne change pas</b>, ' +
-                    'et la figure est d\'accord : les solutions sont ' + (gauche ? 'à gauche' : 'à droite') + ' de la frontière.'),
+                  ? 'C\'est <b class="hot">' + fmt(k) + '</b>, un nombre <b class="hot">négatif</b> : on <b class="hot">retourne</b> le symbole, ' +
+                    RELH[rel] + ' devient ' + RELH[relSol] + '. '
+                  : 'C\'est <b>' + fmt(k) + '</b>, un nombre <b>positif</b> : on <b>garde</b> le symbole ' + RELH[rel] + '. ') +
+                'Puis <b class="hot">× ' + kParen(k) + '</b> traverse le signe et devient <b class="hot">÷ ' + kParen(k) + '</b>. ' +
+                'La figure ' + (k < 0 ? 'le confirme' : 'est d\'accord') + ' : les solutions sont ' +
+                (gauche ? 'à gauche' : 'à droite') + ' de la frontière.',
           move: { side: 'l', role: 'x', start: '× ' + kParen(k), end: '÷ ' + kParen(k), kind: 'div' },
           flip: k < 0, relOld: rel, rel: relSol
         });
@@ -373,7 +389,8 @@ MathsView.register({
       }
       states.push({
         eqn: '<span class="eq-eqn">S = ' + intervalle(relSol, valHtml(n0, d0).replace(/ <span class="eq-approx">.*<\/span>/, '')) + '</span>',
-        note: 'On écrit la réponse en intervalle. ' + (large(relSol)
+        note: (k === 1 ? 'x est déjà seul : le nombre devant x est 1, positif, on garde le symbole. ' : '') +
+              'On écrit la réponse en intervalle. ' + (large(relSol)
           ? 'Inégalité large : le crochet est <b>fermé</b> en ' + valTxt(n0, d0) + ', la frontière est solution.'
           : 'Inégalité stricte : le crochet est <b>ouvert</b> en ' + valTxt(n0, d0) + ', la frontière n\'est pas solution.'),
         final: true, rel: relSol
@@ -575,17 +592,17 @@ MathsView.register({
     });
     function capHaut() {
       if (red.k === 0) return vis.sol >= 1 ? (red.vrai ? 'Tous les nombres conviennent : S = ℝ.' : 'Aucun nombre ne convient : S = ∅.')
-                                           : 'On regroupe : les x à gauche, les nombres à droite.';
+                                           : 'Comme pour une équation : les x à gauche, les nombres à droite, et on garde le signe ' + RELH[rel] + '.';
       var gauche = okSide(-1);
       if (vis.sol > 0) return 'Les solutions sont <b style="color:' + C_OK + '">' + (gauche ? 'à gauche' : 'à droite') + '</b> de la frontière : ' +
                               '<b>x ' + RELH[red.relSol] + ' ' + valTxt(red.n0, red.d0) + '</b>. ' +
-                              (red.k < 0 ? 'Diviser par ' + fmt(red.k) + ' a bien <b style="color:' + C_NO + '">retourné le sens</b>.' :
-                               red.k === 1 ? 'x était déjà seul.' : 'Diviser par ' + fmt(red.k) + ' (positif) garde le sens.');
+                              (red.k < 0 ? 'Le nombre devant x, ' + fmt(red.k) + ', est négatif : le symbole s\'est bien <b style="color:' + C_NO + '">retourné</b>.' :
+                               red.k === 1 ? 'x était déjà seul.' : 'Le nombre devant x, ' + fmt(red.k) + ', est positif : le symbole est gardé.');
       if (vis.testR > 0) return 'À droite de la frontière : ' + (okSide(1) ? 'tous les nombres conviennent ✓' : 'aucun nombre ne convient ✗') + '.';
       if (vis.testL > 0) return 'À gauche de la frontière : ' + (gauche ? 'tous les nombres conviennent ✓' : 'aucun nombre ne convient ✗') + '.';
       if (vis.front > 0) return 'L\'équation associée <b>' + kxTxt(red.k) + ' = ' + fmt(red.R) + '</b> donne la <b style="color:' + C_F + '">frontière</b>, qui coupe la droite en deux.';
-      return reduitVu() ? 'Reste à diviser par ' + fmt(red.k) + '. Avant ça, regardons la droite graduée.'
-                        : 'On regroupe : les x à gauche, les nombres à droite — comme pour une équation.';
+      return reduitVu() ? 'Un terme en x à gauche, un nombre à droite : on va regarder le nombre devant x, ' + fmt(red.k) + '. Avant ça, la droite graduée.'
+                        : 'Comme pour une équation : les x à gauche, les nombres à droite, et on garde le signe ' + RELH[rel] + '.';
     }
     function capBas() {
       if (red.k === 0) return '';
@@ -705,6 +722,19 @@ MathsView.register({
 
     /* ---- Vol d'un terme par-dessus le signe --------------------------------- */
     function removeGhost() { if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost); ghost = null; }
+    // Le vol se joue en trois temps : le terme MONTE jusqu'au-dessus du signe
+    // (p < 0,35), y RESTE le temps de changer de signe — d'un coup de loupe,
+    // à l'arrêt, pour qu'on le voie (0,35 à 0,65) — puis REDESCEND à sa place
+    // sur la ligne suivante. Le changement de signe est ce qu'il faut voir :
+    // c'est pour ça qu'il se passe immobile, au sommet.
+    function volPos(p) {          // avancement le long du trajet, à l'arrêt au milieu
+      var u = p < 0.35 ? 0.5 * p / 0.35 : p > 0.65 ? 0.5 + 0.5 * (p - 0.65) / 0.35 : 0.5;
+      return 0.5 - 0.5 * Math.cos(Math.PI * u);   // départ et arrivée en douceur
+    }
+    function volLoupe(p) {        // le coup de loupe autour du changement de signe
+      if (p < 0.38 || p > 0.62) return 1;
+      return 1 + 0.35 * Math.sin(Math.PI * (p - 0.38) / 0.24);
+    }
     function flight(t, p) {
       var m = states[t].move;
       if (!m) return;
@@ -722,13 +752,15 @@ MathsView.register({
       var tgtX = 2 * eqCx - (srcX + tRect.width);     // symétrique par rapport au signe
       var tgtY = srcY + 44;                           // vers la ligne suivante
       if (!ghost) { ghost = document.createElement('div'); ghost.className = 'eq-ghost'; stageEl.appendChild(ghost); }
+      var u = volPos(p);
       ghost.innerHTML = p < 0.5 ? m.start : m.end;
       ghost.classList.toggle('eq-ghost-flip', p >= 0.5);
-      var x = srcX + (tgtX - srcX) * p;
-      var y = srcY + (tgtY - srcY) * p - 22 * Math.sin(Math.PI * p);
+      ghost.style.transform = 'scale(' + volLoupe(p).toFixed(3) + ')';
+      var x = srcX + (tgtX - srcX) * u;
+      var y = srcY + (tgtY - srcY) * u - 48 * Math.sin(Math.PI * u);   // le sommet flotte au-dessus du signe
       ghost.style.left = x + 'px';
       ghost.style.top = y + 'px';
-      srcTok.style.opacity = Math.max(0, 1 - 1.8 * p);
+      srcTok.style.opacity = Math.max(0, 1 - 3 * p);       // effacé avant le sommet
       noteEl.innerHTML = states[t].note;
     }
     function commit(t) {
@@ -741,8 +773,8 @@ MathsView.register({
     function animLine(t, p) {
       var st = states[t];
       if (st.flip) {
-        if (p < 0.55) { ensureLines(t - 1); flight(t, p / 0.55); }
-        else { removeGhost(); renderLines(t, (p - 0.55) / 0.45); noteEl.innerHTML = st.note; }
+        if (p < 0.7) { ensureLines(t - 1); flight(t, p / 0.7); }
+        else { removeGhost(); renderLines(t, (p - 0.7) / 0.3); noteEl.innerHTML = st.note; }
       } else if (st.move) { ensureLines(t - 1); flight(t, p); }
       else { ensureLines(t - 1); noteEl.innerHTML = st.note; }
     }
@@ -782,7 +814,9 @@ MathsView.register({
     function reset() { xv = clampX(Math.round(x0()) + 2); applyStage(-1, 0); }
     function buildSteps() {
       return plan.map(function (e, i) {
-        var dur = e.kind === 'test' ? 1500 : e.kind === 'front' ? 700 : (states[e.t].flip ? 1300 : 800);
+        // Un terme qui vole prend son temps (c'est là qu'on voit le signe changer) ;
+        // quand le symbole se retourne ensuite, la ligne dure encore un peu plus.
+        var st = states[e.t], dur = e.kind === 'test' ? 1500 : e.kind === 'front' ? 700 : st.flip ? 3400 : st.move ? 2400 : 800;
         return { dur: dur, step: function (p) { applyStage(i, p); }, after: function () { applyStage(i, 1); } };
       });
     }

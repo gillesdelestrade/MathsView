@@ -80,13 +80,15 @@
     if (k === 1) {
       etapes.push('\\(x\\) est déjà seul : \\(x ' + TEX[rel] + ' ' + texNb(R) + '\\).');
     } else if (k < 0) {
-      etapes.push('On divise les deux membres par \\(' + texNb(k) + '\\), un nombre <b>négatif</b> : ' +
-                  'le sens de l\'inégalité <b>change</b>, \\(' + TEX[rel] + '\\) devient \\(' + TEX[relSol] + '\\). ' +
+      etapes.push('Il ne reste qu\'un terme en \\(x\\) à gauche et un nombre à droite : on regarde le nombre qui multiplie \\(x\\). ' +
+                  'C\'est \\(' + texNb(k) + '\\), un nombre <b>négatif</b> : on <b>retourne</b> le symbole, ' +
+                  '\\(' + TEX[rel] + '\\) devient \\(' + TEX[relSol] + '\\), et on divise par \\(' + texNb(k) + '\\) : ' +
                   '\\(x ' + TEX[relSol] + ' \\dfrac{' + texNb(R) + '}{' + texNb(k) + '} = ' + x0Tex + '\\).');
       etapes.push(testCotes(k, R, rel, x0));
     } else {
-      etapes.push('On divise les deux membres par \\(' + k + '\\), un nombre <b>positif</b> : ' +
-                  'le sens ne change pas. \\(x ' + TEX[rel] + ' \\dfrac{' + texNb(R) + '}{' + k + '} = ' + x0Tex + '\\).');
+      etapes.push('Il ne reste qu\'un terme en \\(x\\) à gauche et un nombre à droite : on regarde le nombre qui multiplie \\(x\\). ' +
+                  'C\'est \\(' + k + '\\), un nombre <b>positif</b> : on <b>garde</b> le symbole \\(' + TEX[rel] + '\\), et on divise par \\(' + k + '\\) : ' +
+                  '\\(x ' + TEX[rel] + ' \\dfrac{' + texNb(R) + '}{' + k + '} = ' + x0Tex + '\\).');
     }
     etapes.push('Inégalité ' + (large(relSol) ? '<b>large</b> : crochet fermé en ' : '<b>stricte</b> : crochet ouvert en ') +
                 x0Txt + '. <b>\\(S = ' + S.tex + '\\)</b>');
@@ -95,8 +97,9 @@
 
   var CONSIGNE = 'Résous dans \\(\\mathbb{R}\\), puis donne l\'<strong>ensemble des solutions</strong>.';
   var INDICES = [
-    'Fais comme pour une équation : les \\(x\\) d\'un côté, les nombres de l\'autre.',
-    'Si tu divises par un nombre <b>négatif</b>, le sens de l\'inégalité change.',
+    'Fais comme pour une équation, en gardant le symbole : les \\(x\\) à gauche, les nombres à droite.',
+    'Quand il ne reste qu\'un terme en \\(x\\) à gauche et un nombre à droite, regarde le nombre devant \\(x\\) : ' +
+    '<b>positif</b>, on garde le symbole ; <b>négatif</b>, on le retourne.',
     'Vérifie avec un nombre de chaque côté de la frontière.'
   ];
 
@@ -188,8 +191,9 @@
       type: 'vraifaux',
       correct: a.ok ? 0 : 1,
       etapes: [(a.ok ? '<b>Vrai.</b> ' : '<b>Faux.</b> ') + a.d,
-               'Rappel : on résout une inéquation comme une équation, sauf qu\'en multipliant ou divisant par un ' +
-               'nombre <b>négatif</b>, le sens de l\'inégalité change.'],
+               'Rappel : on résout une inéquation comme une équation, en gardant le symbole ; quand il ne reste qu\'un ' +
+               'terme en \\(x\\) à gauche et un nombre à droite, on regarde le nombre devant \\(x\\) : ' +
+               '<b>négatif</b>, on retourne le symbole ; positif, on le garde.'],
       indices: ['Teste avec un nombre : par exemple \\(x = 0\\), ou \\(x = -10\\).'],
       duree: 40
     };
@@ -240,13 +244,13 @@
       etapes: [
         'La frontière est \\(' + texNb(x0) + '\\) : c\'est la solution de l\'équation associée. Dans chaque proposition, ' +
         '\\(' + kx(a) + ' ' + (b < 0 ? '- ' : '+ ') + Math.abs(b) + ' = ' + texNb(c) + '\\) donne bien \\(x = ' + texNb(x0) + '\\).',
-        'Reste le sens : on résout \\(' + vrai + '\\). \\(' + kx(a) + ' ' + TEX[relI] + ' ' + texNb(c - b) + '\\), puis on divise par \\(' +
-        texNb(a) + '\\)' + (a < 0 ? ', un nombre <b>négatif</b> : le sens change' : ', positif : le sens ne change pas') +
-        ' : \\(x ' + TEX[rel] + ' ' + texNb(x0) + '\\).',
+        'Reste le sens : on résout \\(' + vrai + '\\). \\(' + kx(a) + ' ' + TEX[relI] + ' ' + texNb(c - b) + '\\). Le nombre devant \\(x\\) est \\(' +
+        texNb(a) + '\\)' + (a < 0 ? ', <b>négatif</b> : on retourne le symbole' : ', <b>positif</b> : on garde le symbole') +
+        ', et on divise : \\(x ' + TEX[rel] + ' ' + texNb(x0) + '\\).',
         (large(rel) ? 'Inégalité large, crochet fermé' : 'Inégalité stricte, crochet ouvert') + ' : <b>\\(S = ' + S.tex + '\\)</b>.'
       ],
       indices: ['Résous chaque proposition, ou teste un nombre de l\'intervalle dans chacune.',
-                'Deux propositions ne diffèrent que par le sens : laquelle est retournée par une division par un négatif ?'],
+                'Deux propositions ne diffèrent que par le sens : dans laquelle le nombre devant \\(x\\) est-il négatif, ce qui retourne le symbole ?'],
       duree: 75
     };
   }
@@ -262,7 +266,7 @@
     var etapes = [
       'On isole la fraction : on ' + (r > 0 ? 'soustrait ' : 'ajoute ') + Math.abs(r) + ' aux deux membres. ' +
       '\\(\\dfrac{' + kxb(q, 0).replace(/^/, '') + (p < 0 ? ' - ' : ' + ') + Math.abs(p) + '}{' + n + '} ' + TEX[rel] + ' ' + texNb(k1) + '\\)',
-      'On multiplie les deux membres par \\(' + n + '\\), un nombre <b>positif</b> : le sens ne change pas. ' +
+      'On multiplie les deux membres par le dénominateur \\(' + n + '\\), un nombre <b>positif</b> : le symbole reste \\(' + TEX[rel] + '\\). ' +
       '\\(' + kxb(q, p) + ' ' + TEX[rel] + ' ' + texNb(n * k1) + '\\)',
       'Les nombres vont à droite : on ' + (p > 0 ? 'soustrait ' : 'ajoute ') + Math.abs(p) + '. \\(' +
       kx(q) + ' ' + TEX[rel] + ' ' + texNb(R) + '\\)'
