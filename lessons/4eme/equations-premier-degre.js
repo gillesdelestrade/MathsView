@@ -265,6 +265,19 @@ MathsView.register({
 
     /* ---- Vol d'un terme par-dessus le « = » ----------------------------- */
     function removeGhost() { if (ghost && ghost.parentNode) ghost.parentNode.removeChild(ghost); ghost = null; }
+    // Le vol se joue en trois temps : le terme MONTE jusqu'au-dessus du signe
+    // (p < 0,35), y RESTE le temps de changer de signe — d'un coup de loupe,
+    // à l'arrêt, pour qu'on le voie (0,35 à 0,65) — puis REDESCEND à sa place
+    // sur la ligne suivante. Le changement de signe est ce qu'il faut voir :
+    // c'est pour ça qu'il se passe immobile, au sommet.
+    function volPos(p) {          // avancement le long du trajet, à l'arrêt au milieu
+      var u = p < 0.35 ? 0.5 * p / 0.35 : p > 0.65 ? 0.5 + 0.5 * (p - 0.65) / 0.35 : 0.5;
+      return 0.5 - 0.5 * Math.cos(Math.PI * u);   // départ et arrivée en douceur
+    }
+    function volLoupe(p) {        // le coup de loupe autour du changement de signe
+      if (p < 0.38 || p > 0.62) return 1;
+      return 1 + 0.35 * Math.sin(Math.PI * (p - 0.38) / 0.24);
+    }
 
     function flight(t, p) {
       var mv2 = states[t].move;
@@ -288,13 +301,15 @@ MathsView.register({
         ghost.className = 'eq-ghost';
         stageEl.appendChild(ghost);
       }
+      var u = volPos(p);
       ghost.innerHTML = p < 0.5 ? mv2.start : mv2.end;
       ghost.classList.toggle('eq-ghost-flip', p >= 0.5);
-      var x = srcX + (tgtX - srcX) * p;
-      var y = srcY + (tgtY - srcY) * p - 22 * Math.sin(Math.PI * p);
+      ghost.style.transform = 'scale(' + volLoupe(p).toFixed(3) + ')';
+      var x = srcX + (tgtX - srcX) * u;
+      var y = srcY + (tgtY - srcY) * u - 48 * Math.sin(Math.PI * u);   // le sommet flotte au-dessus du signe
       ghost.style.left = x + 'px';
       ghost.style.top = y + 'px';
-      srcTok.style.opacity = Math.max(0, 1 - 1.8 * p);
+      srcTok.style.opacity = Math.max(0, 1 - 3 * p);       // effacé avant le sommet
       noteEl.innerHTML = states[t].note;
     }
 
@@ -315,7 +330,8 @@ MathsView.register({
       for (var t = 1; t < states.length; t++) {
         (function (t) {
           steps.push({
-            dur: states[t].move && states[t].move.kind === 'div' ? 900 : 800,
+            // Un terme qui vole prend son temps : c'est là qu'on voit le signe changer.
+            dur: states[t].move ? (states[t].move.kind === 'div' ? 2600 : 2400) : 800,
             step: function (p) {
               if (states[t].move) flight(t, p);
               else { noteEl.innerHTML = states[t].note; }

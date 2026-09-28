@@ -488,7 +488,10 @@ body {
 .eq-form { font-size: 1.05rem; color: var(--ink-soft); margin-bottom: .6rem; }
 .eq-form-txt { color: var(--ink); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
 
-.eq-stage { position: relative; padding: .3rem 0; overflow-x: auto; }
+/* overflow-x: auto rogne aussi en hauteur : la marge intérieure du haut, rendue
+   par la marge négative, laisse à la bulle qui vole la place de flotter au-dessus
+   de la première ligne sans décaler la mise en page. */
+.eq-stage { position: relative; padding: 2.4rem 0 .3rem; margin-top: -2.1rem; overflow-x: auto; }
 .eq-lines { display: flex; flex-direction: column; gap: .1rem; }
 .eq-line {
   font-size: 1.7rem; font-weight: 700; letter-spacing: .5px; padding: .2rem .3rem;
