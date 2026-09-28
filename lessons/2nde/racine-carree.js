@@ -36,6 +36,10 @@
  *
  * Chaque étape de l'animation règle un état ABSOLU (jamais un incrément) :
  * « Précédent » rejoue donc exactement la même figure.
+ *
+ * Les deux règles de calcul — √(a×b) = √a × √b et √(a/b) = √a / √b, jamais
+ * pour la somme — ne sont pas dans la figure : elles sont énoncées dans la
+ * description, les notes et la fiche, avec une vérification numérique.
  */
 MathsView.register({
   id: 'racine-carree',
@@ -56,6 +60,10 @@ MathsView.register({
     'racine carrée.' +
     '<br>Le curseur <strong>a</strong> fait ensuite tourner la chaîne ' +
     '\\( a \\to a^2 \\to \\sqrt{a^2} \\) et la compare à \\( |a| \\).' +
+    '<br>Deux règles de calcul à retenir, pour \\( a \\geqslant 0 \\) et \\( b \\geqslant 0 \\) : ' +
+    '<strong>\\( \\sqrt{a\\times b}=\\sqrt{a}\\times\\sqrt{b} \\)</strong> et, si \\( b\\neq0 \\), ' +
+    '<strong>\\( \\sqrt{\\tfrac{a}{b}}=\\tfrac{\\sqrt{a}}{\\sqrt{b}} \\)</strong>. ' +
+    'Rien de tel pour la somme : \\( \\sqrt{9+16}=5 \\) mais \\( \\sqrt{9}+\\sqrt{16}=7 \\).' +
     '<br><em>Le bouton <strong>▶ Animer</strong> déroule les sept étapes pas à pas ' +
     '(bouton <em>Suivante</em> ou barre espace).</em>',
   notes:
@@ -77,6 +85,16 @@ MathsView.register({
     '\\( \\sqrt{9}=3=|-3| \\). Pour \\( a=5 \\) : \\( \\sqrt{25}=5=|5| \\). La racine carrée ' +
     'd\'un carré redonne le nombre <em>sans son signe</em>. Écrire \\( \\sqrt{a^2}=a \\) est ' +
     'faux dès que \\( a \\) est négatif.</li>' +
+    '<li><strong>Produit et quotient.</strong> Pour \\( a \\geqslant 0 \\) et \\( b \\geqslant 0 \\) : ' +
+    '$$\\sqrt{a\\times b}=\\sqrt{a}\\times\\sqrt{b}\\qquad\\text{et, si } b\\neq0,\\qquad ' +
+    '\\sqrt{\\dfrac{a}{b}}=\\dfrac{\\sqrt{a}}{\\sqrt{b}}.$$ ' +
+    'Vérifie : \\( \\sqrt{9\\times16}=\\sqrt{144}=12 \\) et \\( \\sqrt{9}\\times\\sqrt{16}=3\\times4=12 \\) ; ' +
+    '\\( \\sqrt{\\tfrac{100}{4}}=\\sqrt{25}=5 \\) et \\( \\tfrac{\\sqrt{100}}{\\sqrt{4}}=\\tfrac{10}{2}=5 \\). ' +
+    'C\'est ce qui permet de <strong>simplifier</strong> : \\( \\sqrt{50}=\\sqrt{25\\times2}=\\sqrt{25}\\times\\sqrt{2}=5\\sqrt{2} \\), ' +
+    'et \\( \\sqrt{\\tfrac{9}{4}}=\\tfrac{3}{2} \\).</li>' +
+    '<li><strong>Pas pour la somme.</strong> \\( \\sqrt{9+16}=\\sqrt{25}=5 \\), alors que ' +
+    '\\( \\sqrt{9}+\\sqrt{16}=3+4=7 \\). La racine carrée d\'une somme ne se sépare pas — ' +
+    'pas plus que celle d\'une différence.</li>' +
     '<li><strong>Deux croissances.</strong> Sur \\( [0\\,;+\\infty[ \\), \\( x^2 \\) et ' +
     '\\( \\sqrt{x} \\) sont toutes deux croissantes : plus \\( x \\) est grand, plus son carré ' +
     'et sa racine le sont. Mais \\( x^2 \\) monte de plus en plus vite (\\( 5^2=25 \\)) et ' +
@@ -123,12 +141,14 @@ MathsView.register({
       '\\( \\sqrt{x} \\) n\'existe que pour x ⩾ 0 : un carré n\'est jamais négatif, donc aucun nombre négatif n\'a de racine carrée.',
       'Le tableau de \\( \\sqrt{x} \\) est le tableau de x² lu à l\'envers : 0 → 0, 1 → 1, 4 → 2, 9 → 3, 16 → 4, 25 → 5.',
       'Pour tout nombre a : \\( \\sqrt{a^2} = |a| \\). La racine carrée efface le signe.',
+      'Pour a ⩾ 0 et b ⩾ 0 : \\( \\sqrt{a \\times b} = \\sqrt{a} \\times \\sqrt{b} \\) et \\( \\sqrt{\\tfrac{a}{b}} = \\tfrac{\\sqrt{a}}{\\sqrt{b}} \\) (b ≠ 0). Jamais pour une somme.',
       'x² et \\( \\sqrt{x} \\) sont croissantes sur [0 ; +∞[ : x² monte de plus en plus vite, \\( \\sqrt{x} \\) de moins en moins vite.'
     ],
     exemples: [
       '\\( \\sqrt{9} = 3 \\) car 3 ⩾ 0 et 3² = 9. Pas −3 : la racine carrée est toujours positive.',
       '\\( \\sqrt{(-3)^2} = \\sqrt{9} = 3 = |-3| \\) ; \\( \\sqrt{5^2} = 5 \\) ; \\( \\sqrt{(-7)^2} = 7 \\).',
-      '\\( \\sqrt{2} \\approx 1{,}41 \\) (valeur exacte : \\( \\sqrt{2} \\)) ; \\( \\sqrt{-4} \\) n\'existe pas.'
+      '\\( \\sqrt{2} \\approx 1{,}41 \\) (valeur exacte : \\( \\sqrt{2} \\)) ; \\( \\sqrt{-4} \\) n\'existe pas.',
+      '\\( \\sqrt{50} = \\sqrt{25 \\times 2} = 5\\sqrt{2} \\) ; \\( \\sqrt{\\tfrac{9}{4}} = \\tfrac{3}{2} \\) ; mais \\( \\sqrt{9 + 16} = 5 \\neq 3 + 4 \\).'
     ]
   },
 
