@@ -142,6 +142,8 @@ MathsExos.catalogue = [
     chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'sym-centrale',   libelle: 'Symétrie centrale',        niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
+  { code: 'durees',         libelle: 'Convertir des durées',     niveau: '5eme',
+    chapitre: 'grandeurs-5e', prerequis: ['tables'] },
 
   /* --- 4ème -------------------------------------------------------------- */
   { code: 'eq1',       libelle: 'Équations du 1er degré', niveau: '4eme',
