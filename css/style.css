@@ -523,6 +523,10 @@ body {
 .eq-ghost.eq-ghost-flip { color: #b91c1c; border-color: #b91c1c; }
 
 .eq-entry input.ineq-saisie { width: 15rem; max-width: 100%; text-align: left; font-family: inherit; }
+.eq-entry input.duree-in { width: 4.6rem; }
+.eq-entry input.duree-s { width: 7rem; }
+.eq-entry .duree-unite { margin-right: .35rem; }
+.duree-division { display: block; width: fit-content; margin: .35rem 0 .2rem; padding: .35rem .7rem; font-size: .85rem; line-height: 1.25; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; }
 .eq-note { min-height: 1.3rem; margin-top: .5rem; font-size: .95rem; color: var(--ink); }
 .eq-note .hot { color: #dc2626; }
 
