@@ -522,6 +522,7 @@ body {
 }
 .eq-ghost.eq-ghost-flip { color: #b91c1c; border-color: #b91c1c; }
 
+.eq-entry input.ineq-saisie { width: 15rem; max-width: 100%; text-align: left; font-family: inherit; }
 .eq-note { min-height: 1.3rem; margin-top: .5rem; font-size: .95rem; color: var(--ink); }
 .eq-note .hot { color: #dc2626; }
 
