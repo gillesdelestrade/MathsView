@@ -29,6 +29,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: [] },
   { code: 'union-inter',  libelle: 'Union et intersection',     niveau: '2nde',
     chapitre: 'nombres', prerequis: ['intervalles'] },
+  { code: 'et-ou',        libelle: 'Inéquations reliées par « et » ou « ou »', niveau: '2nde',
+    chapitre: 'nombres', prerequis: ['intervalles', 'union-inter'] },
   { code: 'encadrement',  libelle: 'Encadrement décimal',       niveau: '2nde',
     chapitre: 'nombres', prerequis: ['ensembles'] },
   { code: 'val-abs',      libelle: 'Valeur absolue et distance', niveau: '2nde',
