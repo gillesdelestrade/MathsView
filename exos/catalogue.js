@@ -8,6 +8,11 @@
  *
  * `chapitre` sert au regroupement visuel et, plus tard, au déclenchement du
  * boss de fin de chapitre.
+ *
+ * `matiere` ('maths' par défaut, 'pc' pour la physique-chimie) range la
+ * compétence sous la bonne matière sur la page d'entraînement. Un code de
+ * chapitre de physique-chimie reprend les thèmes du programme : 'chimie',
+ * 'mouvement', 'energie', 'signaux' (voir CHAPITRES dans exercices.html).
  */
 MathsExos.catalogue = [
   /* --- Fonctions (2nde), branchées sur js/fonctions-base.js --------------- */

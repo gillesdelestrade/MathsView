@@ -153,6 +153,10 @@
                     '2nde': '2nde', '1ere': '1ère', 'terminale': 'Terminale' };
     var BADGE = { '6eme': 'n6', '5eme': 'n5', '4eme': 'n4', '3eme': 'n3',
                   '2nde': 'n2', '1ere': 'n1', 'terminale': 'nt' };
+    /* Les matières, dans l'ordre d'affichage. Une compétence du catalogue sans
+       champ `matiere` est en maths. Le titre de matière n'apparaît que si les
+       deux ont des entraînements. */
+    var MATIERES = { maths: 'Mathématiques', pc: 'Physique-Chimie' };
     /* Un code sans libellé s'affiche tel quel — « geometrie-5e » en titre de
        section. La table doit donc couvrir TOUS les codes du catalogue. */
     var CHAPITRES = {
@@ -163,7 +167,10 @@
       'calcul-5e': 'Calculs', litteral: 'Calcul littéral', algebre: 'Algèbre', geometrie: 'Géométrie',
       'geometrie-5e': 'Géométrie', 'geometrie-6e': 'Géométrie',
       'espace-5e': 'Géométrie dans l\'espace', 'grandeurs-5e': 'Grandeurs et mesures', vecteurs: 'Vecteurs',
-      'donnees-5e': 'Données et hasard'
+      'donnees-5e': 'Données et hasard',
+      /* physique-chimie : les thèmes du programme */
+      chimie: 'Matière et transformations', mouvement: 'Mouvement et interactions',
+      energie: 'Énergie et conversions', signaux: 'Ondes et signaux'
     };
     // L'état de la plante, de la graine à la fleur.
     var POUSSE = ['🌰', '🌱', '🌿', '🌷', '🌻'];
@@ -413,56 +420,64 @@
         });
       accueil.appendChild(g);
 
-      /* --- les entraînements ----------------------------------------- */
+      /* --- les entraînements, par matière puis par niveau --------------- */
       var gens = MathsExos.liste();
-      Object.keys(NIVEAUX).forEach(function (niv) {
-        var duNiveau = gens.filter(function (x) { return x.level === niv; });
-        if (!duNiveau.length) return;
+      function matiereDe(x) { return MathsExos.competence(x.competence).matiere || 'maths'; }
+      var matieres = Object.keys(MATIERES).filter(function (m) {
+        return gens.some(function (x) { return matiereDe(x) === m; });
+      });
+      matieres.forEach(function (mat) {
+        var gensMat = gens.filter(function (x) { return matiereDe(x) === mat; });
+        if (matieres.length > 1) accueil.appendChild(el('h2', 'home-matiere', esc(MATIERES[mat])));
+        Object.keys(NIVEAUX).forEach(function (niv) {
+          var duNiveau = gensMat.filter(function (x) { return x.level === niv; });
+          if (!duNiveau.length) return;
 
-        var t = el('h3', 'home-level',
-          '<span class="badge ' + BADGE[niv] + '">' + NIVEAUX[niv] + '</span>');
-        accueil.appendChild(t);
+          var t = el('h3', 'home-level',
+            '<span class="badge ' + BADGE[niv] + '">' + NIVEAUX[niv] + '</span>');
+          accueil.appendChild(t);
 
-        var chaps = [];
-        duNiveau.forEach(function (x) {
-          var c = MathsExos.competence(x.competence).chapitre || 'autres';
-          if (chaps.indexOf(c) < 0) chaps.push(c);
-        });
-        chaps.forEach(function (c) {
-          var dedans = duNiveau.filter(function (x) {
-            return (MathsExos.competence(x.competence).chapitre || 'autres') === c;
+          var chaps = [];
+          duNiveau.forEach(function (x) {
+            var c = MathsExos.competence(x.competence).chapitre || 'autres';
+            if (chaps.indexOf(c) < 0) chaps.push(c);
           });
-          var boss = MathsProgression.bossEtat(id, c);
-          var ct = el('div', 'home-cat', esc(CHAPITRES[c] || c) +
-            (dedans.length > 1
-              ? ' <button class="exo-mixte" data-chap="' + esc(c) + '">' +
-                'Série mixte (10 questions)</button>' : '') +
-            (boss.ouvert
-              ? ' <button class="exo-mixte boss" data-boss="' + esc(c) + '">🛡️ Boss' +
-                (boss.fait && boss.fait.reussi ? ' — chapitre validé ✓' : '') + '</button>'
-              : ' <span class="exo-boss-verrou" title="' +
-                esc('Il faut la ceinture verte partout : ' + boss.manque.join(', ')) +
-                '">🔒 boss</span>'));
-          accueil.appendChild(ct);
+          chaps.forEach(function (c) {
+            var dedans = duNiveau.filter(function (x) {
+              return (MathsExos.competence(x.competence).chapitre || 'autres') === c;
+            });
+            var boss = MathsProgression.bossEtat(id, c);
+            var ct = el('div', 'home-cat', esc(CHAPITRES[c] || c) +
+              (dedans.length > 1
+                ? ' <button class="exo-mixte" data-chap="' + esc(c) + '">' +
+                  'Série mixte (10 questions)</button>' : '') +
+              (boss.ouvert
+                ? ' <button class="exo-mixte boss" data-boss="' + esc(c) + '">🛡️ Boss' +
+                  (boss.fait && boss.fait.reussi ? ' — chapitre validé ✓' : '') + '</button>'
+                : ' <span class="exo-boss-verrou" title="' +
+                  esc('Il faut la ceinture verte partout : ' + boss.manque.join(', ')) +
+                  '">🔒 boss</span>'));
+            accueil.appendChild(ct);
 
-          var grille = el('div', 'cards-grid');
-          dedans.forEach(function (x) {
-            var m = MathsProgression.maitrise(id, x.competence);
-            var cei = MathsProgression.ceintureAffichee(m);
-            var carte = el('div', 'card exo-card');
-            carte.onclick = function () { location.hash = 'exo/' + x.id; };
-            carte.innerHTML =
-              '<span class="cat-chip calcul">' +
-                esc(MathsExos.competence(x.competence).libelle) + '</span>' +
-              '<h3>' + esc(x.titre) + '</h3>' +
-              '<p class="exo-paliers">' +
-                '<span class="exo-belt" style="background:' + cei.couleur +
-                  ';color:' + cei.encre + '">' + cei.nom + '</span> ' +
-                (m.tentatives ? Math.round(m.score) + '/100 · palier ' + m.palier
-                              : 'jamais travaillé') + '</p>';
-            grille.appendChild(carte);
+            var grille = el('div', 'cards-grid');
+            dedans.forEach(function (x) {
+              var m = MathsProgression.maitrise(id, x.competence);
+              var cei = MathsProgression.ceintureAffichee(m);
+              var carte = el('div', 'card exo-card');
+              carte.onclick = function () { location.hash = 'exo/' + x.id; };
+              carte.innerHTML =
+                '<span class="cat-chip calcul">' +
+                  esc(MathsExos.competence(x.competence).libelle) + '</span>' +
+                '<h3>' + esc(x.titre) + '</h3>' +
+                '<p class="exo-paliers">' +
+                  '<span class="exo-belt" style="background:' + cei.couleur +
+                    ';color:' + cei.encre + '">' + cei.nom + '</span> ' +
+                  (m.tentatives ? Math.round(m.score) + '/100 · palier ' + m.palier
+                                : 'jamais travaillé') + '</p>';
+              grille.appendChild(carte);
+            });
+            accueil.appendChild(grille);
           });
-          accueil.appendChild(grille);
         });
       });
 

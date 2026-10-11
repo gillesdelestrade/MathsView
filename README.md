@@ -82,7 +82,8 @@ cette notion »** qui mène droit à la série correspondante.
 | `id` | identifiant unique, sert d'adresse `#mon-id` |
 | `title`, `theme` | le titre, et la phrase de la carte d'accueil |
 | `level` | `'6eme'` … `'terminale'` — **doit correspondre au dossier** (un niveau inconnu fait disparaître la leçon du menu, avec un avertissement en console) |
-| `category` | `'calcul'`, `'algebre'`, `'geometrie'` ou `'analyse'` |
+| `matiere` | *(optionnel)* `'maths'` par défaut, `'pc'` pour la physique-chimie — voir ci-dessous |
+| `category` | en maths : `'calcul'`, `'algebre'`, `'geometrie'`, `'analyse'` ou `'donnees'` ; en physique-chimie : `'chimie'`, `'mouvement'`, `'energie'` ou `'signaux'` |
 | `subcategory` | libre — deux leçons qui écrivent la même chaîne se retrouvent groupées |
 | `exercices` | *(optionnel)* les identifiants de générateurs associés |
 | `description`, `notes` | HTML, formules LaTeX entre `\( … \)` |
@@ -92,6 +93,29 @@ cette notion »** qui mène droit à la série correspondante.
 
 3. Ajoute la balise `<script src="lessons/…/mon-fichier.js"></script>` dans `index.html`
    (l'ordre y est celui des cartes d'accueil, par niveau croissant).
+
+### Une seconde matière : la physique-chimie
+
+Le site ne montre qu'**une matière à la fois**. Les pastilles Maths / Physique-Chimie
+n'apparaissent en tête de la barre de filtres que lorsque les deux matières ont au moins
+une leçon ; chacune garde ses niveaux (pas de physique-chimie en 6ème), ses domaines et
+ses intercalaires de fiches. Une adresse directe `#id` vers une leçon de l'autre matière
+fait suivre le menu. Tout le reste — l'animateur, la fiche bristol, les exercices, la
+progression, le profil de l'élève — est commun.
+
+Une leçon de physique-chimie déclare `matiere: 'pc'`, vit dans `lessons/pc/<niveau>/`,
+et prend pour `category` l'un des thèmes du programme :
+
+| clé | thème |
+|---|---|
+| `chimie` | Organisation, constitution et transformations de la matière |
+| `mouvement` | Mouvement et interactions |
+| `energie` | L'énergie et ses conversions |
+| `signaux` | Des signaux pour observer et communiquer ; ondes et signaux |
+
+Ses générateurs d'exercices vont dans `exos/pc/<niveau>/`, et leur ligne de catalogue
+porte `matiere: 'pc'` avec un `chapitre` pris parmi ces mêmes clés : la page
+d'entraînement les range alors sous un titre « Physique-Chimie ».
 
 ### La fiche bristol à recopier
 
@@ -451,11 +475,14 @@ MathsView/
 │   └── dev.py              le site + le stockage en local, un seul processus
 ├── deploy/                 nginx, systemd, mise à jour par git, sauvegarde
 ├── vendor/                 JSXGraph + MathJax, en local
-├── lessons/<niveau>/       une leçon = un fichier
+├── lessons/
+│   ├── <niveau>/           une leçon de maths = un fichier
+│   └── pc/<niveau>/        les leçons de physique-chimie
 └── exos/
     ├── catalogue.js        les compétences et leurs prérequis
     ├── fonctions/          les générateurs branchés sur le pool
-    └── <niveau>/           les générateurs classiques
+    ├── <niveau>/           les générateurs classiques
+    └── pc/<niveau>/        les générateurs de physique-chimie
 ```
 
 `MathsView-Exercices-SPEC.md` est la spécification d'origine du module exercices : elle

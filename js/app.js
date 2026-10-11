@@ -11,7 +11,8 @@
   const registry = [];          // toutes les illustrations enregistrées
   let currentBoard = null;      // tableau JSXGraph actuellement affiché
   let activeFilter = 'all';     // 'all' ou une clé de LEVELS
-  let activeCat = 'all';        // 'all' ou une clé de CATEGORIES
+  let activeCat = 'all';        // 'all' ou une clé des domaines de la matière active
+  let activeMatiere = 'maths';  // une clé de MATIERES
   let cleanups = [];            // fonctions de nettoyage de la leçon courante
                                 // (ex. retirer un écouteur clavier), vidées au
                                 // changement de leçon par freeCurrentBoard().
@@ -45,22 +46,53 @@
     'analyse':   { label: 'Analyse' },
     'donnees':   { label: 'Données et hasard' }
   };
+  // Les matières. MathsView est né pour les maths ; la physique-chimie s'y
+  // range comme une SECONDE matière, avec ses propres domaines — les thèmes des
+  // programmes officiels, du collège au lycée — et ses propres niveaux (pas de
+  // physique-chimie en 6ème). Une leçon la déclare via `matiere: 'pc'` ; sans
+  // ce champ, elle est en maths, et les leçons existantes n'ont rien à changer.
+  // Le menu, les filtres et l'accueil ne montrent qu'une matière à la fois ;
+  // les pastilles Maths / Physique-Chimie n'apparaissent que si les deux ont
+  // au moins une leçon. L'ordre des clés est celui de ces pastilles.
+  const MATIERES = {
+    'maths': { label: 'Maths', categories: CATEGORIES, niveaux: Object.keys(LEVELS) },
+    'pc': {
+      label: 'Physique-Chimie',
+      categories: {
+        'chimie':    { label: 'Matière et transformations' },
+        'mouvement': { label: 'Mouvement et interactions' },
+        'energie':   { label: 'Énergie et conversions' },
+        'signaux':   { label: 'Ondes et signaux' }
+      },
+      niveaux: ['5eme', '4eme', '3eme', '2nde', '1ere', 'terminale']
+    }
+  };
+  const MATIERE_DEFAUT = 'maths';
+
   // Filet de sécurité : une leçon sans domaine connu atterrit ici (et la
   // console prévient) au lieu de disparaître du menu.
   const OTHER_CAT = 'autres';
   const OTHER_DEF = { label: 'Autres' };
 
-  function catKey(lesson) {
-    return CATEGORIES[lesson.category] ? lesson.category : OTHER_CAT;
+  function matKey(lesson) {
+    return MATIERES[lesson.matiere] ? lesson.matiere : MATIERE_DEFAUT;
   }
-  function catDef(key) { return CATEGORIES[key] || OTHER_DEF; }
+  // Les domaines d'une matière (ceux des maths pour une matière inconnue ou
+  // absente : c'est aussi ce que lit la fiche bristol pour ses intercalaires).
+  function domainesDe(matiere) {
+    return (MATIERES[matiere] || MATIERES[MATIERE_DEFAUT]).categories;
+  }
+  function catKey(lesson) {
+    return domainesDe(matKey(lesson))[lesson.category] ? lesson.category : OTHER_CAT;
+  }
+  function catDef(matiere, key) { return domainesDe(matiere)[key] || OTHER_DEF; }
 
   // Range une liste de leçons en [{ key, def, subs: [{ name, lessons }] }].
-  // Les domaines suivent l'ordre de CATEGORIES ; à l'intérieur, les leçons
-  // SANS sous-catégorie viennent d'abord, puis les sous-catégories dans leur
-  // ordre d'apparition dans le catalogue (index.html).
-  function groupByCategory(lessons) {
-    return Object.keys(CATEGORIES).concat(OTHER_CAT).map(key => {
+  // Les domaines suivent l'ordre de ceux de la matière ; à l'intérieur, les
+  // leçons SANS sous-catégorie viennent d'abord, puis les sous-catégories dans
+  // leur ordre d'apparition dans le catalogue (index.html).
+  function groupByCategory(lessons, matiere) {
+    return Object.keys(domainesDe(matiere)).concat(OTHER_CAT).map(key => {
       const inCat = lessons.filter(l => catKey(l) === key);
       if (!inCat.length) return null;
       const subs = [];
@@ -72,7 +104,7 @@
       });
       // Tri stable : seul le groupe « sans sous-catégorie » remonte en tête.
       subs.sort((a, b) => (a.name === '' ? -1 : b.name === '' ? 1 : 0));
-      return { key: key, def: catDef(key), subs: subs };
+      return { key: key, def: catDef(matiere, key), subs: subs };
     }).filter(Boolean);
   }
 
@@ -94,10 +126,23 @@
       console.warn('MathsView : niveau inconnu « ' + lesson.level + ' » pour', lesson.id,
                    '— attendu :', Object.keys(LEVELS).join(', '));
     }
+    // Une matière inconnue range la leçon en maths : on le dit.
+    if (lesson.matiere && !MATIERES[lesson.matiere]) {
+      console.warn('MathsView : matière inconnue « ' + lesson.matiere + ' » pour', lesson.id,
+                   '— attendu :', Object.keys(MATIERES).join(', '), '; rangée en maths');
+    }
+    const matiere = matKey(lesson);
+    // Un niveau que la matière n'a pas (la physique-chimie en 6ème) : la leçon
+    // s'affiche, mais aucune pastille de niveau ne permet de la filtrer.
+    if (LEVELS[lesson.level] && MATIERES[matiere].niveaux.indexOf(lesson.level) < 0) {
+      console.warn('MathsView : la matière « ' + matiere + ' » n\'a pas de niveau « ' +
+                   lesson.level + ' » pour', lesson.id);
+    }
     // Sans domaine reconnu la leçon reste visible, mais rangée dans « Autres ».
-    if (!CATEGORIES[lesson.category]) {
+    if (!domainesDe(matiere)[lesson.category]) {
       console.warn('MathsView : catégorie inconnue « ' + lesson.category + ' » pour', lesson.id,
-                   '— attendu :', Object.keys(CATEGORIES).join(', '));
+                   '(matière « ' + matiere + ' ») — attendu :',
+                   Object.keys(domainesDe(matiere)).join(', '));
     }
     registry.push(lesson);
   }
@@ -128,30 +173,63 @@
     return b;
   }
 
-  // Deux séries de pastilles : les niveaux, puis les domaines. Les deux
-  // filtres se combinent (ex. « 2de » + « Géométrie »).
+  // Les matières qui ont au moins une leçon, dans l'ordre de MATIERES.
+  function matieresPresentes() {
+    return Object.keys(MATIERES).filter(m => registry.some(l => matKey(l) === m));
+  }
+
+  // Changer de matière remet les domaines à « tous » (ils ne sont pas les
+  // mêmes) et lâche un niveau que la nouvelle matière n'a pas.
+  function choisirMatiere(m) {
+    if (!MATIERES[m] || m === activeMatiere) return;
+    activeMatiere = m;
+    activeCat = 'all';
+    if (activeFilter !== 'all' && MATIERES[m].niveaux.indexOf(activeFilter) < 0) activeFilter = 'all';
+    rebuildLists();
+  }
+
+  function separateur(box) {
+    const sep = document.createElement('span');
+    sep.className = 'filters-sep';
+    box.appendChild(sep);
+  }
+
+  // Trois séries de pastilles : la matière (seulement s'il y en a plusieurs),
+  // les niveaux de cette matière, puis ses domaines. Niveau et domaine se
+  // combinent (ex. « 2de » + « Géométrie »).
   function buildFilters() {
     const box = document.getElementById('filters');
     box.innerHTML = '';
 
-    // Dérivé de LEVELS : pas de liste de niveaux en double à maintenir.
+    const matieres = matieresPresentes();
+    if (matieres.length > 1) {
+      matieres.forEach(m => {
+        const b = chip(MATIERES[m].label, activeMatiere === m, () => choisirMatiere(m));
+        b.classList.add('matiere', m);
+        box.appendChild(b);
+      });
+      separateur(box);
+    }
+
+    // Dérivé de LEVELS et des niveaux de la matière : pas de liste de niveaux
+    // en double à maintenir.
     box.appendChild(chip('Tout', activeFilter === 'all',
       () => { activeFilter = 'all'; rebuildLists(); }));
     Object.keys(LEVELS).forEach(k => {
+      if (MATIERES[activeMatiere].niveaux.indexOf(k) < 0) return;
       box.appendChild(chip(LEVELS[k].short, activeFilter === k,
         () => { activeFilter = k; rebuildLists(); }));
     });
 
-    const sep = document.createElement('span');
-    sep.className = 'filters-sep';
-    box.appendChild(sep);
+    separateur(box);
 
     const all = chip('Tous domaines', activeCat === 'all',
       () => { activeCat = 'all'; rebuildLists(); });
     all.classList.add('cat');
     box.appendChild(all);
-    Object.keys(CATEGORIES).forEach(k => {
-      const b = chip(CATEGORIES[k].label, activeCat === k,
+    const domaines = domainesDe(activeMatiere);
+    Object.keys(domaines).forEach(k => {
+      const b = chip(domaines[k].label, activeCat === k,
         () => { activeCat = k; rebuildLists(); });
       b.classList.add('cat', k);
       box.appendChild(b);
@@ -161,12 +239,13 @@
   function visibleLessons() {
     const q = (document.getElementById('search').value || '').trim().toLowerCase();
     return registry.filter(l => {
+      const okMatiere = matKey(l) === activeMatiere;
       const okLevel = activeFilter === 'all' || l.level === activeFilter;
       const okCat = activeCat === 'all' || catKey(l) === activeCat;
       const hay = (l.title + ' ' + (l.theme || '') + ' ' + (l.subcategory || '') + ' ' +
-                   catDef(catKey(l)).label + ' ' + (l.description || '')).toLowerCase();
+                   catDef(matKey(l), catKey(l)).label + ' ' + (l.description || '')).toLowerCase();
       const okSearch = !q || hay.includes(q);
-      return okLevel && okCat && okSearch;
+      return okMatiere && okLevel && okCat && okSearch;
     });
   }
 
@@ -185,7 +264,7 @@
       title.textContent = LEVELS[levelKey].label;
       menu.appendChild(title);
 
-      groupByCategory(group).forEach(cat => {
+      groupByCategory(group, activeMatiere).forEach(cat => {
         const ct = document.createElement('div');
         ct.className = 'menu-cat';
         ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
@@ -237,7 +316,7 @@
         escapeHtml(LEVELS[levelKey].label) + '</span>';
       box.appendChild(lt);
 
-      groupByCategory(group).forEach(cat => {
+      groupByCategory(group, activeMatiere).forEach(cat => {
         const ct = document.createElement('div');
         ct.className = 'home-cat';
         ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
@@ -291,6 +370,9 @@
     if (!id) { showHome(); return; }
     const lesson = registry.find(l => l.id === id);
     if (!lesson) { showHome(); return; }
+    // Une adresse directe vers une leçon de l'autre matière (un lien, un
+    // favori) : le menu et les filtres la suivent.
+    choisirMatiere(matKey(lesson));
     openLesson(lesson);
   }
 
@@ -314,7 +396,7 @@
     const key = catKey(lesson);
     const chipEl = document.getElementById('lesson-cat');
     chipEl.className = 'cat-chip ' + key;
-    chipEl.textContent = catDef(key).label +
+    chipEl.textContent = catDef(matKey(lesson), key).label +
       (lesson.subcategory ? ' › ' + lesson.subcategory : '');
 
     document.getElementById('lesson-title').textContent = lesson.title;
@@ -610,9 +692,11 @@
   }
 
   /* --------------------------------------------------------------------- */
-  // `categories` et `niveaux` sont exposés en lecture pour les modules qui
-  // s'adossent au moteur (la fiche bristol lit l'ordre des domaines pour
-  // placer son intercalaire) : on ne les modifie pas de l'extérieur.
-  global.MathsView = { register, start, categories: CATEGORIES, niveaux: LEVELS };
+  // `categories`, `niveaux` et `matieres` sont exposés en lecture pour les
+  // modules qui s'adossent au moteur ; `domaines(matiere)` rend les domaines
+  // d'une matière (ceux des maths par défaut) : la fiche bristol y lit l'ordre
+  // des intercalaires. On ne les modifie pas de l'extérieur.
+  global.MathsView = { register, start, categories: CATEGORIES, niveaux: LEVELS,
+                       matieres: MATIERES, domaines: domainesDe };
 
 })(window);

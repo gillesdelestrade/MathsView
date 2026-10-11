@@ -8,7 +8,8 @@
  *
  * L'intercalaire (l'onglet en haut) prend la couleur du domaine de la leçon,
  * et sa POSITION LATÉRALE dépend du domaine : un cran par grand domaine, dans
- * l'ordre de `MathsView.categories` (Nombres et calculs tout à gauche, Données
+ * l'ordre des domaines de sa matière, `MathsView.domaines(lesson.matiere)`
+ * (en maths : Nombres et calculs tout à gauche, Données
  * et hasard tout à droite). Une fois rangées, les fiches d'un même domaine
  * s'alignent, comme les onglets d'un répertoire. Les autres emplacements sont
  * dessinés en pointillé, pour que l'élève voie où découper le sien.
@@ -60,6 +61,9 @@
     var row = el('div', 'fiche-onglets');
     keys.forEach(function (k, i) {
       var o = el('span', 'fiche-onglet' + (k === catKey ? ' actif' : ''), cats[k].label);
+      // Un libellé long (« Mouvement et interactions ») se serre un peu pour
+      // tenir dans l'onglet plein, écrit en capitales grasses.
+      if (cats[k].label.length > 20) o.className += ' long';
       o.style.left = (i * 100 / n) + '%';
       o.style.width = (100 / n) + '%';
       o.title = k === catKey ? 'L\'intercalaire de cette fiche' :
@@ -130,7 +134,9 @@
     if (!f) return;
 
     var mv = global.MathsView || {};
-    var cats = mv.categories || {};
+    // Les intercalaires sont ceux de la matière de la leçon : une fiche de
+    // physique-chimie se range avec les fiches de physique-chimie.
+    var cats = (mv.domaines ? mv.domaines(lesson.matiere) : mv.categories) || {};
     var niveaux = mv.niveaux || {};
     var catKey = cats[lesson.category] ? lesson.category : 'autres';
     var niveau = niveaux[lesson.level];

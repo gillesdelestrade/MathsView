@@ -25,6 +25,11 @@
   --cat-analyse: #0284c7;     --cat-analyse-soft: #e0f2fe;
   --cat-donnees: #ca8a04;     --cat-donnees-soft: #fef9c3;
   --cat-autres: #64748b;      --cat-autres-soft: #e2e8f0;
+  /* Les domaines de physique-chimie (les thèmes du programme). */
+  --cat-chimie: #7c3aed;      --cat-chimie-soft: #ede9fe;
+  --cat-mouvement: #2563eb;   --cat-mouvement-soft: #dbeafe;
+  --cat-energie: #d97706;     --cat-energie-soft: #fef3c7;
+  --cat-signaux: #0d9488;     --cat-signaux-soft: #ccfbf1;
   --border: #e2e8f0;
   --radius: 14px;
   --shadow: 0 1px 3px rgba(15,23,42,.08), 0 8px 24px rgba(15,23,42,.06);
@@ -75,7 +80,15 @@ body {
 }
 .filters button:hover { background: rgba(255,255,255,.12); }
 .filters button.active { background: #fff; color: #0f172a; border-color: #fff; }
-/* Petit trait entre la série « niveaux » et la série « domaines ». */
+/* Les pastilles de matière (Maths / Physique-Chimie), en tête de barre. Elles
+   n'apparaissent que si les deux matières ont au moins une leçon. */
+.filters button.matiere {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: .74rem;
+  letter-spacing: .04em;
+}
+/* Petit trait entre les séries « matière », « niveaux » et « domaines ». */
 .filters-sep {
   width: 1px;
   align-self: stretch;
@@ -98,6 +111,10 @@ body {
 .filters button.geometrie::before { background: var(--cat-geometrie); }
 .filters button.analyse::before { background: var(--cat-analyse); }
 .filters button.donnees::before { background: var(--cat-donnees); }
+.filters button.chimie::before { background: var(--cat-chimie); }
+.filters button.mouvement::before { background: var(--cat-mouvement); }
+.filters button.energie::before { background: var(--cat-energie); }
+.filters button.signaux::before { background: var(--cat-signaux); }
 
 /* ---------- Mise en page ---------- */
 .layout { display: flex; align-items: flex-start; }
@@ -176,6 +193,10 @@ body {
 .cat-dot.geometrie { background: var(--cat-geometrie); }
 .cat-dot.analyse { background: var(--cat-analyse); }
 .cat-dot.donnees { background: var(--cat-donnees); }
+.cat-dot.chimie { background: var(--cat-chimie); }
+.cat-dot.mouvement { background: var(--cat-mouvement); }
+.cat-dot.energie { background: var(--cat-energie); }
+.cat-dot.signaux { background: var(--cat-signaux); }
 
 .content { flex: 1; padding: 1.6rem 2rem; min-width: 0; }
 
@@ -196,6 +217,16 @@ body {
   border-bottom: 1px solid var(--border);
 }
 .home-level:first-child { margin-top: 0; }
+/* Sur la page d'entraînement, le titre d'une matière quand il y en a deux. */
+.home-matiere {
+  margin: 2rem 0 .2rem;
+  padding-bottom: .3rem;
+  border-bottom: 2px solid var(--line, #e2e8f0);
+  font-size: 1rem;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
 .home-cat {
   display: flex;
   align-items: center;
@@ -264,6 +295,10 @@ body {
 .cat-chip.geometrie { color: var(--cat-geometrie); background: var(--cat-geometrie-soft); }
 .cat-chip.analyse { color: var(--cat-analyse); background: var(--cat-analyse-soft); }
 .cat-chip.donnees { color: var(--cat-donnees); background: var(--cat-donnees-soft); }
+.cat-chip.chimie { color: var(--cat-chimie); background: var(--cat-chimie-soft); }
+.cat-chip.mouvement { color: var(--cat-mouvement); background: var(--cat-mouvement-soft); }
+.cat-chip.energie { color: var(--cat-energie); background: var(--cat-energie-soft); }
+.cat-chip.signaux { color: var(--cat-signaux); background: var(--cat-signaux-soft); }
 /* Sur une carte, la pastille est un bloc en tête, pas un élément en ligne. */
 .card .cat-chip { display: inline-block; margin-bottom: .15rem; }
 
@@ -2208,6 +2243,10 @@ body {
 .fiche.geometrie { --fc: var(--cat-geometrie); --fc-soft: var(--cat-geometrie-soft); }
 .fiche.analyse   { --fc: var(--cat-analyse);   --fc-soft: var(--cat-analyse-soft); }
 .fiche.donnees   { --fc: var(--cat-donnees);   --fc-soft: var(--cat-donnees-soft); }
+.fiche.chimie    { --fc: var(--cat-chimie);    --fc-soft: var(--cat-chimie-soft); }
+.fiche.mouvement { --fc: var(--cat-mouvement); --fc-soft: var(--cat-mouvement-soft); }
+.fiche.energie   { --fc: var(--cat-energie);   --fc-soft: var(--cat-energie-soft); }
+.fiche.signaux   { --fc: var(--cat-signaux);   --fc-soft: var(--cat-signaux-soft); }
 
 /* Les intercalaires : un emplacement par domaine, l'onglet plein pour le
    domaine de la fiche, les autres en pointillé (« à ne pas découper »). */
@@ -2225,6 +2264,8 @@ body {
   background: var(--fc); border-color: var(--fc); color: #fff;
   font-weight: 700; font-size: 8.5pt; text-transform: uppercase; letter-spacing: .06em;
 }
+/* Les thèmes de physique-chimie ont des libellés longs : plus serrés. */
+.fiche-onglet.actif.long { font-size: 7pt; letter-spacing: .01em; padding: 0 1mm; }
 
 /* La carte : fond bristol, quadrillage 5 mm très pâle, liseré du domaine. */
 .fiche-carte {

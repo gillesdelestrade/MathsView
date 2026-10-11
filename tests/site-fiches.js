@@ -125,13 +125,15 @@ function ko(m) { err.push(m); }
 var avecFiche = lecons.filter(function (l) { return l.fiche; });
 if (!avecFiche.length) ko('aucune leçon ne déclare de fiche');
 
-var domaines = Object.keys(MathsView.categories);
-if (domaines.length < 2) ko('MathsView.categories doit exposer les domaines');
+if (Object.keys(MathsView.categories).length < 2) ko('MathsView.categories doit exposer les domaines');
+if (typeof MathsView.domaines !== 'function') ko('MathsView.domaines(matiere) doit rendre les domaines d\'une matière');
 
 var LONGUEUR_MAX = 200;   // une phrase de fiche se recopie d'un trait
 
 avecFiche.forEach(function (l) {
   var f = l.fiche, nom = '« ' + l.id + ' »';
+  // Les intercalaires sont ceux de la matière de la leçon.
+  var domaines = Object.keys(MathsView.domaines(l.matiere));
   if (!Array.isArray(f.points) || f.points.length < 2) ko(nom + ' : il faut au moins deux phrases dans points');
   if (!Array.isArray(f.exemples) || !f.exemples.length) ko(nom + ' : il faut au moins un exemple');
   (f.points || []).forEach(function (p, i) {
@@ -166,6 +168,7 @@ var figuresDessinees = 0, objetsTotal = 0;
 
 avecFiche.forEach(function (l) {
   var nom = '« ' + l.id + ' »';
+  var domaines = Object.keys(MathsView.domaines(l.matiere));
   erreursConsole = [];
   try {
     MathsFiches.monte(l, ctx);
