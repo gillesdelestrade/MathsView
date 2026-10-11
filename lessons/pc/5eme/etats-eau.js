@@ -28,6 +28,7 @@ MathsView.register({
   matiere: 'pc',
   category: 'chimie',
   subcategory: 'États de la matière',
+  exercices: ['pc-etats-eau'],
   theme: 'Solide, liquide, gaz : les six changements d\'état, et la température qui fait un palier',
   description:
     'L\'eau existe sous <strong>trois états</strong> : la glace (solide), l\'eau liquide, la vapeur ' +

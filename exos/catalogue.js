@@ -172,5 +172,11 @@ MathsExos.catalogue = [
      Chapitre à part de celui de 2nde : un boss exige TOUTES les compétences de
      son chapitre, et une élève de troisième ne verra jamais celles du lycée. */
   { code: 'fn-affine', libelle: 'Fonction affine',        niveau: '3eme',
-    chapitre: 'fonctions-3e', prerequis: [] }
+    chapitre: 'fonctions-3e', prerequis: [] },
+
+  /* --- Physique-chimie (5ème) : la matière et ses transformations ------- */
+  { code: 'pc-melanges',  libelle: 'Mélanges homogènes et hétérogènes', niveau: '5eme',
+    chapitre: 'chimie', matiere: 'pc', prerequis: [] },
+  { code: 'pc-etats-eau', libelle: 'Les trois états de l\'eau',        niveau: '5eme',
+    chapitre: 'chimie', matiere: 'pc', prerequis: [] }
 ];

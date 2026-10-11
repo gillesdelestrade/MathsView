@@ -28,6 +28,7 @@ MathsView.register({
   matiere: 'pc',
   category: 'chimie',
   subcategory: 'Mélanges et solutions',
+  exercices: ['pc-melanges'],
   theme: 'Eau + sel, eau + huile, eau + sable : que voit-on après agitation, puis au repos ?',
   description:
     'Un bécher de <strong>100 mL d\'eau</strong>. Choisis ce que tu y verses et combien, puis ' +
