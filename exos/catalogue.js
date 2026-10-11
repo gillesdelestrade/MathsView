@@ -64,6 +64,10 @@ MathsExos.catalogue = [
   { code: 'vec-translation', libelle: 'La translation',         niveau: '2nde',
     chapitre: 'vecteurs', prerequis: ['vec-coord'] },
 
+  /* --- Géométrie plane (2nde) --------------------------------------------- */
+  { code: 'cercle-demi',  libelle: 'Triangle inscrit dans un demi-cercle', niveau: '2nde',
+    chapitre: 'geometrie', prerequis: ['pythagore'] },
+
   /* --- 6ème -------------------------------------------------------------- */
   { code: 'tables',       libelle: 'Tables de multiplication', niveau: '6eme',
     chapitre: 'calcul-mental', prerequis: [] },
