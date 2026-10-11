@@ -361,6 +361,14 @@ body {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
 }
+/* ---------- Mélanges (leçon de chimie) ---------- */
+.melange-choix { margin: .6rem 0 .2rem; }
+.melange-etapes { margin: .3rem 0 .5rem; padding-left: 1.3rem; }
+.melange-etapes li { margin: .3rem 0; color: var(--ink-soft); }
+.melange-etapes li.courante { color: var(--ink); }
+.melange-bilan { margin: .4rem 0 0; padding: .5rem .7rem; border-radius: 8px; font-size: .95rem; }
+.melange-bilan.homogene { background: #dcfce7; color: #166534; }
+.melange-bilan.heterogene { background: #ffedd5; color: #9a3412; }
 /* ---------- Tableau de conversion (leçon conversions) ---------- */
 .conv-ui { max-width: 640px; }
 .conv-types { display: flex; gap: .4rem; margin: 0 0 .8rem; flex-wrap: wrap; }

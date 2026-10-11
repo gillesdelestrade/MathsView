@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MathsView — Illustrations de cours de mathématiques</title>
+  <title>MathsView — Illustrations de cours de mathématiques et de physique-chimie</title>
   <link rel="stylesheet" href="vendor/jsxgraph.css">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/exos.css">
@@ -14,7 +14,7 @@
       <span class="logo">△</span>
       <div>
         <h1>MathsView</h1>
-        <p class="tagline">Illustrations interactives pour apprendre les maths</p>
+        <p class="tagline">Illustrations interactives pour apprendre les maths et la physique-chimie</p>
       </div>
     </div>
     <div class="filters" id="filters"></div>
@@ -32,8 +32,8 @@
       <section id="home" class="home">
         <h2>Bienvenue&nbsp;!</h2>
         <p>Choisis une illustration dans le menu de gauche pour explorer une notion de
-           mathématiques de façon interactive. Déplace les points, bouge les curseurs,
-           observe ce qui change.</p>
+           mathématiques ou de physique-chimie de façon interactive. Déplace les points,
+           bouge les curseurs, observe ce qui change.</p>
         <div id="cards" class="cards"></div>
       </section>
 
@@ -159,6 +159,9 @@
   <script src="lessons/2nde/fonctions-variations.js"></script>
   <script src="lessons/1ere/derivee-tangente.js"></script>
   <script src="lessons/1ere/cercle-trigonometrique.js"></script>
+
+  <!-- Physique-chimie (matiere: 'pc'), par niveau croissant -->
+  <script src="lessons/pc/5eme/melanges.js"></script>
 
   <script>
     MathsView.start();
