@@ -178,5 +178,11 @@ MathsExos.catalogue = [
   { code: 'pc-melanges',  libelle: 'Mélanges homogènes et hétérogènes', niveau: '5eme',
     chapitre: 'chimie', matiere: 'pc', prerequis: [] },
   { code: 'pc-etats-eau', libelle: 'Les trois états de l\'eau',        niveau: '5eme',
-    chapitre: 'chimie', matiere: 'pc', prerequis: [] }
+    chapitre: 'chimie', matiere: 'pc', prerequis: [] },
+  { code: 'pc-masse',     libelle: 'La masse et ses unités',            niveau: '5eme',
+    chapitre: 'chimie', matiere: 'pc', prerequis: [] },
+  { code: 'pc-volume',    libelle: 'Le volume et ses unités',           niveau: '5eme',
+    chapitre: 'chimie', matiere: 'pc', prerequis: [] },
+  { code: 'pc-masse-volumique', libelle: 'La masse volumique',          niveau: '5eme',
+    chapitre: 'chimie', matiere: 'pc', prerequis: ['pc-masse', 'pc-volume'] }
 ];
