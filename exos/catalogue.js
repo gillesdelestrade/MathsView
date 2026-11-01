@@ -72,6 +72,8 @@ MathsExos.catalogue = [
   /* --- Géométrie plane (2nde) --------------------------------------------- */
   { code: 'cercle-demi',  libelle: 'Triangle inscrit dans un demi-cercle', niveau: '2nde',
     chapitre: 'geometrie', prerequis: ['pythagore'] },
+  { code: 'angle-inscrit', libelle: 'Angle inscrit et angle au centre', niveau: '2nde',
+    chapitre: 'geometrie', prerequis: ['somme-angles'] },
 
   /* --- 6ème -------------------------------------------------------------- */
   { code: 'tables',       libelle: 'Tables de multiplication', niveau: '6eme',
