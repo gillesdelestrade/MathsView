@@ -52,6 +52,7 @@ MathsView.register({
   id: 'medianes-triangle',
   title: 'Les médianes d\'un triangle',
   level: '5eme',
+  rappels: ['2nde'],   // revue en seconde, telle quelle
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — médianes d\'un triangle et centre de gravité',

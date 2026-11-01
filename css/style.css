@@ -295,6 +295,11 @@ body {
 .cat-chip.geometrie { color: var(--cat-geometrie); background: var(--cat-geometrie-soft); }
 .cat-chip.analyse { color: var(--cat-analyse); background: var(--cat-analyse-soft); }
 .cat-chip.donnees { color: var(--cat-donnees); background: var(--cat-donnees-soft); }
+/* « Rappel en 2nde » : une leçon d'un niveau revue dans un autre. */
+.cat-chip.rappel { color: #92400e; background: #fef3c7; }
+.cat-chip.rappel[hidden] { display: none; }
+.menu-sub.rappel, .home-sub.rappel { color: #92400e; }
+.card.rappel { border-style: dashed; }
 .cat-chip.chimie { color: var(--cat-chimie); background: var(--cat-chimie-soft); }
 .cat-chip.mouvement { color: var(--cat-mouvement); background: var(--cat-mouvement-soft); }
 .cat-chip.energie { color: var(--cat-energie); background: var(--cat-energie-soft); }

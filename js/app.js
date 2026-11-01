@@ -87,23 +87,37 @@
   }
   function catDef(matiere, key) { return domainesDe(matiere)[key] || OTHER_DEF; }
 
+  // Une leçon vit dans son niveau, et peut être RAPPELÉE dans d'autres (une
+  // leçon de 5ème revue en 2nde) : elle y réapparaît telle quelle, rangée dans
+  // une rubrique « Rappels de 5ème », sans être dupliquée.
+  function rappelsDe(lesson) {
+    return Array.isArray(lesson.rappels) ? lesson.rappels.filter(k => LEVELS[k] && k !== lesson.level) : [];
+  }
+  function niveauxDe(lesson) { return [lesson.level].concat(rappelsDe(lesson)); }
+  function estRappel(lesson, levelKey) { return lesson.level !== levelKey; }
+  function nomRappel(lesson) { return 'Rappels de ' + (LEVELS[lesson.level] ? LEVELS[lesson.level].label : lesson.level); }
+
   // Range une liste de leçons en [{ key, def, subs: [{ name, lessons }] }].
   // Les domaines suivent l'ordre de ceux de la matière ; à l'intérieur, les
   // leçons SANS sous-catégorie viennent d'abord, puis les sous-catégories dans
-  // leur ordre d'apparition dans le catalogue (index.html).
-  function groupByCategory(lessons, matiere) {
+  // leur ordre d'apparition dans le catalogue (index.html), et enfin les
+  // rappels venus d'un autre niveau (« Rappels de 5ème »), quand `levelKey`
+  // est le niveau de la rubrique en cours.
+  function groupByCategory(lessons, matiere, levelKey) {
     return Object.keys(domainesDe(matiere)).concat(OTHER_CAT).map(key => {
       const inCat = lessons.filter(l => catKey(l) === key);
       if (!inCat.length) return null;
       const subs = [];
       inCat.forEach(l => {
-        const name = l.subcategory || '';
-        let sub = subs.find(s => s.name === name);
-        if (!sub) { sub = { name: name, lessons: [] }; subs.push(sub); }
+        const rappel = levelKey !== undefined && estRappel(l, levelKey);
+        const name = rappel ? nomRappel(l) : (l.subcategory || '');
+        let sub = subs.find(s => s.name === name && !!s.rappel === rappel);
+        if (!sub) { sub = { name: name, lessons: [], rappel: rappel }; subs.push(sub); }
         sub.lessons.push(l);
       });
-      // Tri stable : seul le groupe « sans sous-catégorie » remonte en tête.
-      subs.sort((a, b) => (a.name === '' ? -1 : b.name === '' ? 1 : 0));
+      // Tri stable : le groupe « sans sous-catégorie » en tête, les rappels en queue.
+      const rang = s => (s.rappel ? 2 : s.name === '' ? 0 : 1);
+      subs.sort((a, b) => rang(a) - rang(b));
       return { key: key, def: catDef(matiere, key), subs: subs };
     }).filter(Boolean);
   }
@@ -137,6 +151,17 @@
     if (LEVELS[lesson.level] && MATIERES[matiere].niveaux.indexOf(lesson.level) < 0) {
       console.warn('MathsView : la matière « ' + matiere + ' » n\'a pas de niveau « ' +
                    lesson.level + ' » pour', lesson.id);
+    }
+    // Un rappel vers un niveau inconnu, ou vers son propre niveau, ne ferait
+    // rien du tout : on le dit.
+    if (lesson.rappels !== undefined) {
+      const mauvais = Array.isArray(lesson.rappels)
+        ? lesson.rappels.filter(k => !LEVELS[k] || k === lesson.level) : [lesson.rappels];
+      if (mauvais.length) {
+        console.warn('MathsView : rappels ignorés pour', lesson.id, ':', mauvais.join(', '),
+                     '— attendu une liste de niveaux parmi', Object.keys(LEVELS).join(', '),
+                     'autres que « ' + lesson.level + ' »');
+      }
     }
     // Sans domaine reconnu la leçon reste visible, mais rangée dans « Autres ».
     if (!domainesDe(matiere)[lesson.category]) {
@@ -240,7 +265,7 @@
     const q = (document.getElementById('search').value || '').trim().toLowerCase();
     return registry.filter(l => {
       const okMatiere = matKey(l) === activeMatiere;
-      const okLevel = activeFilter === 'all' || l.level === activeFilter;
+      const okLevel = activeFilter === 'all' || niveauxDe(l).indexOf(activeFilter) >= 0;
       const okCat = activeCat === 'all' || catKey(l) === activeCat;
       const hay = (l.title + ' ' + (l.theme || '') + ' ' + (l.subcategory || '') + ' ' +
                    catDef(matKey(l), catKey(l)).label + ' ' + (l.description || '')).toLowerCase();
@@ -256,7 +281,10 @@
     const lessons = visibleLessons();
 
     Object.keys(LEVELS).forEach(levelKey => {
-      const group = lessons.filter(l => l.level === levelKey);
+      // Sous un filtre de niveau, seule la rubrique de ce niveau s'affiche : une
+      // leçon rappelée n'y est pas aussi listée dans sa propre classe.
+      if (activeFilter !== 'all' && levelKey !== activeFilter) return;
+      const group = lessons.filter(l => niveauxDe(l).indexOf(levelKey) >= 0);
       if (!group.length) return;
 
       const title = document.createElement('div');
@@ -264,7 +292,7 @@
       title.textContent = LEVELS[levelKey].label;
       menu.appendChild(title);
 
-      groupByCategory(group, activeMatiere).forEach(cat => {
+      groupByCategory(group, activeMatiere, levelKey).forEach(cat => {
         const ct = document.createElement('div');
         ct.className = 'menu-cat';
         ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
@@ -273,7 +301,7 @@
         cat.subs.forEach(sub => {
           if (sub.name) {
             const st = document.createElement('div');
-            st.className = 'menu-sub';
+            st.className = 'menu-sub' + (sub.rappel ? ' rappel' : '');
             st.textContent = sub.name;
             menu.appendChild(st);
           }
@@ -283,6 +311,7 @@
             a.href = '#' + l.id;
             a.dataset.id = l.id;
             if (sub.name) a.classList.add('deep');
+            if (sub.rappel) a.classList.add('rappel');
             menu.appendChild(a);
           });
         });
@@ -307,7 +336,10 @@
     const lessons = visibleLessons();
 
     Object.keys(LEVELS).forEach(levelKey => {
-      const group = lessons.filter(l => l.level === levelKey);
+      // Sous un filtre de niveau, seule la rubrique de ce niveau s'affiche : une
+      // leçon rappelée n'y est pas aussi listée dans sa propre classe.
+      if (activeFilter !== 'all' && levelKey !== activeFilter) return;
+      const group = lessons.filter(l => niveauxDe(l).indexOf(levelKey) >= 0);
       if (!group.length) return;
 
       const lt = document.createElement('h3');
@@ -316,7 +348,7 @@
         escapeHtml(LEVELS[levelKey].label) + '</span>';
       box.appendChild(lt);
 
-      groupByCategory(group, activeMatiere).forEach(cat => {
+      groupByCategory(group, activeMatiere, levelKey).forEach(cat => {
         const ct = document.createElement('div');
         ct.className = 'home-cat';
         ct.innerHTML = '<i class="cat-dot ' + cat.key + '"></i>' + escapeHtml(cat.def.label);
@@ -325,7 +357,7 @@
         cat.subs.forEach(sub => {
           if (sub.name) {
             const st = document.createElement('div');
-            st.className = 'home-sub';
+            st.className = 'home-sub' + (sub.rappel ? ' rappel' : '');
             st.textContent = sub.name;
             box.appendChild(st);
           }
@@ -333,7 +365,7 @@
           grid.className = 'cards-grid';
           sub.lessons.forEach(l => {
             const card = document.createElement('div');
-            card.className = 'card';
+            card.className = 'card' + (sub.rappel ? ' rappel' : '');
             card.onclick = () => { location.hash = l.id; };
             card.innerHTML =
               '<span class="cat-chip ' + cat.key + '">' + escapeHtml(cat.def.label) +
@@ -391,6 +423,13 @@
     const badge = document.getElementById('lesson-level');
     badge.textContent = LEVELS[lesson.level] ? LEVELS[lesson.level].label : lesson.level;
     badge.className = 'badge ' + (LEVELS[lesson.level] ? LEVELS[lesson.level].badge : '');
+    // Une leçon rappelée ailleurs le dit à côté de son niveau : « Rappel en 2nde ».
+    const rappelEl = document.getElementById('lesson-rappel');
+    if (rappelEl) {
+      const ou = rappelsDe(lesson).map(k => LEVELS[k].label);
+      rappelEl.textContent = ou.length ? 'Rappel en ' + ou.join(' et ') : '';
+      rappelEl.hidden = !ou.length;
+    }
 
     // Fil d'Ariane du domaine : « Géométrie › Vecteurs ».
     const key = catKey(lesson);

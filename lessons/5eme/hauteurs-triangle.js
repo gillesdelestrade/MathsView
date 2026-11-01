@@ -49,6 +49,7 @@ MathsView.register({
   id: 'hauteurs-triangle',
   title: 'Les hauteurs d\'un triangle',
   level: '5eme',
+  rappels: ['2nde'],   // revue en seconde, telle quelle
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — hauteurs d\'un triangle et orthocentre',

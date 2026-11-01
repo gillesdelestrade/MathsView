@@ -56,6 +56,7 @@ MathsView.register({
   id: 'mediatrices-triangle',
   title: 'Les médiatrices et le cercle circonscrit',
   level: '5eme',
+  rappels: ['2nde'],   // revue en seconde, telle quelle
   category: 'geometrie',
   subcategory: 'Figures planes',
   theme: 'Géométrie — médiatrices d\'un triangle et cercle circonscrit',
