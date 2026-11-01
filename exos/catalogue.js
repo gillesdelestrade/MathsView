@@ -132,6 +132,8 @@ MathsExos.catalogue = [
     chapitre: 'geometrie-5e', prerequis: ['somme-angles'] },
   { code: 'mediatrices',    libelle: 'Médiatrices et cercle circonscrit', niveau: '5eme',
     chapitre: 'geometrie-5e', prerequis: [] },
+  { code: 'bissectrices',   libelle: 'Bissectrices et cercle inscrit', niveau: '5eme',
+    chapitre: 'geometrie-5e', prerequis: [] },
   { code: 'substitution',   libelle: 'Calculer une expression littérale', niveau: '5eme',
     chapitre: 'calcul-5e', prerequis: ['priorites'] },
   { code: 'reperage',       libelle: 'Repérage dans le plan',    niveau: '5eme',

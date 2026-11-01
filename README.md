@@ -16,8 +16,8 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **78 leçons** (dont cinq de physique-chimie), **73 générateurs d'exercices** couvrant 73 compétences,
-dont **75 leçons mènent directement à un entraînement**.
+État actuel : **79 leçons** (dont cinq de physique-chimie), **74 générateurs d'exercices** couvrant 74 compétences,
+dont **76 leçons mènent directement à un entraînement**.
 
 Deux compétences échappent à ce régime : les **tables de multiplication** et les
 **additions jusqu'à 20**. Elles ne se comprennent pas, elles s'automatisent — et
@@ -86,6 +86,7 @@ cette notion »** qui mène droit à la série correspondante.
 | `category` | en maths : `'calcul'`, `'algebre'`, `'geometrie'`, `'analyse'` ou `'donnees'` ; en physique-chimie : `'chimie'`, `'mouvement'`, `'energie'` ou `'signaux'` |
 | `subcategory` | libre — deux leçons qui écrivent la même chaîne se retrouvent groupées |
 | `exercices` | *(optionnel)* les identifiants de générateurs associés |
+| `rappels` | *(optionnel)* d'autres niveaux où la leçon est **rappelée** telle quelle, ex. `['2nde']` pour une leçon de 5ème — voir ci-dessous |
 | `description`, `notes` | HTML, formules LaTeX entre `\( … \)` |
 | `board` | options du repère JSXGraph |
 | `setup(board, mv)` | le code qui construit la figure |
@@ -93,6 +94,17 @@ cette notion »** qui mène droit à la série correspondante.
 
 3. Ajoute la balise `<script src="lessons/…/mon-fichier.js"></script>` dans `index.html`
    (l'ordre y est celui des cartes d'accueil, par niveau croissant).
+
+### Une leçon rappelée dans un autre niveau
+
+Certaines notions de collège se revoient au lycée telles quelles : les hauteurs, les
+médianes, les médiatrices et les bissectrices d'un triangle (5ème) en seconde. Plutôt que de dupliquer le
+fichier, la leçon déclare `rappels: ['2nde']`. Elle reste une leçon de 5ème — même
+figure, même badge, mêmes exercices — mais elle réapparaît dans la rubrique de seconde,
+dans le menu comme à l'accueil, sous une sous-rubrique **« Rappels de 5ème »** placée
+après les leçons propres à la seconde. Le filtre « 2de » la montre, « 5e » aussi, et sa
+page affiche « Rappel en 2nde » à côté de son niveau. Un rappel vers un niveau inconnu
+ou vers son propre niveau est ignoré, et la console le dit.
 
 ### Une seconde matière : la physique-chimie
 
