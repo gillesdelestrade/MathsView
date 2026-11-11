@@ -44,6 +44,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: [] },
 
   /* --- Algèbre (2nde) ------------------------------------------------------ */
+  { code: 'eq-equivalentes', libelle: 'Équations équivalentes',  niveau: '2nde',
+    chapitre: 'algebre', prerequis: ['eq1'] },
   { code: 'eq-produit-nul', libelle: 'Équations produit nul',    niveau: '2nde',
     chapitre: 'algebre', prerequis: [] },
   { code: 'eq-quotient-nul', libelle: 'Équations quotient nul',  niveau: '2nde',

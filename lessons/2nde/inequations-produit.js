@@ -38,6 +38,7 @@ MathsView.register({
   title: 'Inéquations produit',
   level: '2nde',
   category: 'algebre',
+  subcategory: 'Inéquations',
   exercices: ['ineq-produit'],
   theme: 'Algèbre — le tableau de signes de (ax + b)(cx + d)',
   description:

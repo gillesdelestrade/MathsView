@@ -36,6 +36,7 @@ MathsView.register({
   title: 'Inéquations quotient',
   level: '2nde',
   category: 'algebre',
+  subcategory: 'Inéquations',
   exercices: ['ineq-quotient'],
   theme: 'Algèbre — le tableau de signes de (ax + b)/(cx + d), et la valeur interdite',
   description:

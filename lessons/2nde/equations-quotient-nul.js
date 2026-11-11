@@ -27,6 +27,7 @@ MathsView.register({
   title: 'Équations quotient nul',
   level: '2nde',
   category: 'algebre',
+  subcategory: 'Équations',
   exercices: ['eq-quotient-nul'],
   theme: 'Algèbre — (ax + b)/(cx + d) = 0 : numérateur nul, dénominateur non nul',
   description:

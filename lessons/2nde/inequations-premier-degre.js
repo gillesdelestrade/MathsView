@@ -43,6 +43,7 @@ MathsView.register({
   title: 'Inéquations du premier degré',
   level: '2nde',
   category: 'algebre',
+  subcategory: 'Inéquations',
   exercices: ['inequations'],
   theme: 'Algèbre — comme une équation ; à la fin, on regarde le nombre devant x',
   description:

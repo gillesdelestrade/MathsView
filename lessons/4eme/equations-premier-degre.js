@@ -19,6 +19,7 @@ MathsView.register({
   title: 'Équations du premier degré',
   level: '4eme',
   category: 'algebre',
+  rappels: ['2nde'],   // revue en seconde, entre « Équations équivalentes » et le produit nul
   exercices: ['eq1'],
   theme: 'Calcul littéral — résoudre a·x + b = c·x + d',
   description:

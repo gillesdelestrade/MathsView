@@ -16,8 +16,8 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **79 leçons** (dont cinq de physique-chimie), **74 générateurs d'exercices** couvrant 74 compétences,
-dont **76 leçons mènent directement à un entraînement**.
+État actuel : **80 leçons** (dont cinq de physique-chimie), **75 générateurs d'exercices** couvrant 75 compétences,
+dont **77 leçons mènent directement à un entraînement**.
 
 Deux compétences échappent à ce régime : les **tables de multiplication** et les
 **additions jusqu'à 20**. Elles ne se comprennent pas, elles s'automatisent — et
@@ -98,7 +98,8 @@ cette notion »** qui mène droit à la série correspondante.
 ### Une leçon rappelée dans un autre niveau
 
 Certaines notions de collège se revoient au lycée telles quelles : les hauteurs, les
-médianes, les médiatrices et les bissectrices d'un triangle (5ème) en seconde. Plutôt que de dupliquer le
+médianes, les médiatrices et les bissectrices d'un triangle (5ème) en seconde, ou les équations du
+premier degré (4ème), deuxième partie du chapitre « Équations » de seconde. Plutôt que de dupliquer le
 fichier, la leçon déclare `rappels: ['2nde']`. Elle reste une leçon de 5ème — même
 figure, même badge, mêmes exercices — mais elle réapparaît dans la rubrique de seconde,
 dans le menu comme à l'accueil, sous une sous-rubrique **« Rappels de 5ème »** placée
