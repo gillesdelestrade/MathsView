@@ -42,6 +42,8 @@ MathsExos.catalogue = [
     chapitre: 'nombres', prerequis: ['intervalles'] },
   { code: 'racines',      libelle: 'Racines carrées',           niveau: '2nde',
     chapitre: 'nombres', prerequis: [] },
+  { code: 'quotients-division', libelle: 'Inverse et division de quotients', niveau: '2nde',
+    chapitre: 'nombres', prerequis: ['fractions'] },
 
   /* --- Algèbre (2nde) ------------------------------------------------------ */
   { code: 'eq-equivalentes', libelle: 'Équations équivalentes',  niveau: '2nde',
