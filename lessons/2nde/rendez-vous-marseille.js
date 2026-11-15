@@ -27,13 +27,21 @@
  * marque le milieu du segment (elle est graduée) ; l'équerre trace la
  * perpendiculaire à un côté ou à une droite, par un point ; le compas trace
  * un cercle (centre, puis un point), dont le rayon est tracé et coté en
- * mètres, et peut garder son écartement. Chaque
+ * mètres, et peut garder son écartement ; le rapporteur (sommet, côté du
+ * zéro, direction) mesure un angle quand on vise un point, et trace sinon
+ * une demi-droite à l'angle voulu, au demi-degré près. Chaque
  * clic s'accroche aux sommets, aux milieux marqués et aux intersections des
  * tracés ; le point RDV aussi. De quoi construire : une médiane (règle sur
  * un côté → milieu, règle du sommet au milieu), une hauteur (équerre), une
  * médiatrice (deux cercles de même rayon, règle par leurs intersections),
  * une bissectrice (un cercle au sommet, deux cercles de même écartement sur
- * les côtés, règle).
+ * les côtés, règle — ou, au rapporteur, on mesure l'angle puis on en
+ * reporte la moitié).
+ *
+ * LES PIÈCES. Avec un profil choisi, un rendez-vous à trois étoiles rapporte
+ * 2 pièces, à deux étoiles 1 pièce, dans la limite de 6 pièces par jour
+ * civil (état du profil : jeux.rdv). Une ligne « jeu » est ajoutée au
+ * journal quand des pièces sont gagnées.
  *
  * Le triangle est tiré au hasard, mais pas n'importe comment : jamais
  * rectangle (aucun angle à moins de 10° de l'angle droit), ni trop plat,
@@ -62,11 +70,13 @@ MathsView.register({
     'sans le nommer : « à égale distance des points A, B et C », « à égale distance des ' +
     'côtés du triangle ».' +
     '<br>Tu as une <strong>règle graduée</strong> (elle trace la droite et marque le milieu), une ' +
-    '<strong>équerre</strong> (la perpendiculaire à un côté, par un point) et un <strong>compas</strong> ' +
-    '(qui peut garder son écartement) pour tracer sur le plan médianes, hauteurs, médiatrices ou bissectrices.' +
+    '<strong>équerre</strong> (la perpendiculaire à un côté, par un point), un <strong>compas</strong> ' +
+    '(qui peut garder son écartement) et un <strong>rapporteur</strong> (il mesure un angle, ou en reporte un) ' +
+    'pour tracer sur le plan médianes, hauteurs, médiatrices ou bissectrices.' +
     '<br><strong>Déplace ensuite le point RDV</strong> — il s\'accroche aux intersections de tes tracés — ' +
     'puis <strong>valide</strong> : le jeu mesure ton écart en mètres, montre la construction et te donne ' +
-    'jusqu\'à trois étoiles. Un <strong>indice</strong> coûte une étoile.',
+    'jusqu\'à trois étoiles. Un <strong>indice</strong> coûte une étoile. Avec un profil, trois étoiles rapportent ' +
+    '<strong>2 pièces</strong> et deux étoiles <strong>1 pièce</strong>, dans la limite de 6 pièces par jour.',
   notes:
     '<ul>' +
     '<li><strong>Centre de gravité G</strong> : point de concours des <strong>médianes</strong> ' +
@@ -462,6 +472,39 @@ MathsView.register({
     }
     function ajoute(action) { O.actions.push(action); recalculeAccroches(); }
 
+    // --- Le rapporteur -------------------------------------------------------
+    // Trois clics : le sommet, un point du côté de référence (le zéro), puis la
+    // direction. Si ce troisième clic s'accroche à un point, l'angle est MESURÉ
+    // tel quel ; sinon il est arrondi au demi-degré : on peut donc mesurer un
+    // angle (64°), puis en reporter la moitié (32°) pour tracer une bissectrice.
+    var R_RAP = 118;
+    function degres(v) { return fmt(Math.round(v * 10) / 10) + '°'; }
+    function directionRapporteur(brut) {
+      var a = O.attente, S = a.p, vise = accroche(brut), exact = vise !== brut && dist(vise, S) > 4, cible = exact ? vise : brut;
+      if (dist(cible, S) < 4) return null;
+      var a0 = Math.atan2(a.ref[1] - S[1], a.ref[0] - S[0]), a1 = Math.atan2(cible[1] - S[1], cible[0] - S[0]);
+      var delta = a1 - a0;
+      while (delta > Math.PI) delta -= 2 * Math.PI;
+      while (delta <= -Math.PI) delta += 2 * Math.PI;
+      var mes = Math.abs(delta) * 180 / Math.PI, sens = delta < 0 ? -1 : 1;
+      if (!exact) mes = Math.round(mes * 2) / 2;
+      return { mes: mes, a0: a0, sens: sens, ang: a0 + sens * mes * Math.PI / 180 };
+    }
+    function dessineAngle(S, d) {
+      var u = [Math.cos(d.ang), Math.sin(d.ang)], far = 2500;
+      var demi = board.create('segment', [S, [S[0] + u[0] * far, S[1] + u[1] * far]], { strokeColor: C_TRACE, strokeWidth: 1.6, fixed: true, highlight: false, layer: 6 });
+      demi.point1.setAttribute({ visible: false }); demi.point2.setAttribute({ visible: false });
+      demi.mvRole = 'trace-droite';
+      var xs = [], ys = [], n = Math.max(2, Math.ceil(d.mes / 4));
+      for (var i = 0; i <= n; i++) { var g = d.a0 + d.sens * d.mes * Math.PI / 180 * i / n; xs.push(S[0] + 46 * Math.cos(g)); ys.push(S[1] + 46 * Math.sin(g)); }
+      var arc = board.create('curve', [xs, ys], { strokeColor: '#b45309', strokeWidth: 2.2, fixed: true, highlight: false, layer: 6 });
+      arc.mvRole = 'trace-arc';
+      var mi = d.a0 + d.sens * d.mes * Math.PI / 360;
+      var cote = etiq(S[0] + 70 * Math.cos(mi), S[1] + 70 * Math.sin(mi), degres(d.mes), '#b45309', 11);
+      cote.mvRole = 'trace-angle';
+      return [demi, demi.point1, demi.point2, arc, cote];
+    }
+
     // L'aperçu : ce que donnerait le prochain clic, suivi à la souris.
     function apercuFin() { return O.souris ? accroche(O.souris) : (O.attente && O.attente.p) || [0, 0]; }
     var apA = pt(function () { return O.attente && O.attente.p ? O.attente.p[0] : 0; }, function () { return O.attente && O.attente.p ? O.attente.p[1] : 0; });
@@ -473,9 +516,41 @@ MathsView.register({
     var apD1 = pt(function () { return O.attente && O.attente.d ? O.attente.d.p[0] : 0; }, function () { return O.attente && O.attente.d ? O.attente.d.p[1] : 0; });
     var apD2 = pt(function () { return O.attente && O.attente.d ? O.attente.d.q[0] : 0; }, function () { return O.attente && O.attente.d ? O.attente.d.q[1] : 0; });
     var AP_DRO = board.create('line', [apD1, apD2], { strokeColor: '#f59e0b', strokeWidth: 5, strokeOpacity: 0.55, fixed: true, highlight: false, layer: 4, visible: false });
+    // l'aperçu du rapporteur : son cercle gradué, la ligne du zéro, la demi-droite visée
+    function rapS() { return O.attente && O.attente.ref ? O.attente.p : [0, 0]; }
+    function rapA0() { var a = O.attente; return a && a.ref ? Math.atan2(a.ref[1] - a.p[1], a.ref[0] - a.p[0]) : 0; }
+    function rapDir() { var a = O.attente; return a && a.ref && O.souris ? directionRapporteur(O.souris) : null; }
+    var rapCentre = pt(function () { return rapS()[0]; }, function () { return rapS()[1]; });
+    var RAP_CER = board.create('circle', [rapCentre, R_RAP], { strokeColor: '#b45309', strokeWidth: 1.5, fillColor: '#fef3c7', fillOpacity: 0.35, fixed: true, highlight: false, layer: 4, visible: false });
+    var RAP_GRAD = board.create('curve', [[0], [0]], { strokeColor: '#b45309', strokeWidth: 1.2, fixed: true, highlight: false, layer: 5, visible: false });
+    RAP_GRAD.updateDataArray = function () {
+      var S = rapS(), a0 = rapA0(), xs = [], ys = [];
+      for (var k = 0; k < 72; k++) {
+        var g = a0 + k * 5 * Math.PI / 180, r1 = k % 6 === 0 ? R_RAP - 20 : k % 2 === 0 ? R_RAP - 12 : R_RAP - 6;
+        xs.push(S[0] + r1 * Math.cos(g), S[0] + R_RAP * Math.cos(g), NaN); ys.push(S[1] + r1 * Math.sin(g), S[1] + R_RAP * Math.sin(g), NaN);
+      }
+      // la ligne du zéro, jusqu'au centre
+      xs.push(S[0], S[0] + (R_RAP + 14) * Math.cos(a0)); ys.push(S[1], S[1] + (R_RAP + 14) * Math.sin(a0));
+      this.dataX = xs; this.dataY = ys;
+    };
+    var RAP_NB = [];
+    for (var kk = -5; kk <= 6; kk++) (function (k) {
+      RAP_NB.push(board.create('text', [function () { return rapS()[0] + (R_RAP - 32) * Math.cos(rapA0() + k * Math.PI / 6); },
+                                        function () { return rapS()[1] + (R_RAP - 32) * Math.sin(rapA0() + k * Math.PI / 6); }, String(Math.abs(k) * 30)],
+        { anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: '#92400e', cssStyle: 'font-weight:700', fixed: true, highlight: false, layer: 5, visible: false }));
+    })(kk);
+    var rapBout = pt(function () { var d = rapDir(), S = rapS(); return d ? S[0] + (R_RAP + 40) * Math.cos(d.ang) : S[0]; },
+                     function () { var d = rapDir(), S = rapS(); return d ? S[1] + (R_RAP + 40) * Math.sin(d.ang) : S[1]; });
+    var RAP_RAY = board.create('segment', [rapCentre, rapBout], { strokeColor: C_TRACE, strokeWidth: 1.6, dash: 2, fixed: true, highlight: false, layer: 7, visible: false });
+    var RAP_LU = etiq(function () { var d = rapDir(), S = rapS(); return d ? S[0] + (R_RAP + 58) * Math.cos(d.ang) : S[0]; },
+                      function () { var d = rapDir(), S = rapS(); return d ? S[1] + (R_RAP + 58) * Math.sin(d.ang) : S[1]; },
+                      function () { var d = rapDir(); return d ? degres(d.mes) : ''; }, '#b45309', 13);
     function refreshOutils() {
       var a = O.attente, actif = E.phase === 'jeu';
-      show(AP_SEG, actif && O.outil === 'regle' && a && O.souris);
+      var rap = actif && O.outil === 'rapporteur' && a && a.ref;
+      show(RAP_CER, rap); show(RAP_GRAD, rap); RAP_NB.forEach(function (t) { show(t, rap); });
+      show(RAP_RAY, rap && O.souris && rapDir()); show(RAP_LU, rap && O.souris && rapDir());
+      show(AP_SEG, actif && (O.outil === 'regle' || (O.outil === 'rapporteur' && a && !a.ref)) && a && O.souris);
       show(AP_CER, actif && O.outil === 'compas' && a && O.souris);
       show(AP_DRO, actif && O.outil === 'equerre' && a);
     }
@@ -484,7 +559,8 @@ MathsView.register({
       main: 'Déplace le point RDV : il s\'accroche aux intersections de tes tracés.',
       regle: 'Règle : clique deux points. Elle trace la droite et marque le <b>milieu</b> du segment.',
       equerre: 'Équerre : clique un côté ou une droite, puis le point par où doit passer la <b>perpendiculaire</b>.',
-      compas: 'Compas : clique le centre, puis un point pour fixer l\'écartement. Le <b>rayon</b> s\'affiche en mètres.'
+      compas: 'Compas : clique le centre, puis un point pour fixer l\'écartement. Le <b>rayon</b> s\'affiche en mètres.',
+      rapporteur: 'Rapporteur : clique le <b>sommet</b> de l\'angle, puis un point du côté qui sert de zéro.'
     };
     function consigne() {
       if (O.message) return O.message;
@@ -492,6 +568,8 @@ MathsView.register({
       if (O.outil === 'equerre' && O.attente) return 'Équerre : clique maintenant le point par où passe la perpendiculaire.';
       if (O.outil === 'compas' && O.memeEcart && O.ecart) return 'Compas, même écartement (' + Math.round(O.ecart * E.carte.mpp) + ' m) : clique un centre.';
       if (O.outil === 'compas' && O.attente) return 'Compas : clique un point pour fixer l\'écartement.';
+      if (O.outil === 'rapporteur' && O.attente && O.attente.ref) return 'Rapporteur : vise la direction voulue et clique. Sur un point, l\'angle est <b>mesuré</b> ; ailleurs, il se règle au demi-degré.';
+      if (O.outil === 'rapporteur' && O.attente) return 'Rapporteur : clique un point du côté qui sert de zéro.';
       return CONSIGNES[O.outil];
     }
 
@@ -526,6 +604,17 @@ MathsView.register({
           O.ecart = dist(a.p, p);
           ajoute({ objs: [{ t: 'c', c: a.p, r: O.ecart }], marques: [], jsx: dessineCercle(a.p, O.ecart, p) });
           O.attente = null;
+        }
+      } else if (O.outil === 'rapporteur') {
+        if (!a) O.attente = { p: p };
+        else if (!a.ref) { if (dist(a.p, p) < 4) O.message = 'Le côté du zéro doit partir du sommet vers un autre point.'; else O.attente = { p: a.p, ref: p }; }
+        else {
+          var dr = directionRapporteur(brut);
+          if (!dr || dr.mes < 0.5) O.message = 'Vise une direction différente du zéro.';
+          else {
+            ajoute({ objs: [{ t: 'd', p: a.p, q: [a.p[0] + 100 * Math.cos(dr.ang), a.p[1] + 100 * Math.sin(dr.ang)] }], marques: [], jsx: dessineAngle(a.p, dr), angle: dr.mes });
+            O.attente = null;
+          }
         }
       }
       majOutils();
@@ -562,7 +651,7 @@ MathsView.register({
 
     // La barre d'outils.
     var barre = el('div', 'rdv-outils', 'display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.1rem 0 .4rem;max-width:640px');
-    var OUTILS = [['main', '✋ Déplacer RDV'], ['regle', '📏 Règle graduée'], ['equerre', '📐 Équerre'], ['compas', '⭕ Compas']];
+    var OUTILS = [['main', '✋ Déplacer RDV'], ['regle', '📏 Règle graduée'], ['equerre', '📐 Équerre'], ['compas', '⭕ Compas'], ['rapporteur', '∡ Rapporteur']];
     var boutons = OUTILS.map(function (o) {
       var b = el('button', 'ineq-preset rdv-outil'); b.type = 'button'; b.textContent = o[1];
       b.onclick = function () { choisir(o[0]); };
@@ -607,6 +696,11 @@ MathsView.register({
         '<p style="margin:.3rem 0">Il fallait trouver <b style="color:' + P.col + '">' + P.nom + '</b>, point de concours des <b>' + P.droites + '</b>' +
           (E.formule.nomme ? '' : (E.formule.cle === 'O' ? ' : c\'est lui qui est à égale distance des trois sommets — le cercle circonscrit passe par A, B et C'
                                                          : ' : c\'est lui qui est à égale distance des trois côtés — le cercle inscrit touche chaque côté')) + '.</p>' +
+        '<p class="rdv-pieces" style="margin:.3rem 0;font-weight:700;color:#b45309">' +
+          (!v.gain.profil ? 'Choisis un profil (en haut de la page) pour gagner des pièces.'
+           : v.gain.pieces ? '+' + v.gain.pieces + ' pièce' + (v.gain.pieces > 1 ? 's' : '') + ' 🪙 (' + v.gain.duJour + ' sur ' + PLAFOND_JOUR + ' aujourd\'hui)'
+           : v.gain.plafond ? 'Plafond du jour atteint (' + PLAFOND_JOUR + ' pièces) : reviens demain pour en gagner d\'autres.'
+           : 'Pas de pièce cette fois : il en faut deux étoiles pour une pièce, trois pour deux.') + '</p>' +
         (v.confusion ? '<p style="margin:.3rem 0;color:' + C_NO + '">Ton point est plus près de <b>' + POINTS[v.confusion].nom + '</b> : tu as peut-être tracé les <b>' +
                        POINTS[v.confusion].droites + '</b> au lieu des <b>' + P.droites + '</b>.</p>' : '');
     }
@@ -625,6 +719,24 @@ MathsView.register({
       ancreNoms(); O.outil = 'main'; effacerTout();
       render(); board.update();
     }
+    // LES PIÈCES. Deux pour un rendez-vous à trois étoiles, une pour deux étoiles, rien
+    // en dessous — et pas plus de PLAFOND_JOUR pièces par jour civil : le jeu récompense
+    // la construction soignée, il n'enrichit pas. Sans profil choisi, on joue pour l'honneur.
+    var PLAFOND_JOUR = 6;
+    function jourCivil() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+    function crediter(etoiles) {
+      var P = typeof MathsProfils !== 'undefined' ? MathsProfils : null, id = P && P.courant ? P.courant() : null;
+      if (!id) return { pieces: 0, profil: false };
+      var e = P.etat(id), jeux = e.jeux || {}, j = jeux.rdv || { jour: '', pieces: 0, missions: 0 };
+      if (j.jour !== jourCivil()) { j.jour = jourCivil(); j.pieces = 0; }
+      var voulu = etoiles === 3 ? 2 : etoiles === 2 ? 1 : 0, gain = Math.max(0, Math.min(voulu, PLAFOND_JOUR - j.pieces));
+      j.pieces += gain; j.missions = (j.missions || 0) + 1;
+      jeux.rdv = j; e.jeux = jeux; e.pieces = (e.pieces || 0) + gain;
+      P.setEtat(id, e);
+      if (gain) P.ajouteJournal(id, { t: Date.now(), type: 'jeu', jeu: 'rendez-vous-marseille', etoiles: etoiles, pieces: gain });
+      if (typeof MathsBandeau !== 'undefined' && MathsBandeau.maj) MathsBandeau.maj();
+      return { pieces: gain, profil: true, plafond: voulu > gain, duJour: j.pieces };
+    }
     function valider() {
       if (E.phase !== 'jeu') return;
       var d = dist(E.rdv, cible()), rel = d / E.K.L;
@@ -637,7 +749,7 @@ MathsView.register({
         var dk = dist(E.rdv, E.K[k]);
         if (dk < best && dk <= 0.08 * E.K.L) { best = dk; confusion = k; }
       });
-      E.verdict = { metres: Math.round(d * E.carte.mpp), etoiles: etoiles, confusion: rel > 0.04 ? confusion : null };
+      E.verdict = { metres: Math.round(d * E.carte.mpp), etoiles: etoiles, confusion: rel > 0.04 ? confusion : null, gain: crediter(etoiles) };
       E.etoiles += etoiles; E.jouees++; E.phase = 'corrige';
       O.attente = null; majOutils(); render(); board.update();
     }

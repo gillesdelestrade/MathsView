@@ -30,6 +30,18 @@
  * Les tracés sont recomptés ; « annuler » retire le dernier, l'équerre refuse
  * un clic loin de toute droite, plus rien ne se trace après la validation et
  * la mission suivante repart d'un plan vierge.
+ *
+ * LE RAPPORTEUR. Une bissectrice sur deux est construite au rapporteur : on
+ * mesure l'angle en visant les deux côtés (la mesure affichée est comparée à
+ * l'angle réel), puis on en reporte la moitié — réglée au demi-degré — et
+ * les deux demi-droites se coupent à quelques pixels du centre du cercle
+ * inscrit.
+ *
+ * LES PIÈCES. Avec un faux magasin de profils : sans profil, aucune pièce et
+ * le verdict invite à en choisir un ; avec profil, 2 pièces pour trois
+ * étoiles, 1 pour deux, 0 en dessous, jamais plus de 6 par jour civil (le
+ * verdict annonce alors le plafond) ; le lendemain le compteur repart. Le
+ * solde du profil et le journal (« jeu ») sont recomptés à chaque mission.
  */
 load('tests/lecon-pc-grandeurs-decor.js');
 var err = [];
@@ -37,6 +49,12 @@ function ko(m) { if (err.length < 20 && err.indexOf(m) < 0) err.push(m); }
 // un hasard semé, pour rejouer les mêmes missions
 var graine = 20261115;
 Math.random = function () { graine = (graine * 1664525 + 1013904223) % 4294967296; return graine / 4294967296; };
+
+// un faux magasin de profils : l'état d'un seul profil, et son journal
+var profilCourant = null, ETAT = { xp: 0, pieces: 0 }, JOURNAL = [];
+var MathsProfils = { courant: function () { return profilCourant; }, etat: function () { return ETAT; },
+                     setEtat: function (id, e) { ETAT = e; }, ajouteJournal: function (id, ev) { JOURNAL.push(ev); } };
+var soldeAttendu = 0, duJour = 0, gainsAttendus = 0, plafondVu = 0, sansProfilVu = 0;
 
 var H = monter('lessons/2nde/rendez-vous-marseille.js');
 if (H.erreurSetup) ko('setup() plante : ' + H.erreurSetup);
@@ -60,11 +78,37 @@ function poser(p) { RDV.setPosition(JXG.COORDS_BY_USER, p); RDV.triggerEventHand
 var formules = {}, quartiers = {}, sixDernieres = [], confusions = 0, construits = { G: 0, H: 0, O: 0, I: 0 };
 var T = board.mvOutils;
 if (!T) ko('la boîte à outils n\'est pas exposée');
-if (H.parClasse('rdv-outil').length !== 4 || !H.parClasse('rdv-meme')[0] || !H.parClasse('rdv-annuler')[0] || !H.parClasse('rdv-effacer')[0]) ko('barre d\'outils incomplète');
+if (H.parClasse('rdv-outil').length !== 5 || !H.parClasse('rdv-meme')[0] || !H.parClasse('rdv-annuler')[0] || !H.parClasse('rdv-effacer')[0]) ko('barre d\'outils incomplète');
 function traces() { return role('trace-droite').length + role('trace-cercle').length; }
 function vers(p, q, k) { return [p[0] + (q[0] - p[0]) * k, p[1] + (q[1] - p[1]) * k]; }
 function flou(p, i) { return [p[0] + [3, -2, 2, -3][i % 4], p[1] + [2, 3, -3, -2][i % 4]]; }       // un clic imprécis
 function dedans(p) { return p[0] > 5 && p[0] < 1019 && p[1] > 5 && p[1] < 763; }
+var auRapporteur = false, tourRapporteur = 0, construitsRap = 0;
+// Deux bissectrices au rapporteur : mesurer l'angle, puis en reporter la moitié.
+function bissectricesAuRapporteur(A, B, C) {
+  var bon = true;
+  [[A, B, C], [B, C, A]].forEach(function (s, i) {
+    var a0 = Math.atan2(s[1][1] - s[0][1], s[1][0] - s[0][0]), a1 = Math.atan2(s[2][1] - s[0][1], s[2][0] - s[0][0]), d = a1 - a0;
+    while (d > Math.PI) d -= 2 * Math.PI; while (d <= -Math.PI) d += 2 * Math.PI;
+    var vrai = Math.abs(d) * 180 / Math.PI, sg = d < 0 ? -1 : 1;
+    T.choisir('rapporteur'); T.clic(flou(s[0], i)); T.clic(flou(s[1], i + 1)); T.clic(flou(s[2], i + 2));       // viser le second côté : une mesure
+    var mesure = T.etat.actions[T.etat.actions.length - 1];
+    if (!mesure || Math.abs(mesure.angle - vrai) > 0.01) { ko('le rapporteur mesure ' + (mesure && mesure.angle) + '° au lieu de ' + vrai.toFixed(2) + '°'); bon = false; return; }
+    var cotes = role('trace-angle').map(function (o) { return strip(o.plaintext); });
+    if (cotes[cotes.length - 1] !== String(Math.round(vrai * 10) / 10).replace('.', ',') + '°') ko('cote de l\'angle : ' + cotes[cotes.length - 1] + ' pour ' + vrai.toFixed(2) + '°');
+    // reporter la moitié : on vise à l'œil, loin de tout point d'accroche
+    var g = a0 + sg * vrai / 2 * Math.PI / 180, vise = null;
+    [150, 115, 190, 230, 90].forEach(function (r) {
+      var q = [s[0][0] + r * Math.cos(g), s[0][1] + r * Math.sin(g)];
+      if (!vise && dedans(q) && T.etat.accroches.every(function (k) { return dist(k, q) > 22; })) vise = q;
+    });
+    if (!vise) { bon = false; return; }
+    T.clic(flou(s[0], i)); T.clic(flou(s[1], i + 1)); T.clic(vise);
+    var moitie = T.etat.actions[T.etat.actions.length - 1];
+    if (Math.abs(moitie.angle - Math.round(vrai) / 2) > 0.26 || (moitie.angle * 2) % 1 !== 0) ko('la moitié de ' + vrai.toFixed(2) + '° doit se régler au demi-degré : ' + moitie.angle);
+  });
+  return bon && role('trace-droite').length === 4 && role('trace-arc').length === 4;
+}
 // Construit le point `cle` avec les outils. Rend false si la construction sortirait du plan.
 function construire(cle, A, B, C) {
   var S2 = [[A, B, C], [B, C, A]];                       // deux sommets suffisent : [sommet, côté opposé]
@@ -93,6 +137,7 @@ function construire(cle, A, B, C) {
     });
     return ok && role('trace-cercle').length === 4 && role('trace-droite').length === 2;
   }
+  if (auRapporteur) return bissectricesAuRapporteur(A, B, C);
   var bon = true;
   S2.forEach(function (s, i) {
     var r = 0.38 * Math.min(dist(s[0], s[1]), dist(s[0], s[2]));
@@ -188,7 +233,9 @@ for (var n = 1; n <= 240; n++) {
       }
       T.annuler(); if (traces() !== 0 || role('trace-rayon').length || role('trace-cote-rayon').length) ko(nom + '« annuler » ne retire pas le dernier tracé, rayon compris');
     }
+    auRapporteur = cle === 'I' && (tourRapporteur++ % 2 === 0);
     var fait = construire(cle, A, B, C);
+    if (fait && auRapporteur) construitsRap++;
     // chaque cercle tracé montre un rayon de la bonne longueur, parti de son centre
     var cer = role('trace-cercle'), rys = role('trace-rayon');
     if (cer.length !== rys.length || role('trace-cote-rayon').length !== cer.length) ko(nom + cer.length + ' cercle(s) pour ' + rys.length + ' rayon(s)');
@@ -205,7 +252,11 @@ for (var n = 1; n <= 240; n++) {
   var ou = P(RDV);
   var construit = sc === 0 && n % 8 === 4 && T.etat.actions.length > 0;
   // (une autre intersection des tracés peut se trouver à un ou deux pixels du point : le RDV s'y accroche aussi bien)
-  if (sc === 0 && dist(ou, cible) > (construit ? 2 : 1e-6 * L)) ko(nom + 'le RDV ne s\'accroche pas au point construit (' + cle + ', écart ' + dist(ou, cible).toFixed(3) + ')');
+  var auRap = construit && cle === 'I' && auRapporteur;      // au demi-degré près : quelques pixels d'écart sont attendus
+  if (sc === 0 && dist(ou, cible) > (auRap ? 6 : construit ? 2 : 1e-6 * L)) ko(nom + 'le RDV ne s\'accroche pas au point construit (' + cle + ', écart ' + dist(ou, cible).toFixed(3) + ')');
+  // les pièces : sans profil d'abord, puis avec, et un « lendemain » à mi-parcours
+  profilCourant = n <= 8 ? null : 'lea';
+  if (n === 130 && ETAT.jeux) { ETAT.jeux.rdv.jour = 'hier'; duJour = 0; }
   clic('valider');
   var V = texte('rdv-verdict'), mm = /Tu es à (\d+) m/.exec(V), etoiles = (V.match(/★/g) || []).length;
   if (!mm) { ko(nom + 'verdict illisible : ' + V); continue; }
@@ -215,7 +266,21 @@ for (var n = 1; n <= 240; n++) {
   var rel = dist(ou, cible) / L, att = rel <= 0.04 ? 3 : rel <= 0.08 ? 2 : rel <= 0.14 ? 1 : 0;
   if (sc === 0 && n % 8 === 0) att = Math.max(0, att - 1);
   if (etoiles !== att) ko(nom + etoiles + ' étoile(s) au lieu de ' + att + ' (écart ' + rel.toFixed(3) + ' L)');
-  if (sc === 0 && +mm[1] > (construit ? 4 : 0)) ko(nom + 'posé sur la cible, l\'écart doit être 0 m');
+  var PV = strip(H.parClasse('rdv-verdict')[0].innerHTML.replace(/^[\s\S]*class="rdv-pieces"[^>]*>([\s\S]*?)<\/p>[\s\S]*$/, '$1'));
+  if (!profilCourant) {
+    sansProfilVu++;
+    if (!/Choisis un profil/.test(PV) || ETAT.pieces !== 0 || JOURNAL.length) ko(nom + 'sans profil, aucune pièce et une invitation à en choisir un : ' + PV);
+  } else {
+    var voulu = etoiles === 3 ? 2 : etoiles === 2 ? 1 : 0, gain = Math.max(0, Math.min(voulu, 6 - duJour));
+    duJour += gain; soldeAttendu += gain; if (gain) gainsAttendus++;
+    if (ETAT.pieces !== soldeAttendu) ko(nom + 'solde ' + ETAT.pieces + ' au lieu de ' + soldeAttendu + ' (' + etoiles + ' étoiles)');
+    if (JOURNAL.length !== gainsAttendus || JOURNAL.some(function (j) { return j.type !== 'jeu' || !(j.pieces > 0) || j.jeu !== 'rendez-vous-marseille'; })) ko(nom + 'journal incohérent');
+    if (gain && PV.indexOf('+' + gain + ' pièce') < 0) ko(nom + 'le verdict doit annoncer +' + gain + ' : ' + PV);
+    if (!gain && voulu) { plafondVu++; if (!/Plafond du jour/.test(PV)) ko(nom + 'le plafond doit être annoncé : ' + PV); }
+    if (!voulu && !/Pas de pièce/.test(PV)) ko(nom + 'sans pièce, le verdict doit dire pourquoi : ' + PV);
+    if (duJour > 6) ko(nom + 'plus de 6 pièces dans la journée');
+  }
+  if (sc === 0 && +mm[1] > (auRap ? 11 : construit ? 4 : 0)) ko(nom + 'posé sur la cible, l\'écart doit être 0 m');
   var apres = +/score : (\d+) ★ sur (\d+)/.exec(texte('rdv-score'))[1];
   if (apres !== avant + att) ko(nom + 'le score ne suit pas');
   if (sc === 2) { if (!/Ton point est plus près de/.test(V)) ko(nom + 'posé sur ' + autre + ', la confusion doit être nommée : ' + V); else confusions++; }
@@ -247,9 +312,11 @@ for (var n = 1; n <= 240; n++) {
 for (var i = 0; i < 6; i++) if (!formules[i] || formules[i] !== 40) ko('formulation n° ' + i + ' tirée ' + (formules[i] || 0) + ' fois sur 240 au lieu de 40');
 if (Object.keys(quartiers).length !== 8) ko('8 quartiers attendus, vus : ' + Object.keys(quartiers).join(', '));
 if (!confusions) ko('aucune confusion testée');
+if (!construitsRap) ko('aucune bissectrice construite au rapporteur');
+if (!sansProfilVu || !plafondVu || soldeAttendu !== 12) ko('pièces : sans profil ' + sansProfilVu + ', plafonds ' + plafondVu + ', solde ' + soldeAttendu + ' (12 attendu : deux journées pleines)');
 ['G', 'H', 'O', 'I'].forEach(function (k) { if (construits[k] < 2) ko('le point ' + k + ' n\'a été construit aux outils que ' + construits[k] + ' fois'); });
 H.sain('jeu', ko);
 if (erreursConsole.length) ko('console.error : ' + erreursConsole[0]);
 
 if (err.length) { print('ÉCHEC'); err.forEach(function (e) { print('  ' + e); }); }
-else print('Rendez-vous à Marseille : 240 missions jouées sur 8 quartiers — points remarquables revérifiés, six formulations équilibrées, verdicts, étoiles, écarts en mètres, confusions et correction tracée ; ' + ['G', 'H', 'O', 'I'].map(function (k) { return construits[k] + ' ' + k; }).join(', ') + ' construits à la règle, à l\'équerre et au compas.');
+else print('Rendez-vous à Marseille : 240 missions jouées sur 8 quartiers — points remarquables revérifiés, six formulations équilibrées, verdicts, étoiles, écarts en mètres, confusions et correction tracée ; ' + ['G', 'H', 'O', 'I'].map(function (k) { return construits[k] + ' ' + k; }).join(', ') + ' construits à la règle, à l\'équerre, au compas et au rapporteur (' + construitsRap + ' fois) ; pièces : ' + soldeAttendu + ' en deux journées, plafond tenu.');
