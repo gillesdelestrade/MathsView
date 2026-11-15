@@ -16,8 +16,8 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **82 leçons** (dont cinq de physique-chimie) et **un jeu de repérage**, **77 générateurs d'exercices** couvrant 77 compétences,
-dont **79 leçons mènent directement à un entraînement**.
+État actuel : **83 leçons** (dont six de physique-chimie) et **un jeu de repérage**, **78 générateurs d'exercices** couvrant 78 compétences,
+dont **80 leçons mènent directement à un entraînement**.
 
 ## En images
 
@@ -41,9 +41,10 @@ Un **jeu de repérage** prolonge les leçons sur les droites remarquables du tri
 trois amis sont en A, B et C sur un plan d'un quartier de Marseille, et il faut placer
 le rendez-vous au centre de gravité, à l'orthocentre, au centre du cercle circonscrit
 (« à égale distance des points A, B et C ») ou du cercle inscrit (« à égale distance
-des côtés »). Une règle graduée, une équerre et un compas permettent de tracer sur le plan
+des côtés »). Une règle graduée, une équerre, un compas et un rapporteur permettent de tracer sur le plan
 médianes, hauteurs, médiatrices et bissectrices ; le point de rendez-vous s'accroche aux
-intersections. L'écart est mesuré en mètres, la construction est montrée en correction.
+intersections. L'écart est mesuré en mètres, la construction est montrée en correction, et
+un rendez-vous réussi rapporte des pièces au profil (plafonnées par jour).
 
 ![Jeu « Rendez-vous à Marseille » : placer le point de rendez-vous sur un plan du Prado](docs/captures/rendez-vous-marseille.png)
 
@@ -160,7 +161,9 @@ et prend pour `category` l'un des thèmes du programme :
 
 Ses générateurs d'exercices vont dans `exos/pc/<niveau>/`, et leur ligne de catalogue
 porte `matiere: 'pc'` avec un `chapitre` pris parmi ces mêmes clés : la page
-d'entraînement les range alors sous un titre « Physique-Chimie ».
+d'entraînement les range alors sous un titre « Physique-Chimie ». Au lycée, le chapitre
+prend un suffixe de niveau (`chimie-2de`) : le boss d'un chapitre exige la ceinture verte
+sur toutes ses compétences, et celles de seconde n'ont pas à bloquer un élève de cinquième.
 
 ### La fiche bristol à recopier
 
@@ -387,6 +390,7 @@ compréhension. Les pièces récompensent donc uniquement ce qui est difficile �
 | trophée | 10 à 50 |
 | boss de chapitre réussi | 25, une seule fois par chapitre |
 | défi gagné par la défiée | le double de la mise |
+| jeu « Rendez-vous à Marseille » | 2 pour un rendez-vous à trois étoiles, 1 pour deux étoiles — 6 au plus par jour |
 
 Le coffre est tiré de la **graine de la série**, pas de `Math.random()` : recharger la
 page de fin n'en fait pas réapparaître un.

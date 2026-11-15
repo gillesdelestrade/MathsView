@@ -194,5 +194,12 @@ MathsExos.catalogue = [
   { code: 'pc-volume',    libelle: 'Le volume et ses unités',           niveau: '5eme',
     chapitre: 'chimie', matiere: 'pc', prerequis: [] },
   { code: 'pc-masse-volumique', libelle: 'La masse volumique',          niveau: '5eme',
-    chapitre: 'chimie', matiere: 'pc', prerequis: ['pc-masse', 'pc-volume'] }
+    chapitre: 'chimie', matiere: 'pc', prerequis: ['pc-masse', 'pc-volume'] },
+
+  /* --- Physique-chimie (2nde) : constitution de la matière ---------------
+     Un chapitre à part ('chimie-2de') : le boss d'un chapitre demande la
+     ceinture verte sur TOUTES ses compétences, et un élève de 5ème n'a pas
+     à maîtriser la mole pour valider le sien. */
+  { code: 'pc-quantite-matiere', libelle: 'La quantité de matière : mole et masse molaire', niveau: '2nde',
+    chapitre: 'chimie-2de', matiere: 'pc', prerequis: [] }
 ];
