@@ -62,7 +62,9 @@ MathsView.register({
     'par une, avec le codage de l\'angle droit à chaque fois. Elles se coupent toutes les ' +
     'trois au même point, l\'<strong>orthocentre</strong>. ' +
     '<br>Ensuite, <strong>déplace les sommets</strong> : tout suit en direct. Regarde ce que ' +
-    'devient l\'orthocentre quand le triangle devient rectangle, puis obtusangle.',
+    'devient l\'orthocentre quand le triangle devient rectangle, puis obtusangle.' +
+    '<br>🎯 <a href="#rendez-vous-marseille"><strong>Jeu : rendez-vous à Marseille</strong></a> — ' +
+    'retrouve ce point, et les autres points remarquables, sur un plan de la ville.',
   notes:
     '<ul>' +
     '<li>Une hauteur est une <strong>droite</strong>, pas un segment : quand le pied tombe ' +

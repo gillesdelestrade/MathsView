@@ -69,7 +69,9 @@ MathsView.register({
     '<br><strong>Change de triangle</strong> : quelle que soit sa forme, \\(I\\) reste ' +
     '<em>dedans</em>. Coche <strong>Cercle circonscrit</strong> pour comparer avec \\(O\\), ' +
     'qui, lui, peut sortir — et <strong>Les médianes</strong> pour voir, dans un triangle ' +
-    'isocèle ou équilatéral, ces droites se confondre.',
+    'isocèle ou équilatéral, ces droites se confondre.' +
+    '<br>🎯 <a href="#rendez-vous-marseille"><strong>Jeu : rendez-vous à Marseille</strong></a> — ' +
+    'retrouve ce point, et les autres points remarquables, sur un plan de la ville.',
   notes:
     '<ul>' +
     '<li><strong>La définition.</strong> La bissectrice de l\'angle \\(\\widehat{BAC}\\) est ' +

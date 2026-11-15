@@ -16,7 +16,7 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **82 leçons** (dont cinq de physique-chimie), **77 générateurs d'exercices** couvrant 77 compétences,
+État actuel : **82 leçons** (dont cinq de physique-chimie) et **un jeu de repérage**, **77 générateurs d'exercices** couvrant 77 compétences,
 dont **79 leçons mènent directement à un entraînement**.
 
 ## En images
@@ -36,6 +36,16 @@ ici en seconde, en quatrième et en physique-chimie de cinquième.
 | **Équations produit nul** (2nde) — une colonne par facteur ; un seul facteur nul suffit. | **Équations quotient nul** (2nde) — dénominateur non nul d'abord, puis numérateur nul. |
 | ![Théorème de Pythagore : les carrés construits sur les côtés](docs/captures/pythagore.png) | ![La masse volumique : le triangle des formules](docs/captures/masse-volumique.png) |
 | **Théorème de Pythagore** (4ème) — les deux petits carrés se versent dans le grand. | **La masse volumique** (5ème, physique-chimie) — le triangle des formules. |
+
+Un **jeu de repérage** prolonge les leçons sur les droites remarquables du triangle :
+trois amis sont en A, B et C sur un plan d'un quartier de Marseille, et il faut placer
+le rendez-vous au centre de gravité, à l'orthocentre, au centre du cercle circonscrit
+(« à égale distance des points A, B et C ») ou du cercle inscrit (« à égale distance
+des côtés »). Une règle graduée, une équerre et un compas permettent de tracer sur le plan
+médianes, hauteurs, médiatrices et bissectrices ; le point de rendez-vous s'accroche aux
+intersections. L'écart est mesuré en mètres, la construction est montrée en correction.
+
+![Jeu « Rendez-vous à Marseille » : placer le point de rendez-vous sur un plan du Prado](docs/captures/rendez-vous-marseille.png)
 
 Sous chaque leçon, la **fiche bristol** à recopier (200 × 125 mm) :
 
@@ -511,6 +521,8 @@ MathsView/
 ├── deploy/                 nginx, systemd, mise à jour par git, sauvegarde
 ├── vendor/                 JSXGraph + MathJax, en local
 ├── docs/captures/          les captures d'écran de ce README
+├── cartes/marseille/       les plans du jeu « Rendez-vous à Marseille » : 8 quartiers,
+│                           4 × 3 tuiles OpenStreetMap chacun (© les contributeurs d'OpenStreetMap)
 ├── lessons/
 │   ├── <niveau>/           une leçon de maths = un fichier
 │   └── pc/<niveau>/        les leçons de physique-chimie

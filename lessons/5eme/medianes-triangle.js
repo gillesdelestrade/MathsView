@@ -65,7 +65,9 @@ MathsView.register({
     'coupent toutes les trois au même point, le <strong>centre de gravité</strong> \\( G \\), ' +
     'situé aux <strong>deux tiers</strong> de chaque médiane en partant du sommet. ' +
     '<br>Ensuite, <strong>déplace les sommets</strong> : tout suit en direct — et le rapport ' +
-    '\\( \\dfrac{AG}{GA\'} \\) reste égal à 2, quoi que tu fasses.',
+    '\\( \\dfrac{AG}{GA\'} \\) reste égal à 2, quoi que tu fasses.' +
+    '<br>🎯 <a href="#rendez-vous-marseille"><strong>Jeu : rendez-vous à Marseille</strong></a> — ' +
+    'retrouve ce point, et les autres points remarquables, sur un plan de la ville.',
   notes:
     '<ul>' +
     '<li>La médiane issue de \\( A \\) joint \\( A \\) au <strong>milieu</strong> \\( A\' \\) de ' +

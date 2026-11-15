@@ -70,7 +70,9 @@ MathsView.register({
     'les trois : le <strong>cercle circonscrit</strong>.' +
     '<br><strong>Change de triangle</strong> : selon sa forme, \\(O\\) tombe dedans, dehors, ' +
     'ou pile sur un côté. Et coche <strong>Les hauteurs</strong> ou <strong>Les médianes</strong> ' +
-    'pour voir, dans un triangle isocèle ou équilatéral, ces droites se confondre.',
+    'pour voir, dans un triangle isocèle ou équilatéral, ces droites se confondre.' +
+    '<br>🎯 <a href="#rendez-vous-marseille"><strong>Jeu : rendez-vous à Marseille</strong></a> — ' +
+    'retrouve ce point, et les autres points remarquables, sur un plan de la ville.',
   notes:
     '<ul>' +
     '<li><strong>La définition.</strong> La médiatrice de \\([AB]\\) est la droite ' +
