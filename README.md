@@ -19,6 +19,28 @@ Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 État actuel : **82 leçons** (dont cinq de physique-chimie), **77 générateurs d'exercices** couvrant 77 compétences,
 dont **79 leçons mènent directement à un entraînement**.
 
+## En images
+
+L'accueil : les leçons rangées par matière, par niveau et par domaine.
+
+![L'accueil de MathsView : le menu des leçons et les cartes par niveau](docs/captures/accueil.png)
+
+Chaque leçon est une figure qui se manipule ou une animation qui se déroule pas à pas —
+ici en seconde, en quatrième et en physique-chimie de cinquième.
+
+| | |
+|---|---|
+| ![Double distributivité : quatre flèches et un rectangle coupé en quatre](docs/captures/double-distributivite.png) | ![Inverse et division de quotients : la pièce reportée le long de la barre](docs/captures/quotients-division.png) |
+| **Double distributivité** (2nde) — quatre flèches sur l'écriture, un rectangle coupé en quatre. | **Inverse et division de quotients** (2nde) — combien de fois 1/4 rentre dans 3/2. |
+| ![Équations produit nul : une colonne par facteur](docs/captures/equations-produit-nul.png) | ![Équations quotient nul : dénominateur non nul, numérateur nul](docs/captures/equations-quotient-nul.png) |
+| **Équations produit nul** (2nde) — une colonne par facteur ; un seul facteur nul suffit. | **Équations quotient nul** (2nde) — dénominateur non nul d'abord, puis numérateur nul. |
+| ![Théorème de Pythagore : les carrés construits sur les côtés](docs/captures/pythagore.png) | ![La masse volumique : le triangle des formules](docs/captures/masse-volumique.png) |
+| **Théorème de Pythagore** (4ème) — les deux petits carrés se versent dans le grand. | **La masse volumique** (5ème, physique-chimie) — le triangle des formules. |
+
+Sous chaque leçon, la **fiche bristol** à recopier (200 × 125 mm) :
+
+![La fiche bristol de la leçon « Double distributivité »](docs/captures/fiche-bristol.png)
+
 Deux compétences échappent à ce régime : les **tables de multiplication** et les
 **additions jusqu'à 20**. Elles ne se comprennent pas, elles s'automatisent — et
 `js/flash.js` leur réserve une séance chronométrée de 20 questions, proposée
@@ -36,7 +58,7 @@ un bonus d'une pièce tous les 12 points (5 au plus).
 ./tests/lancer.sh
 ```
 
-Une trentaine de contrôles, sans rien à installer : ils tournent sous `jsc`, le
+Plus de cent contrôles, sans rien à installer : ils tournent sous `jsc`, le
 moteur JavaScript livré avec macOS. Ils refont le travail de chaque générateur à
 côté plutôt que de relire ce qu'il annonce, relisent les figures produites en
 SVG et rejouent les animations. Voir [tests/README.md](tests/README.md).
@@ -488,6 +510,7 @@ MathsView/
 │   └── dev.py              le site + le stockage en local, un seul processus
 ├── deploy/                 nginx, systemd, mise à jour par git, sauvegarde
 ├── vendor/                 JSXGraph + MathJax, en local
+├── docs/captures/          les captures d'écran de ce README
 ├── lessons/
 │   ├── <niveau>/           une leçon de maths = un fichier
 │   └── pc/<niveau>/        les leçons de physique-chimie
