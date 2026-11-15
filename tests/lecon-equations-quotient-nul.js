@@ -4,11 +4,15 @@
  * Les lignes du panneau sont relues dans l'ordre de la méthode : la valeur
  * interdite d'abord (celle du dénominateur, recalculée à côté), puis
  * « numérateur = 0 et x ≠ interdite », puis la valeur, puis S — qui doit être
- * {zéro du numérateur}, ou ∅ quand ce zéro est la valeur interdite. Sur la
- * figure, la branche gauche de l'hyperbole passe par 0 au zéro du numérateur,
- * le point vert final est posé dessus (et absent quand S = ∅), le point de
- * test dit « solution » exactement là et « interdite » sur la valeur
- * interdite. Le rejeu redonne le même écran.
+ * {zéro du numérateur}, ou ∅ quand ce zéro est la valeur interdite. La figure
+ * ne trace plus aucune courbe : la colonne du dénominateur est relue (elle
+ * s'écrit avec ≠ et se termine par x ≠ valeur interdite), celle du numérateur
+ * aussi (= et x = zéro), la confrontation dit si la valeur est interdite et
+ * porte S. Après la première colonne le point d'essai est posé sur la valeur
+ * interdite et dit « impossible » ; après la seconde, sur le zéro du
+ * numérateur. Le point vert final est posé sur la solution (absent quand
+ * S = ∅), le point de test dit « solution » exactement là et « interdite »
+ * sur la valeur interdite. Le rejeu redonne le même écran.
  */
 load('tests/lecon-equations-quotient-nul-decor.js');
 
@@ -28,7 +32,10 @@ var PX = objets.filter(function (o) { return o.type === 'point' && o.attrs.fixed
 var SOL = objets.filter(function (o) { return o.type === 'point' && o.attrs.size === 6 && o.attrs.fixed === true; });
 var courbes = objets.filter(function (o) { return o.type === 'functiongraph'; });
 var labP = objets.filter(function (o) { return o.type === 'text' && typeof o.parents[2] === 'function' && /✓|✗/.test(o.texte()); })[0];
-if (!PX || SOL.length !== 1 || courbes.length !== 4 || !labP) ko('objets de la figure introuvables');
+if (!PX || SOL.length !== 1 || !labP) ko('objets de la figure introuvables');
+if (courbes.length || objets.some(function (o) { return o.type === 'curve'; })) ko('la figure ne doit plus tracer de courbe');
+function visible2(o) { return o.attrs.visible === undefined || ev(o.attrs.visible) === true; }
+function textesVus() { return objets.filter(function (o) { return o.type === 'text' && visible2(o); }).map(function (o) { return strip(o.texte()); }); }
 function lignes() {
   var out = [], re = /<div class="eq-line( eq-sol)?">([\s\S]*?)<\/div>/g, m;
   while ((m = re.exec(linesEl.innerHTML))) out.push(strip(m[2]));
@@ -61,11 +68,16 @@ function verifier(a, b, c, d) {
       var mv = /^valeur interdite : .+ = 0 ⟺ x = (.+)$/.exec(L[1] || '');
       if (L.length !== 2 || !mv) return ko(nom + 'la première ligne doit être la valeur interdite : ' + L.join(' | '));
       if (Math.abs(nb(mv[1]) - z2) > 1e-9) ko(nom + 'valeur interdite annoncée ' + mv[1] + ' au lieu de ' + z2);
+      if (Math.abs(PX.X() - z2) > 1e-9) ko(nom + 'après le dénominateur, le point d\'essai doit être sur la valeur interdite');
+      if (!/interdite ✗/.test(labP.texte()) || !textesVus().some(function (s) { return /impossible/.test(s); })) ko(nom + 'sur la valeur interdite, l\'essai doit dire « impossible »');
+      if (textesVus().some(function (s) { return /^⟺ x = /.test(s); })) ko(nom + 'le numérateur est résolu avant le dénominateur');
     }
     if (i === 1) {
       var mn = /^⟺ (.+) = 0 et x ≠ (.+)$/.exec(L[2] || '');
       if (L.length !== 3 || !mn) return ko(nom + 'après le numérateur : ' + L.join(' | '));
       if (Math.abs(nb(mn[2]) - z2) > 1e-9) ko(nom + 'la condition x ≠ doit viser la valeur interdite');
+      if (Math.abs(PX.X() - z1) > 1e-9) ko(nom + 'après le numérateur, le point d\'essai doit être sur son zéro');
+      if ((/✓/.test(labP.texte())) === meme) ko(nom + 'sur le zéro du numérateur, verdict faux : ' + strip(labP.texte()));
     }
     if (i === 2) {
       var mx = /^⟺ x = (.+?) et (.+)$/.exec(L[3] || '');
@@ -83,14 +95,25 @@ function verifier(a, b, c, d) {
     if (!sol(nb(mS[1]))) ko(nom + 'la solution annoncée n\'annule pas le numérateur, ou annule le dénominateur');
   }
   if (!/interdit/.test(strip(noteEl.innerHTML))) ko(nom + 'la note finale doit nommer la valeur interdite');
-  // la figure : la branche gauche de l'hyperbole, le point vert
-  var LPg = courbes[2], LPd = courbes[3];
-  if (!meme) {
-    var br = z1 < z2 ? LPg : LPd;
-    if (Math.abs(br.parents[0](z1)) > 1e-9) ko(nom + 'la courbe du quotient ne passe pas par 0 en ' + z1);
+  // la figure : les deux colonnes, la confrontation
+  var T = textesVus();
+  if (!T.some(function (s) { var m = /^⟺ x ≠ (.+)$/.exec(s); return m && Math.abs(nb(m[1]) - z2) < 1e-9; })) ko(nom + 'la colonne du dénominateur ne se termine pas par x ≠ ' + z2);
+  if (!T.some(function (s) { var m = /^⟺ x = (.+)$/.exec(s); return m && Math.abs(nb(m[1]) - z1) < 1e-9; })) ko(nom + 'la colonne du numérateur ne se termine pas par x = ' + z1);
+  if (!T.some(function (s) { return / ≠ 0$/.test(s); }) || !T.some(function (s) { return /[^≠] = 0$/.test(s) && !/⟺/.test(s); })) ko(nom + 'il faut « dénominateur ≠ 0 » et « numérateur = 0 »');
+  T.forEach(function (s) {
+    var m = /^⟺ (−?)(\d*)x (≠|=) (.+)$/.exec(s); if (!m) return;
+    var kk = (m[1] ? -1 : 1) * (m[2] === '' ? 1 : +m[2]); if (kk === 1) return;
+    var bon = m[3] === '≠' ? (kk === c && Math.abs(nb(m[4]) + d) < 1e-9) : (kk === a && Math.abs(nb(m[4]) + b) < 1e-9);
+    if (!bon) ko(nom + 'étape du milieu fausse : ' + s);
+  });
+  if (c !== 1 && !T.some(function (s) { return /^⟺ −?\d*x ≠ /.test(s) && !/^⟺ x ≠/.test(s); })) ko(nom + 'l\'étape du milieu du dénominateur manque');
+  if (T.indexOf('et') < 0) ko(nom + 'le « et » entre les deux colonnes manque');
+  var conf = T.filter(function (s) { return /⟹ S = /.test(s); })[0];
+  if (!conf) ko(nom + 'la confrontation ne porte pas S');
+  else {
+    if ((/est la valeur interdite/.test(conf)) !== meme) ko(nom + 'la confrontation se trompe : ' + conf);
+    if (meme ? !/S = ∅$/.test(conf) : Math.abs(nb(/S = \{(.+)\}$/.exec(conf)[1]) - z1) > 1e-9) ko(nom + 'le S de la figure est faux : ' + conf);
   }
-  if (!visible(LPg) || !visible(LPd)) ko(nom + 'les deux branches doivent être visibles à la fin');
-  if (LPg.parents[2]() >= z2 || LPd.parents[1]() <= z2) ko(nom + 'une branche traverse la valeur interdite');
   if (visible(SOL[0]) !== !meme) ko(nom + 'le point vert ' + (meme ? 'ne doit pas exister (S = ∅)' : 'manque'));
   if (!meme && Math.abs(SOL[0].X() - z1) > 1e-9) ko(nom + 'point vert en ' + SOL[0].X() + ' au lieu de ' + z1);
   // le point de test
@@ -125,4 +148,4 @@ inA.value = 0; inA.onchange();
 if (parseInt(inA.value, 10) === 0) ko('un coefficient nul doit être refusé');
 
 if (err.length) { print('ÉCHEC'); err.forEach(function (e) { print('  ' + e); }); }
-else print('Équations quotient nul : ' + (5 + n) + ' résolutions relues, valeur interdite d\'abord, S confronté au zéro du numérateur, figure et rejeu vérifiés.');
+else print('Équations quotient nul : ' + (5 + n) + ' résolutions relues, valeur interdite d\'abord, S confronté au zéro du numérateur, colonnes, confrontation, verdicts et rejeu vérifiés, aucune courbe.');

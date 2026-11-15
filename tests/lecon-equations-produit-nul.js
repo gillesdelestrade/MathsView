@@ -4,13 +4,17 @@
  * Les lignes écrites au panneau sont relues : la ligne « ou » doit poser les
  * deux facteurs = 0, la suivante donner les deux valeurs, et l'ensemble S
  * final — reparsé, fractions comprises — doit être exactement l'ensemble des
- * zéros recalculés à côté, chacun annulant bien le produit ; le même zéro en
- * haut et en bas ne doit être écrit qu'une fois. Le trinôme « développé »
- * montré pour dissuader est recalculé coefficient par coefficient. Sur la
- * figure, la courbe du produit doit passer par 0 aux zéros, les points verts
- * finaux être posés dessus, et le point de test dire « solution » exactement
- * là. Le piège de la simplification par x doit être signalé quand un facteur
- * est x, et seulement alors. Le rejeu redonne le même écran.
+ * zéros recalculés à côté, chacun annulant bien le produit ; le même zéro
+ * dans les deux facteurs ne doit être écrit qu'une fois. Le trinôme
+ * « développé » montré pour dissuader est recalculé coefficient par
+ * coefficient. La figure ne trace plus aucune courbe : ses deux colonnes
+ * sont relues (étape du milieu « kx = v » exacte, valeur finale), le S vert
+ * est celui du panneau, les points verts sont posés sur les solutions. Après
+ * chaque colonne le point d'essai est posé sur le zéro trouvé, et le verdict
+ * dit « cela suffit » exactement quand un seul facteur est nul, « aucun
+ * facteur » quand aucun ne l'est. Le piège de la simplification par x doit
+ * être signalé quand un facteur est x, et seulement alors. Le rejeu redonne
+ * le même écran.
  */
 load('tests/lecon-equations-produit-nul-decor.js');
 
@@ -30,7 +34,10 @@ var PX = objets.filter(function (o) { return o.type === 'point' && o.attrs.fixed
 var SOL = objets.filter(function (o) { return o.type === 'point' && o.attrs.size === 6 && o.attrs.fixed === true; });
 var courbes = objets.filter(function (o) { return o.type === 'functiongraph'; });
 var labP = objets.filter(function (o) { return o.type === 'text' && typeof o.parents[2] === 'function' && /✓|✗/.test(o.texte()); })[0];
-if (!PX || SOL.length !== 2 || courbes.length !== 3 || !labP) ko('objets de la figure introuvables');
+if (!PX || SOL.length !== 2 || !labP) ko('objets de la figure introuvables');
+if (courbes.length || objets.some(function (o) { return o.type === 'curve'; })) ko('la figure ne doit plus tracer de courbe');
+function textesVus() { return objets.filter(function (o) { return o.type === 'text' && visible2(o); }).map(function (o) { return strip(o.texte()); }); }
+function visible2(o) { return o.attrs.visible === undefined || ev(o.attrs.visible) === true; }
 function lignes() {
   var out = [], re = /<div class="eq-line( eq-sol)?">([\s\S]*?)<\/div>/g, m;
   while ((m = re.exec(linesEl.innerHTML))) out.push(strip(m[2]));
@@ -67,6 +74,13 @@ function verifier(a, b, c, d) {
       if (pi !== (b === 0 || d === 0)) ko(nom + 'le piège de la simplification par x est ' + (pi ? 'signalé à tort' : 'oublié'));
     }
     if (i === 1 && !(L.length === 3 && /^⟺ x = .+ ou …$/.test(L[2]))) ko(nom + 'après le premier facteur : ' + L[2]);
+    if (i === 1 || i === 2) {
+      // le point d'essai est posé sur le zéro qu'on vient de trouver
+      var z = i === 1 ? z1 : z2;
+      if (Math.abs(PX.X() - z) > 1e-9) ko(nom + 'après la colonne ' + i + ', le point d\'essai est en ' + PX.X() + ' au lieu de ' + z);
+      if (!/✓/.test(labP.texte())) ko(nom + 'sur le zéro d\'un facteur, le verdict doit dire que le produit est nul');
+      if (!/Pas à pas|suffit|deux facteurs/.test(strip(noteEl.innerHTML) + labP.texte())) ko(nom + 'le verdict doit dire qu\'un facteur nul suffit');
+    }
     if (i === 2) {
       var mx = /^⟺ x = (.+?) ou x = (.+?)$/.exec(L[2]);
       if (!mx) return ko(nom + 'après le second facteur : ' + L[2]);
@@ -86,13 +100,27 @@ function verifier(a, b, c, d) {
     var T = trinome(md[1]);
     if (T[0] !== a * c || T[1] !== a * d + b * c || T[2] !== b * d) ko(nom + 'développé faux : ' + md[1] + ' lu ' + T + ' au lieu de ' + [a * c, a * d + b * c, b * d]);
   }
-  // la figure
-  var LP = courbes[2];
-  zs.forEach(function (z) { if (Math.abs(LP.parents[0](z)) > 1e-9) ko(nom + 'la courbe du produit ne passe pas par 0 en ' + z); });
-  if (!visible(LP)) ko(nom + 'la courbe du produit est invisible à la fin');
+  // la figure : deux colonnes relues, S, les points verts
+  var T = textesVus();
+  [[a, b, z1], [c, d, z2]].forEach(function (f) {
+    if (!T.some(function (s) { var m = /^⟺ x = (.+)$/.exec(s); return m && Math.abs(nb(m[1]) - f[2]) < 1e-9; })) ko(nom + 'la colonne ne se termine pas par x = ' + f[2]);
+    var mil = T.filter(function (s) { return /^⟺ −?\d*x = /.test(s); }).map(function (s) {
+      var m = /^⟺ (−?)(\d*)x = (.+)$/.exec(s); return [(m[1] ? -1 : 1) * (m[2] === '' ? 1 : +m[2]), nb(m[3])];
+    }).filter(function (m) { return m[0] !== 1; });
+    if (f[0] !== 1 && !mil.some(function (m) { return m[0] === f[0] && Math.abs(m[1] + f[1]) < 1e-9; })) ko(nom + 'l\'étape du milieu ' + f[0] + 'x = ' + (-f[1]) + ' manque : ' + JSON.stringify(mil));
+    mil.forEach(function (m) { if (!((m[0] === a && Math.abs(m[1] + b) < 1e-9) || (m[0] === c && Math.abs(m[1] + d) < 1e-9))) ko(nom + 'étape du milieu fausse : ' + m); });
+  });
+  if (T.indexOf('ou') < 0) ko(nom + 'le « ou » entre les deux colonnes manque');
+  var figS = T.map(function (s) { return /^S = \{(.*)\}$/.exec(s); }).filter(Boolean)[0];
+  if (!figS) ko(nom + 'la figure n\'affiche pas S');
+  else {
+    var fv = figS[1].split(' ; ').map(nb);
+    if (fv.length !== zs.length || fv.some(function (v, i) { return Math.abs(v - zs[i]) > 1e-9; })) ko(nom + 'le S de la figure (' + figS[0] + ') n\'est pas ' + fin);
+  }
   var vus = SOL.filter(visible);
   if (vus.length !== zs.length) ko(nom + vus.length + ' point(s) vert(s) pour ' + zs.length + ' solution(s)');
   vus.forEach(function (s, i) { if (Math.abs(s.X() - zs[i]) > 1e-9) ko(nom + 'point vert en ' + s.X() + ' au lieu de ' + zs[i]); });
+  if (!meme && !(b === 0 || d === 0) && !/oublier une solution/.test(strip(noteEl.innerHTML))) ko(nom + 'la note finale doit dire qu\'il faut résoudre chaque facteur');
   if ((b === 0 || d === 0) && !/perdre la solution/.test(strip(noteEl.innerHTML))) ko(nom + 'la note finale doit rappeler la solution 0 sauvée');
   // le point de test
   [zs[0], zs[0] + 0.5, zs[zs.length - 1], zs[zs.length - 1] - 1].forEach(function (x) {
@@ -101,6 +129,10 @@ function verifier(a, b, c, d) {
     var sol = Math.abs(f1(PX.X()) * f2(PX.X())) < 1e-9;
     if ((/✓/.test(labP.texte())) !== sol) ko(nom + 'en x = ' + PX.X() + ', l\'étiquette dit ' + strip(labP.texte()));
     if ((/: solution/.test(strip(panel.innerHTML))) !== sol) ko(nom + 'en x = ' + PX.X() + ', le panneau se trompe');
+    var n1 = Math.abs(f1(PX.X())) < 1e-9, n2 = Math.abs(f2(PX.X())) < 1e-9, V = strip(labP.texte());
+    if ((/cela suffit/.test(V)) !== (n1 !== n2)) ko(nom + 'en x = ' + PX.X() + ', « cela suffit » : ' + V);
+    if ((/Aucun facteur/.test(V)) !== (!n1 && !n2)) ko(nom + 'en x = ' + PX.X() + ', « aucun facteur » : ' + V);
+    if ((/1er/.test(V)) !== (n1 && !n2)) ko(nom + 'en x = ' + PX.X() + ', le verdict ne nomme pas le bon facteur : ' + V);
   });
 }
 function rejouer(nom) {
@@ -126,4 +158,4 @@ inA.value = 0; inA.onchange();
 if (parseInt(inA.value, 10) === 0) ko('un coefficient nul doit être refusé');
 
 if (err.length) { print('ÉCHEC'); err.forEach(function (e) { print('  ' + e); }); }
-else print('Équations produit nul : ' + (5 + n) + ' résolutions relues, S confronté aux zéros, développé recalculé, figure et rejeu vérifiés.');
+else print('Équations produit nul : ' + (5 + n) + ' résolutions relues, S confronté aux zéros, développé recalculé, colonnes, verdicts et rejeu vérifiés, aucune courbe.');

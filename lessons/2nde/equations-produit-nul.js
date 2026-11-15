@@ -1,28 +1,32 @@
 /*
  * Équations produit nul (2nde) — résoudre (ax + b)(cx + d) = 0.
  *
- * Un produit est nul si, et seulement si, l'un de ses facteurs est nul. C'est
- * la seule idée de la leçon, et tout est fait pour qu'on la VOIE :
+ * Un produit est nul si, et seulement si, l'un de ses facteurs est nul. La
+ * leçon insiste sur les deux moitiés de la phrase, sans aucune courbe :
  *
- *   1) on écrit la règle : (2x − 4)(−x + 3) = 0 ⟺ 2x − 4 = 0 ou −x + 3 = 0 ;
- *   2) chaque facteur est une droite ; on la trace, on marque son zéro, et on
- *      résout la petite équation : x = 2 ;
- *   3) pareil pour le second : x = 3 ;
- *   4) la courbe du produit y = (2x − 4)(−x + 3) se trace : elle coupe l'axe
- *      exactement en 2 et en 3, nulle part ailleurs — le produit est nul là où
- *      un facteur est nul, et seulement là ;
- *   5) S = {2 ; 3}, les deux points sur l'axe.
+ *   - il SUFFIT qu'un facteur soit nul : 0 × n'importe quoi = 0 ;
+ *   - il le FAUT : deux nombres non nuls ont un produit non nul ;
+ *   - donc, pour avoir TOUTES les solutions, on résout CHAQUE facteur = 0.
  *
- * Le point sur l'axe se déplace à la souris et refait le calcul : la valeur de
- * chaque facteur, celle du produit, vert quand il est nul.
+ * La figure est en deux colonnes, une par facteur, reliées par « ou » :
+ *
+ *   1) on écrit la règle : chaque facteur = 0 ;
+ *   2) première colonne : 2x − 4 = 0 ⟺ 2x = 4 ⟺ x = 2 ;
+ *   3) seconde colonne : −x + 3 = 0 ⟺ −x = −3 ⟺ x = 3 ;
+ *   4) les deux colonnes se rejoignent : S = {2 ; 3}.
+ *
+ * Dessous, la zone d'essai : un point à déplacer sur une droite graduée, et
+ * le calcul « facteur 1 × facteur 2 = produit » dans trois cases. Une case
+ * passe au vert dès qu'elle vaut 0, et le verdict le dit : un seul facteur
+ * nul suffit. À la fin de chaque colonne, le point va se poser sur le zéro
+ * qu'on vient de trouver.
  *
  * Deux pièges sont traités, pas évités : x(x − 3) = 0, où « simplifier par x »
  * ferait perdre la solution 0 (le panneau prévient dès qu'un facteur est x) ;
  * et la tentation de développer — le panneau montre ce que donnerait
- * −2x² + 10x − 12 = 0, pour dire qu'on ne saurait plus rien en faire : la
- * forme factorisée est la bonne. Le cas des deux facteurs qui s'annulent au
- * même endroit — (x − 1)(2x − 2) = 0 — donne une seule solution, écrite une
- * fois.
+ * −2x² + 10x − 12 = 0, pour dire qu'on ne saurait plus rien en faire. Le cas
+ * des deux facteurs qui s'annulent pour la même valeur — (x − 1)(2x − 2) = 0 —
+ * donne une seule solution, écrite une fois.
  *
  * Même discipline que les autres leçons animées : état absolu par étape,
  * rafraîchissement explicite, tout ce que lisent les textes calculé avant le
@@ -40,19 +44,22 @@ MathsView.register({
     'Pour résoudre \\((2x-4)(-x+3)=0\\), inutile de développer : un <strong>produit est ' +
     'nul si, et seulement si, l\'un de ses facteurs est nul</strong>. On résout donc ' +
     '\\(2x-4=0\\) <strong>ou</strong> \\(-x+3=0\\), deux petites équations du premier degré.' +
-    '<br>La figure le montre : chaque facteur est une droite qui coupe l\'axe en son zéro, et ' +
-    'la courbe du produit coupe l\'axe <strong>exactement</strong> en ces deux points, nulle ' +
-    'part ailleurs.' +
+    '<br>Il <strong>suffit</strong> qu\'un seul facteur soit nul pour que le produit le soit, ' +
+    'et il le <strong>faut</strong> : pour trouver <strong>toutes</strong> les solutions, on ' +
+    'résout donc <strong>chaque</strong> facteur \\(=0\\), une colonne par facteur.' +
     '<br>Choisis une équation ou saisis la tienne, puis clique sur <strong>▶ Animer</strong> ' +
-    '(ou coche <strong>Pas à pas</strong>). <strong>Déplace le point</strong> sur l\'axe pour ' +
-    'calculer le produit en une valeur.',
+    '(ou coche <strong>Pas à pas</strong>). <strong>Déplace le point</strong> sur la droite ' +
+    'graduée pour essayer une valeur : le produit vaut 0 dès qu\'un facteur vaut 0.',
   notes:
     '<ul>' +
     '<li><strong>La règle.</strong> \\(A\\times B=0\\iff A=0\\text{ ou }B=0\\). Dans un sens : ' +
-    'si un facteur est nul, le produit l\'est. Dans l\'autre : si le produit est nul et qu\'un ' +
+    '<strong>il suffit</strong> qu\'un facteur soit nul pour que le produit le soit, car \\(0\\times B=0\\) quel que soit \\(B\\). Dans l\'autre, <strong>il le faut</strong> : si le produit est nul et qu\'un ' +
     'facteur ne l\'est pas, on peut diviser par ce facteur, et l\'autre est nul.</li>' +
     '<li><strong>La méthode.</strong> \\((2x-4)(-x+3)=0\\iff 2x-4=0\\text{ ou }-x+3=0' +
     '\\iff x=2\\text{ ou }x=3\\). D\'où \\(S=\\{2\\,;3\\}\\) : deux solutions, entre accolades.</li>' +
+    '<li><strong>Résoudre chaque facteur.</strong> Chaque facteur peut apporter une solution : ' +
+    's\'arrêter après \\(2x-4=0\\) ferait oublier \\(3\\). L\'ensemble des solutions réunit ' +
+    'celles de <strong>tous</strong> les facteurs — trois facteurs, trois équations.</li>' +
     '<li><strong>Ne développe pas.</strong> \\((2x-4)(-x+3)=-2x^2+10x-12\\) : sous cette ' +
     'forme, on ne sait plus résoudre. Une équation \\(=0\\) se résout sur la <strong>forme ' +
     'factorisée</strong> — et si elle ne l\'est pas, on commence par factoriser : ' +
@@ -66,7 +73,7 @@ MathsView.register({
     'Pour \\(x=2{,}5\\), \\(1\\times0{,}5=0{,}5\\neq0\\) : pas solution.</li>' +
     '</ul>',
   board: {
-    boundingbox: [-6.5, 10.2, 6.5, -9.4], keepaspectratio: false,
+    boundingbox: [-6.5, 14.0, 6.5, -4.5], keepaspectratio: false,
     axis: false, grid: false, showNavigation: false,
     pan: { enabled: false }, zoom: { enabled: false, wheel: false, pinch: false }
   },
@@ -75,38 +82,36 @@ MathsView.register({
   fiche: {
     titre: 'Équations produit nul',
     figures: [{
-      legende: '(2x − 4)(−x + 3) = 0 : la courbe du produit coupe l\'axe en 2 et en 3.',
-      boundingbox: [-0.8, 3.4, 5.8, -3.2],
+      legende: 'Un facteur par colonne, reliés par « ou » : on les résout tous les deux.',
+      boundingbox: [0, 10, 10, 0],
       keepaspectratio: false,
       largeur: 60, hauteur: 36,
       dessine: function (board) {
-        var g = '#334155', ok = '#16a34a', b1 = '#2563eb', b2 = '#ea580c', vio = '#7c3aed';
-        board.create('segment', [[-0.6, 0], [5.6, 0]], { strokeColor: g, strokeWidth: 1.2, lastArrow: true, fixed: true, highlight: false });
-        board.create('segment', [[0, -3], [0, 3.2]], { strokeColor: g, strokeWidth: 1.2, lastArrow: true, fixed: true, highlight: false });
-        for (var i = 1; i <= 5; i++) {
-          board.create('segment', [[i, -0.1], [i, 0.1]], { strokeColor: g, strokeWidth: 1, fixed: true, highlight: false });
-          board.create('text', [i, -0.4, String(i)], { anchorX: 'middle', anchorY: 'middle', fontSize: 8, color: '#64748b', fixed: true, highlight: false });
+        var g = '#334155', ok = '#16a34a', b1 = '#2563eb', b2 = '#ea580c';
+        function t(x, y, s, col, fs) {
+          board.create('text', [x, y, s], { anchorX: 'middle', anchorY: 'middle', fontSize: fs || 9, color: col, cssStyle: 'font-weight:800;white-space:nowrap', fixed: true, highlight: false });
         }
-        board.create('functiongraph', [function (x) { return (2 * x - 4) / 2; }, -0.6, 5.6], { strokeColor: b1, strokeWidth: 1.4, fixed: true, highlight: false });
-        board.create('functiongraph', [function (x) { return (-x + 3); }, -0.6, 5.6], { strokeColor: b2, strokeWidth: 1.4, fixed: true, highlight: false });
-        board.create('functiongraph', [function (x) { return (2 * x - 4) * (-x + 3); }, 0.9, 4.1], { strokeColor: vio, strokeWidth: 2, fixed: true, highlight: false });
-        [2, 3].forEach(function (z) {
-          board.create('point', [z, 0], { name: '', size: 3, fillColor: ok, strokeColor: ok, fixed: true, highlight: false, showInfobox: false });
-          board.create('text', [z, 0.55, 'x = ' + z], { anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: ok, cssStyle: 'font-weight:800', fixed: true, highlight: false });
-        });
-        board.create('text', [4.6, 2.6, '2x − 4'], { anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: b1, cssStyle: 'font-weight:700', fixed: true, highlight: false });
-        board.create('text', [4.9, -1.3, '−x + 3'], { anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: b2, cssStyle: 'font-weight:700', fixed: true, highlight: false });
-        board.create('text', [1.2, -2.2, 'produit'], { anchorX: 'middle', anchorY: 'middle', fontSize: 9, color: vio, cssStyle: 'font-weight:700', fixed: true, highlight: false });
-        board.create('text', [2.5, 2.7, 'S = {2 ; 3}'], { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: ok, cssStyle: 'font-weight:800', fixed: true, highlight: false });
+        function cadre(x1, x2, col) {
+          board.create('polygon', [[x1, 2.7], [x2, 2.7], [x2, 7.5], [x1, 7.5]], { fillColor: col, fillOpacity: 0.08, fixed: true, highlight: false,
+            vertices: { visible: false }, borders: { strokeColor: col, strokeWidth: 1, fixed: true, highlight: false } });
+        }
+        t(5, 9, '(2x − 4)(−x + 3) = 0', g, 11);
+        cadre(0.3, 4.4, b1); cadre(5.6, 9.7, b2);
+        t(2.35, 6.6, '2x − 4 = 0', b1); t(2.35, 5.1, '2x = 4', b1); t(2.35, 3.6, 'x = 2', b1, 10);
+        t(7.65, 6.6, '−x + 3 = 0', b2); t(7.65, 5.1, '−x = −3', b2); t(7.65, 3.6, 'x = 3', b2, 10);
+        t(5, 5.1, 'ou', g, 10);
+        board.create('segment', [[2.35, 2.5], [4.0, 1.5]], { strokeColor: ok, strokeWidth: 1.2, lastArrow: true, fixed: true, highlight: false });
+        board.create('segment', [[7.65, 2.5], [6.0, 1.5]], { strokeColor: ok, strokeWidth: 1.2, lastArrow: true, fixed: true, highlight: false });
+        t(5, 1.0, 'S = {2 ; 3}', ok, 11);
       }
     }],
     points: [
       'Un <b>produit est nul</b> si et seulement si l\'un de ses <b>facteurs est nul</b> : \\( A \\times B = 0 \\iff A = 0 \\) ou \\( B = 0 \\).',
-      'On résout chaque facteur = 0 : deux petites équations du premier degré, reliées par <b>ou</b>.',
+      'Il <b>suffit</b> qu\'un seul facteur soit nul : \\( 0 \\times B = 0 \\). Il le <b>faut</b> : non nul × non nul ≠ 0.',
+      'Pour avoir <b>toutes</b> les solutions, on résout <b>chaque</b> facteur = 0, reliés par <b>ou</b>.',
       'On écrit les solutions entre accolades : \\( S = \\{2\\,;3\\} \\). Le même zéro deux fois : une seule solution.',
       '<b>Ne pas développer</b> : une équation = 0 se résout sur la forme <b>factorisée</b>. Sinon, factoriser d\'abord.',
-      'Ne jamais « simplifier par x » : \\( x(x - 3) = 0 \\) a DEUX solutions, 0 et 3.',
-      'Vérifier en remplaçant x par chaque solution : le produit doit valoir 0.'
+      'Ne jamais « simplifier par x » : \\( x(x - 3) = 0 \\) a DEUX solutions, 0 et 3.'
     ],
     exemples: [
       '\\( (2x - 4)(-x + 3) = 0 \\iff 2x - 4 = 0 \\) ou \\( -x + 3 = 0 \\iff x = 2 \\) ou \\( x = 3 \\). \\( S = \\{2\\,;3\\} \\).',
@@ -173,7 +178,7 @@ MathsView.register({
     /* ==================================================================== */
     var a = 2, b = -4, c = -1, d = 3;                    // (2x − 4)(−x + 3) = 0
     var D = null;
-    var XL = -6, XR = 6, YT = 7.2;
+    var XL = -6, XR = 6, Y_HAUT = 14.0, Y_BAS = -4.5;
 
     function f1(x) { return a * x + b; }
     function f2(x) { return c * x + d; }
@@ -195,7 +200,7 @@ MathsView.register({
       var lo = Math.min.apply(null, D.zs), hi = Math.max.apply(null, D.zs);
       XL = Math.floor(lo) - 3; XR = Math.ceil(hi) + 3;
       while (XR - XL < 8) { XL--; XR++; }
-      board.setBoundingBox([XL - 0.6, 10.2, XR + 0.6, -9.4], false);
+      board.setBoundingBox([XL - 0.6, Y_HAUT, XR + 0.6, Y_BAS], false);
     }
     calcule();
     bornesFenetre();
@@ -203,17 +208,32 @@ MathsView.register({
     /* ==================================================================== */
     /* État de l'animation (absolu)                                          */
     /* ==================================================================== */
-    var PLAN = ['ou', 'f1', 'f2', 'prod', 'sol'];
-    var vis = { ou: 0, f1: 0, f2: 0, prod: 0, sol: 0 };
+    var PLAN = ['ou', 'f1', 'f2', 'sol'];
+    var vis = { ou: 0, f1: 0, f2: 0, sol: 0 };
     var xv = 2.5;
     function applyStage(i, p) {
       PLAN.forEach(function (k, j) { vis[k] = j < i ? 1 : (j === i ? p : 0); });
+      // une fois un facteur résolu, le point d'essai va se poser sur son zéro :
+      // on y lit « 0 × … = 0 », un seul facteur nul suffit
+      if (i === 1 && p >= 1) xv = D.z1;
+      if (i === 2 && p >= 1) xv = D.z2;
       syncPX(); refresh(); renderPanel();
     }
-    function clampX(v) { return Math.max(XL, Math.min(XR, Math.round(v * 2) / 2)); }
+    // le point d'essai s'accroche aux demi-entiers et aux deux zéros
+    function clampX(v) {
+      var best = Math.round(v * 2) / 2;
+      [D.z1, D.z2].forEach(function (z) { if (Math.abs(v - z) < Math.abs(v - best)) best = z; });
+      return Math.max(XL, Math.min(XR, best));
+    }
+    function xTxt() {
+      if (Math.abs(xv - D.z1) < 1e-9) return D.z1Txt;
+      if (Math.abs(xv - D.z2) < 1e-9) return D.z2Txt;
+      return fmt(xv);
+    }
+    function xParen() { var t = xTxt(); return (xv < 0 || t.indexOf('/') >= 0) ? '(' + t + ')' : t; }
 
     /* ==================================================================== */
-    /* La figure                                                             */
+    /* La figure : deux colonnes, une par facteur, puis la zone d'essai      */
     /* ==================================================================== */
     function attr(o, key, val) {
       if (!o._mv) o._mv = {};
@@ -229,60 +249,75 @@ MathsView.register({
       return board.create('text', [fx, fy, txt], o);
     }
     function cx() { return (XL + XR) / 2; }
-    function clip(v) { return Math.max(-YT - 0.3, Math.min(YT + 0.3, v)); }
+    function W() { return XR - XL + 1.2; }
+    function colX(s) { return function () { return cx() + s * 0.255 * W(); }; }   // s = −1 : gauche, +1 : droite
 
-    // Les axes.
+    // Les deux cadres : un facteur par colonne.
+    function cadre(s, col) {
+      var x1 = function () { return cx() + s * 0.045 * W(); }, x2 = function () { return cx() + s * 0.47 * W(); };
+      var yb = function () { return 6.15; }, yh = function () { return 10.45; };
+      return board.create('polygon', [pt(x1, yb), pt(x2, yb), pt(x2, yh), pt(x1, yh)],
+        { fillColor: col, fillOpacity: 0.07, highlightFillOpacity: 0.07, fixed: true, highlight: false, layer: 1,
+          vertices: { visible: false }, borders: { strokeColor: col, strokeWidth: 1.5, strokeOpacity: 0.55, fixed: true, highlight: false } });
+    }
+    cadre(-1, C1); cadre(1, C2);
+    function tete(s, txt) {
+      return board.create('text', [colX(s), 10.95, txt],
+        { anchorX: 'middle', anchorY: 'middle', fontSize: 11, color: SOFT, cssStyle: 'font-weight:700;white-space:nowrap', fixed: true, highlight: false, layer: 9 });
+    }
+    tete(-1, '1er facteur'); tete(1, '2e facteur');
+
+    // « 2x = 4 » : l'étape du milieu, sautée quand le coefficient vaut 1
+    function milieu(k, m) { return k === 1 ? null : (k < 0 ? '−' : '') + absX(k) + ' = ' + fmt(-m); }
+    function colonne(s, col, key, kf, mf, zTxt) {
+      var aMilieu = function () { return milieu(kf(), mf()) !== null; };
+      var r1 = etiquette(colX(s), 9.55, function () { return facteur(kf(), mf()) + (vis.ou >= 0.5 ? ' = 0' : ''); }, col, 17);
+      var r2 = etiquette(colX(s), 8.3, function () { return '⟺ ' + (milieu(kf(), mf()) || ''); }, col, 15, { cssStyle: 'font-weight:700;white-space:nowrap' });
+      var r3 = etiquette(colX(s), function () { return aMilieu() ? 7.05 : 7.8; }, function () { return '⟺ x = ' + zTxt(); }, col, 18);
+      return { r1: r1, r2: r2, r3: r3, aMilieu: aMilieu, key: key };
+    }
+    var K1 = colonne(-1, C1, 'f1', function () { return a; }, function () { return b; }, function () { return D.z1Txt; });
+    var K2 = colonne(1, C2, 'f2', function () { return c; }, function () { return d; }, function () { return D.z2Txt; });
+    var motOu = etiquette(cx, 8.3, 'ou', INK, 16);
+
+    // Les deux flèches qui ramènent les solutions vers S, et S.
+    function fleche(s) {
+      return board.create('segment', [pt(colX(s), function () { return 6.0; }),
+                                      pt(function () { return cx() + s * 0.1 * W(); }, function () { return 5.35; })],
+        { strokeColor: C_OK, strokeWidth: 2, lastArrow: ARROW, fixed: true, highlight: false, layer: 4, visible: false });
+    }
+    var FL = [fleche(-1), fleche(1)];
+    var labS = etiquette(cx, 5.1, function () { return 'S = ' + D.Stxt; }, C_OK, 20);
+
+    // La zone d'essai : une droite graduée, un point à déplacer, le calcul.
+    board.create('segment', [pt(function () { return XL - 0.4; }, function () { return 4.15; }),
+                             pt(function () { return XR + 0.4; }, function () { return 4.15; })],
+      { strokeColor: SOFT, strokeWidth: 1, dash: 2, fixed: true, highlight: false, layer: 2 });
     board.create('segment', [pt(function () { return XL - 0.6; }, function () { return 0; }),
                              pt(function () { return XR + 0.6; }, function () { return 0; })],
       { strokeColor: INK, strokeWidth: 1.6, firstArrow: ARROW, lastArrow: ARROW, fixed: true, highlight: false, layer: 3 });
-    board.create('segment', [pt(function () { return 0; }, function () { return -YT; }), pt(function () { return 0; }, function () { return YT; })],
-      { strokeColor: INK, strokeWidth: 1.6, lastArrow: ARROW, fixed: true, highlight: false, layer: 3 });
     for (var i = 0; i < 17; i++) {
       (function (i) {
         var gx = function () { return XL + i; }, dans = function () { return XL + i <= XR; };
-        board.create('segment', [pt(gx, function () { return -0.18; }), pt(gx, function () { return 0.18; })],
+        board.create('segment', [pt(gx, function () { return -0.2; }), pt(gx, function () { return 0.2; })],
           { strokeColor: SOFT, strokeWidth: 1, fixed: true, highlight: false, layer: 3, visible: dans });
-        board.create('text', [gx, -0.62, function () { return fmt(XL + i); }],
+        board.create('text', [gx, -0.75, function () { return fmt(XL + i); }],
           { anchorX: 'middle', anchorY: 'middle', fontSize: 10, color: SOFT, fixed: true, highlight: false, layer: 3, visible: dans });
       })(i);
     }
-    for (var y = -6; y <= 6; y += 2) {
-      if (y === 0) continue;
-      board.create('segment', [pt(function () { return -0.15; }, function () { return y; }), pt(function () { return 0.15; }, function () { return y; })],
-        { strokeColor: SOFT, strokeWidth: 1, fixed: true, highlight: false, layer: 3 });
-      board.create('text', [-0.3, y, fmt(y)], { anchorX: 'right', anchorY: 'middle', fontSize: 10, color: SOFT, fixed: true, highlight: false, layer: 3 });
-    }
 
-    // Les deux droites et la courbe du produit, tracées de gauche à droite.
-    function courbe(f, key, col, w, dash) {
-      return board.create('functiongraph', [f, function () { return XL - 0.6; },
-                                            function () { return XL - 0.6 + vis[key] * (XR - XL + 1.2); }],
-        { strokeColor: col, strokeWidth: w, dash: dash || 0, fixed: true, highlight: false, layer: 5, visible: false });
-    }
-    var L1 = courbe(f1, 'f1', C1, 3), L2 = courbe(f2, 'f2', C2, 3), LP = courbe(prod, 'prod', C_P, 3.5);
-    function nomCourbe(f, txt, col) {
-      return etiquette(function () { return XR + 0.2; }, function () { return Math.max(-YT + 0.5, Math.min(YT - 0.5, f(XR + 0.2))); },
-                       txt, col, 12, { anchorX: 'right' });
-    }
-    var nomL1 = nomCourbe(f1, function () { return facteur(a, b); }, C1);
-    var nomL2 = nomCourbe(f2, function () { return facteur(c, d); }, C2);
-    var nomLP = etiquette(function () { return D.zs[0] - 1.2; }, function () { return clip(prod(D.zs[0] - 1.2)) + (prod(D.zs[0] - 1.2) > 0 ? -0.9 : 0.9); },
-                          'produit', C_P, 12);
-
-    // Les zéros : un point sur l'axe, une verticale pointillée, une étiquette.
+    // Les zéros des facteurs, reportés sur la droite.
     function zero(zf, key, col, dy) {
       var P = board.create('point', [zf, 0], { size: 4, face: 'o', fillColor: '#fff', strokeColor: col, strokeWidth: 2.5,
         fixed: true, withLabel: false, showInfobox: false, highlight: false, layer: 8, visible: false });
-      var V = board.create('segment', [pt(zf, function () { return -YT; }), pt(zf, function () { return YT; })],
-        { strokeColor: col, strokeWidth: 1, dash: 2, fixed: true, highlight: false, layer: 2, visible: false });
       var T = etiquette(zf, dy, function () { return 'x = ' + (key === 'f1' ? D.z1Txt : D.z2Txt); }, col, 12);
-      return { P: P, V: V, T: T };
+      return { P: P, T: T };
     }
-    var Z1 = zero(function () { return D.z1; }, 'f1', C1, -1.25);
-    var Z2 = zero(function () { return D.z2; }, 'f2', C2, function () { return Math.abs(D.z1 - D.z2) < 1.6 ? -2.05 : -1.25; });
+    var Z1 = zero(function () { return D.z1; }, 'f1', C1, -1.7);
+    var Z2 = zero(function () { return D.z2; }, 'f2', C2, function () { return Math.abs(D.z1 - D.z2) < 1.6 ? -2.55 : -1.7; });
 
-    // Les solutions : de gros points verts sur l'axe, et S.
-    var SOL = D.zs.length ? [] : [];
+    // Les solutions : de gros points verts sur la droite.
+    var SOL = [];
     for (var m = 0; m < 2; m++) {
       (function (m) {
         var zx = function () { return D.zs[m] != null ? D.zs[m] : XL; };
@@ -291,25 +326,29 @@ MathsView.register({
       })(m);
     }
 
-    // Le point de test, ses images sur les droites et sur la courbe.
+    // Le point d'essai et son calcul : la valeur de chaque facteur, puis le produit.
     var PX = board.create('point', [xv, 0], { size: 6, strokeWidth: 2, strokeColor: '#fff', fillColor: C_NO, fixed: false,
       withLabel: false, showInfobox: false, layer: 9 });
     function syncPX() { PX.setPosition(JXG.COORDS_BY_USER, [xv, 0]); }
-    var G = board.create('segment', [pt(function () { return xv; }, function () { return clip(Math.min(0, f1(xv), f2(xv), prod(xv))); }),
-                                     pt(function () { return xv; }, function () { return clip(Math.max(0, f1(xv), f2(xv), prod(xv))); })],
+    board.create('segment', [pt(function () { return xv; }, function () { return 0; }), pt(function () { return xv; }, function () { return 1.35; })],
       { strokeColor: SOFT, strokeWidth: 1, dash: 1, fixed: true, highlight: false, layer: 2 });
-    function image(f, col) {
-      return board.create('point', [function () { return xv; }, function () { return clip(f(xv)); }],
-        { size: 4, fillColor: col, strokeColor: '#fff', strokeWidth: 1.5, fixed: true, withLabel: false, showInfobox: false, highlight: false, layer: 8 });
+    function boite(txt, col, nul) {
+      return '<span style="display:inline-block;padding:1px 7px;border:2px solid ' + (nul ? C_OK : col) + ';border-radius:7px;color:' +
+             (nul ? C_OK : col) + ';background:' + (nul ? '#dcfce7' : '#fff') + '">' + txt + '</span>';
     }
-    var P1 = image(f1, C1), P2 = image(f2, C2), PP = image(prod, C_P);
     function calcTxt() {
-      var v1 = f1(xv), v2 = f2(xv), vp = prod(xv);
-      return 'x = ' + fmt(xv) + ' : <span style="color:' + C1 + '">' + fmt(v1) + '</span> × <span style="color:' + C2 + '">' +
-             paren(v2) + '</span> = <span style="color:' + C_P + '">' + fmt(vp) + '</span> ' +
-             (ok(xv) ? '<span style="color:' + C_OK + '">= 0 ✓ solution</span>' : '<span style="color:' + C_NO + '">≠ 0 ✗</span>');
+      var v1 = f1(xv), v2 = f2(xv);
+      return 'Pour x = ' + xTxt() + ' :&nbsp; ' + boite(facteur(a, b) + ' = ' + fmt(v1), C1, sgn(v1) === 0) + ' × ' +
+             boite(facteur(c, d) + ' = ' + fmt(v2), C2, sgn(v2) === 0) + ' = ' + boite(fmt(prod(xv)), C_P, ok(xv));
     }
-    var labP = etiquette(function () { return xv; }, function () { return -YT - 0.6; }, calcTxt, INK, 12);
+    function verdictTxt() {
+      var n1 = sgn(f1(xv)) === 0, n2 = sgn(f2(xv)) === 0;
+      if (n1 && n2) return '<span style="color:' + C_OK + '">Les deux facteurs sont nuls : le produit est nul ✓</span>';
+      if (n1 || n2) return '<span style="color:' + C_OK + '">Le ' + (n1 ? '1er' : '2e') + ' facteur est nul : cela suffit, le produit est nul ✓</span>';
+      return '<span style="color:' + C_NO + '">Aucun facteur n\'est nul : le produit ne peut pas être nul ✗</span>';
+    }
+    etiquette(cx, 3.2, calcTxt, INK, 13, { cssStyle: 'font-weight:700;white-space:nowrap' });
+    var labP = etiquette(cx, 2.05, verdictTxt, INK, 13);
     PX.on('drag', function () {
       xv = clampX(PX.X());
       syncPX(); refresh(); renderPanel();
@@ -317,36 +356,37 @@ MathsView.register({
     });
 
     // Le titre et les deux lignes qui racontent l'étape.
-    board.create('text', [cx, 9.55, function () { return produitTxt() + ' = 0'; }],
+    board.create('text', [cx, 13.1, function () { return produitTxt() + ' = 0'; }],
       { anchorX: 'middle', anchorY: 'middle', fontSize: 21, color: INK, cssStyle: 'font-weight:800', fixed: true, highlight: false, layer: 9 });
     function capHaut() {
       if (vis.sol > 0) return D.meme
-        ? 'Les deux facteurs s\'annulent au même endroit : une seule solution, <b style="color:' + C_OK + '">S = ' + D.Stxt + '</b>.'
-        : 'Deux solutions, et pas une de plus : <b style="color:' + C_OK + '">S = ' + D.Stxt + '</b>.';
-      if (vis.prod > 0) return 'La courbe du <b style="color:' + C_P + '">produit</b> coupe l\'axe exactement en ' + D.zs.map(function (z, i) { return i === 0 ? D.zs[0] === D.z1 ? D.z1Txt : D.z2Txt : D.zs[1] === D.z1 ? D.z1Txt : D.z2Txt; }).join(' et ') + ' : là où un facteur est nul, et seulement là.';
-      if (vis.f2 > 0) return '<b style="color:' + C2 + '">' + facteur(c, d) + ' = 0</b> ⟺ x = ' + D.z2Txt + ' : la droite coupe l\'axe en ' + D.z2Txt + '.';
-      if (vis.f1 > 0) return '<b style="color:' + C1 + '">' + facteur(a, b) + ' = 0</b> ⟺ x = ' + D.z1Txt + ' : la droite coupe l\'axe en ' + D.z1Txt + '.';
-      if (vis.ou > 0) return 'Un produit est nul si, et seulement si, <b>l\'un de ses facteurs est nul</b> : on résout chaque facteur = 0.';
-      return 'On ne développe pas : on cherche où chaque facteur s\'annule.';
+        ? 'Les deux facteurs s\'annulent pour la même valeur : une seule solution, <b style="color:' + C_OK + '">S = ' + D.Stxt + '</b>.'
+        : 'Chaque facteur a donné sa solution, il les faut <b>toutes les deux</b> : <b style="color:' + C_OK + '">S = ' + D.Stxt + '</b>.';
+      if (vis.f2 > 0) return 'Il faut aussi résoudre <b style="color:' + C2 + '">' + facteur(c, d) + ' = 0</b> : pour x = ' + D.z2Txt +
+                             ', le produit vaut ' + fmt(f1(D.z2)) + ' × 0 = 0.';
+      if (vis.f1 > 0) return '<b style="color:' + C1 + '">' + facteur(a, b) + ' = 0</b> ⟺ x = ' + D.z1Txt + ' : pour x = ' + D.z1Txt +
+                             ', le produit vaut 0 × ' + paren(f2(D.z1)) + ' = 0, quel que soit l\'autre facteur.';
+      if (vis.ou > 0) return 'Il <b>suffit</b> qu\'un facteur soit nul (0 × 7 = 0), et il le <b>faut</b> (5 × 7 ≠ 0) : on écrit chaque facteur = 0.';
+      return 'Pour quelles valeurs de x ce produit vaut-il 0 ? On ne développe pas : on regarde ses deux facteurs.';
     }
     function capBas() {
-      if (vis.sol >= 1) return 'Déplace le point : le produit vaut 0 exactement sur les solutions.';
-      if (vis.prod > 0) return 'Ailleurs, le produit n\'est pas nul : ni au-dessus, ni en dessous de l\'axe.';
-      return '';
+      return 'Déplace le point : le produit vaut 0 dès qu\'un facteur vaut 0, et jamais autrement.';
     }
-    board.create('text', [cx, 8.55, capHaut], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, color: INK, fixed: true, highlight: false, layer: 9 });
-    board.create('text', [cx, -9.0, capBas], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, color: INK, fixed: true, highlight: false, layer: 9 });
+    board.create('text', [cx, 11.95, capHaut], { anchorX: 'middle', anchorY: 'middle', fontSize: 13, color: INK, fixed: true, highlight: false, layer: 9 });
+    board.create('text', [cx, -3.75, capBas], { anchorX: 'middle', anchorY: 'middle', fontSize: 12, color: SOFT, fixed: true, highlight: false, layer: 9 });
 
     function refresh() {
-      show(L1, vis.f1 > 0); show(L2, vis.f2 > 0); show(LP, vis.prod > 0);
-      show(nomL1, vis.f1 >= 0.5); show(nomL2, vis.f2 >= 0.5); show(nomLP, vis.prod >= 0.999);
-      [[Z1, vis.f1], [Z2, vis.f2]].forEach(function (z) {
-        show(z[0].P, z[1] >= 0.5 && !(vis.sol > 0)); show(z[0].V, z[1] >= 0.5); show(z[0].T, z[1] >= 0.5);
+      [[K1, vis.f1, Z1], [K2, vis.f2, Z2]].forEach(function (t) {
+        var K = t[0], v = t[1], Z = t[2];
+        show(K.r2, v >= 0.3 && K.aMilieu());
+        show(K.r3, v >= 0.7);
+        show(Z.P, v >= 0.999 && !(vis.sol > 0)); show(Z.T, v >= 0.999);
       });
+      show(motOu, vis.ou >= 0.5);
+      FL.forEach(function (f) { show(f, vis.sol > 0); });
+      show(labS, vis.sol >= 0.5);
       SOL.forEach(function (s, m) { show(s, vis.sol > 0 && D.zs[m] != null); });
       attr(PX, 'fillColor', ok(xv) ? C_OK : C_NO);
-      show(P1, vis.f1 >= 0.999); show(P2, vis.f2 >= 0.999); show(PP, vis.prod >= 0.999);
-      attr(labP, 'anchorX', xv > XR - 3 ? 'right' : xv < XL + 3 ? 'left' : 'middle');
     }
 
     /* ==================================================================== */
@@ -416,11 +456,11 @@ MathsView.register({
       if (vis.f1 >= 0.999) {
         var x2 = vis.f2 >= 0.999 ? '<span style="color:' + C2 + '">' + xEgale(D.z2Html) + '</span>' : '…';
         ligne('⟺ <span style="color:' + C1 + '">' + xEgale(D.z1Html) + '</span> <span class="eq-ou">ou</span> ' + x2,
-              'Deux équations du premier degré, résolues chacune de son côté.');
+              'Deux équations du premier degré : il faut les résoudre toutes les deux.');
       }
       if (vis.sol >= 0.999) {
         ligne('S = ' + D.Shtml, D.meme ? 'Les deux facteurs donnent la même solution : on ne l\'écrit qu\'une fois.'
-                                        : 'Les solutions, entre accolades.', true);
+                                        : 'Toutes les solutions, entre accolades : celle de chaque facteur.', true);
       }
       linesEl.innerHTML = lignes.join('');
     }
@@ -428,13 +468,14 @@ MathsView.register({
       if (vis.sol >= 0.999) {
         noteEl.innerHTML = '<b style="color:' + C_OK + '">S = ' + D.Stxt + '</b>' +
           (D.pieges.length ? ' — et non pas seulement ' + (D.z1 === 0 ? D.z2Txt : D.z1Txt) +
-            ' : « simplifier par x » aurait fait perdre la solution <b>0</b>.' : '');
-      } else if (vis.prod > 0) {
-        noteEl.innerHTML = 'La courbe du produit passe par l\'axe exactement aux zéros des facteurs.';
+            ' : « simplifier par x » aurait fait perdre la solution <b>0</b>.'
+            : D.meme ? '' : ' — ne résoudre qu\'un seul facteur aurait fait oublier une solution.');
+      } else if (vis.f1 > 0) {
+        noteEl.innerHTML = 'Un facteur nul suffit à annuler le produit : chaque facteur peut donc apporter une solution, on les résout <b>tous</b>.';
       } else if (vis.ou > 0) {
         noteEl.innerHTML = D.pieges.length
           ? '<b style="color:' + C_NO + '">Attention</b> : un des facteurs est <b>x</b>. On ne « simplifie » pas par x — ce serait diviser par quelque chose qui peut être nul, et perdre la solution 0.'
-          : 'On ne développe pas : la forme factorisée est celle qui permet de résoudre.';
+          : 'Il suffit qu\'<b>un seul</b> facteur soit nul pour que le produit le soit — et si aucun ne l\'est, le produit ne l\'est pas.';
       } else noteEl.innerHTML = '';
     }
     function renderPanel() {
@@ -444,16 +485,19 @@ MathsView.register({
         '<div class="props-label">Le résultat</div>' +
         '<p style="margin:.2rem 0 .5rem;font-size:1.15rem;font-weight:800;color:' + (fini ? C_OK : SOFT) + '">' +
           (fini ? 'S = ' + D.Stxt : 'S = … (lance l\'animation)') + '</p>' +
+        '<div class="props-label">La règle</div>' +
+        '<p style="margin:.2rem 0 .5rem">Pour qu\'un produit soit nul, il <b>suffit</b> qu\'un de ses facteurs soit nul, et il le ' +
+          '<b>faut</b>. Pour avoir <b>toutes</b> les solutions, on résout donc <b>chaque</b> facteur = 0.</p>' +
         '<div class="props-label">Pourquoi ne pas développer</div>' +
         '<p style="margin:.2rem 0 .5rem">Développé, cela donnerait <b>' + D.dev + ' = 0</b> : sous cette forme, on ne sait plus ' +
           'résoudre. La forme <b>factorisée</b> est la bonne.</p>' +
         '<div class="props-label">Le point de test</div>' +
-        '<p style="margin:.2rem 0 0">x = <strong>' + fmt(xv) + '</strong> : ' +
-          '<span style="color:' + C1 + '">' + facteur(a, b).replace('x', '× ' + paren(xv)).replace(/^−× /, '−') + ' = ' + fmt(v1) + '</span>' +
-          ' et <span style="color:' + C2 + '">' + facteur(c, d).replace('x', '× ' + paren(xv)).replace(/^−× /, '−') + ' = ' + fmt(v2) + '</span>' +
+        '<p style="margin:.2rem 0 0">x = <strong>' + xTxt() + '</strong> : ' +
+          '<span style="color:' + C1 + '">' + facteur(a, b).replace('x', '× ' + xParen()).replace(/^−× /, '−') + ' = ' + fmt(v1) + '</span>' +
+          ' et <span style="color:' + C2 + '">' + facteur(c, d).replace('x', '× ' + xParen()).replace(/^−× /, '−') + ' = ' + fmt(v2) + '</span>' +
           ' ; produit ' + fmt(v1) + ' × ' + paren(v2) + ' = <strong style="color:' + (ok(xv) ? C_OK : C_NO) + '">' + fmt(vp) + '</strong>' +
           (ok(xv) ? ' : <strong style="color:' + C_OK + '">solution</strong>' : ' ≠ 0 : pas solution') +
-          (fini ? ', et en effet ' + fmt(xv) + (ok(xv) ? ' ∈ ' : ' ∉ ') + D.Stxt + '.' : '.') +
+          (fini ? ', et en effet ' + xTxt() + (ok(xv) ? ' ∈ ' : ' ∉ ') + D.Stxt + '.' : '.') +
         '</p>';
     }
 
@@ -464,7 +508,7 @@ MathsView.register({
     function reset() { applyStage(-1, 0); }
     function buildSteps() {
       return PLAN.map(function (k, i) {
-        return { dur: k === 'ou' ? 500 : k === 'sol' ? 700 : 1200, step: function (p) { applyStage(i, p); }, after: function () { applyStage(i, 1); } };
+        return { dur: k === 'ou' ? 700 : k === 'sol' ? 700 : 1400, step: function (p) { applyStage(i, p); }, after: function () { applyStage(i, 1); } };
       });
     }
 
