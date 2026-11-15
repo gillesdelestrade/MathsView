@@ -16,8 +16,8 @@ Construit avec [JSXGraph](https://jsxgraph.org) (figures interactives) et
 [MathJax](https://www.mathjax.org) (formules), **tous deux embarqués en local**.
 Aucune installation, aucun build, aucun appel réseau : ça marche hors-ligne.
 
-État actuel : **81 leçons** (dont cinq de physique-chimie), **76 générateurs d'exercices** couvrant 76 compétences,
-dont **78 leçons mènent directement à un entraînement**.
+État actuel : **82 leçons** (dont cinq de physique-chimie), **77 générateurs d'exercices** couvrant 77 compétences,
+dont **79 leçons mènent directement à un entraînement**.
 
 Deux compétences échappent à ce régime : les **tables de multiplication** et les
 **additions jusqu'à 20**. Elles ne se comprennent pas, elles s'automatisent — et
